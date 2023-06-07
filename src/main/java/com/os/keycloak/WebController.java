@@ -21,7 +21,11 @@ public class WebController {
 	RestTemplate restTemplate;
 	
     @GetMapping(path = "/")
-    public String index() {
+    public String index(Principal principal, Model model) {
+    	if (principal != null) {
+    		model.addAttribute("username", principal.getName());
+    	}
+    	
         return "public";
     }
 
@@ -31,8 +35,8 @@ public class WebController {
         return "redirect:/";
     }
 
-    @GetMapping(path = "/ledger")
-    public String ledger(Principal principal, Model model) {
+    @GetMapping(path = "/events")
+    public String events(Principal principal, Model model) {
         
     	model.addAttribute("username", principal.getName());
         
@@ -42,6 +46,35 @@ public class WebController {
     	    model.addAttribute("authtoken", user.getIdToken().getTokenValue());
     	}
 	    
-        return "ledger";
+        return "events";
     }
+
+    @GetMapping(path = "/agreements")
+    public String agreements(Principal principal, Model model) {
+        
+    	model.addAttribute("username", principal.getName());
+        
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	if (authentication != null && authentication.getPrincipal() instanceof DefaultOidcUser) {
+    		DefaultOidcUser user = (DefaultOidcUser)authentication.getPrincipal();
+    	    model.addAttribute("authtoken", user.getIdToken().getTokenValue());
+    	}
+	    
+        return "agreements";
+    }
+
+    @GetMapping(path = "/contracts")
+    public String contracts(Principal principal, Model model) {
+        
+    	model.addAttribute("username", principal.getName());
+        
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	if (authentication != null && authentication.getPrincipal() instanceof DefaultOidcUser) {
+    		DefaultOidcUser user = (DefaultOidcUser)authentication.getPrincipal();
+    	    model.addAttribute("authtoken", user.getIdToken().getTokenValue());
+    	}
+	    
+        return "contracts";
+    }
+
 }
