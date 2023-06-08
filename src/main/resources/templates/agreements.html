@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
 <style>
 body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
 body {font-size:16px;}
@@ -20,6 +21,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
     <script type="text/javascript" src="/js/util.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['table']});
@@ -27,7 +29,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 
       var authtoken = '[[${authtoken}]]';
       function loadEvents() {
-    	loadData(authtoken, '/v1/ledger/agreements', agreementData, 0, '/v1/ledger/agreements/');
+    	loadData(authtoken, '/v1/ledger/agreements', agreementData);
       }
     </script>
 </head>
@@ -68,19 +70,56 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
   </div>
 
   <!-- Modal for json display on click-->
-  <div id="modal01" class="w3-modal w3-white" style="padding-top:0" onclick="this.style.display='none'">
-    <span class="w3-button w3-white w3-xxlarge w3-display-topright">×</span>
+  <div id="modal01" class="w3-modal w3-white" style="padding-top:0">
+    <span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal01').hide();">×</span>
     <div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
       <p id="caption"></p>
       <pre id="jsonobj"></pre>
     </div>
   </div>
 
+  <!-- Modal for contract form display on click-->
+  <div id="modal02" class="w3-modal w3-white" style="padding-top:0">
+    <span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal02').hide();">×</span>
+    <div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
+      <p id="caption02"></p>
+      <form id="createContractForm">
+      <table>
+      	<tr><td><b>Agreement ID:</b></td><td colspan="2"><p id="cAgreementId"></p></td></tr>
+      	<tr><td><b>Counterparty:</b></td><td colspan="2"><p id="cCounterparty"></p></td></tr>
+      	<tr><td><b>Instrument</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>FIGI:</b></td><td><p id="cFigi"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Ticker:</b></td><td><p id="cTicker"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>CUSIP:</b></td><td><p id="cCusip"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>SEDOL:</b></td><td><p id="cSedol"></p></td></tr>
+      	<tr><td><b>Terms</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate:</b></td><td><p id="cRate"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Quantity:</b></td><td><p id="cQuantity"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Currency:</b></td><td><p id="cCurrency"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Value:</b></td><td><p id="cValue"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Term:</b></td><td><p id="cTerm"></p></td></tr>
+      	<tr><td colspan="3"><input type="submit"></td></tr>
+      </table>
+      <input type="hidden" id="fAgreementId" name="fAgreementId">
+      </form>
+    </div>
+  </div>
+
+<div id="cDialog" title="Proposing Contract" style='display:none;'><div id="cDialogText">Waiting for ledger response...</div></div>
 <!-- End page content -->
 </div>
 
 <!-- W3.CSS Container -->
 <div class="w3-light-grey w3-container w3-padding-32" style="margin-top:75px;padding-right:58px"><p class="w3-right">Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-opacity">w3.css</a></p></div>
 
+<script>
+$(function() {
+	  $('#createContractForm').on("submit", function(e) {
+	    e.preventDefault(); // cancel the actual submit
+		$('#modal02').hide();
+		createContractFromAgreement(e.target[1].value);
+	  });
+	});
+</script>
 </body>
 </html>

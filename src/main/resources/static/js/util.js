@@ -2,17 +2,12 @@ var table;
 var data;
 var authtoken;
 var apiserver = 'http://demoapi.1sourceeq.com';
-var clickIndx;
-var clickUriPrefix;
 
-function loadData(token, uri, dFunction, colUriIndx, colUriPrefix) {
+function loadData(token, uri, dFunction) {
 
     authtoken = token;
-    clickIndx = colUriIndx;
-    clickUriPrefix = colUriPrefix;
 	table = new google.visualization.Table(document.getElementById('table_div'));
 	google.visualization.events.addListener(table, 'page', pageTable);
-	google.visualization.events.addListener(table, 'select', rowClick);
 
 	table.clearChart();
 
@@ -37,7 +32,7 @@ function loadData(token, uri, dFunction, colUriIndx, colUriPrefix) {
 		async: true,
 		success: function(j) {
 			data = dFunction(j);
-			table.draw(data, { showRowNumber: true, width: '100%', height: '90%', page: 'enable', pageSize: 10 });
+			table.draw(data, { allowHtml: true, showRowNumber: true, width: '100%', height: '90%', page: 'enable', pageSize: 10 });
 		}
 	});
 }
@@ -45,13 +40,18 @@ function loadData(token, uri, dFunction, colUriIndx, colUriPrefix) {
 function eventData(j) {
 
 	var d = new google.visualization.DataTable();
+	d.addColumn('string', '');
 	d.addColumn('number', 'Event ID');
 	d.addColumn('string', 'Event Type');
 	d.addColumn('datetime', 'Timestamp');
 	d.addColumn('string', 'URI');
 
 	for (var i = 0; i < j.length; i++) {
-		d.addRow([j[i].eventId, j[i].eventType, new Date(Date.parse(j[i].eventDatetime)), j[i].resourceUri]);
+		d.addRow([{v:'ButtonName', f:'<input type="button" value="Json" onclick="showJson(' + i + ', 4, \'\');return false;"/>'}
+			, j[i].eventId
+			, j[i].eventType
+			, new Date(Date.parse(j[i].eventDatetime))
+			, j[i].resourceUri]);
 		lastEventId = j[i].eventId;
 	}
 
@@ -60,7 +60,10 @@ function eventData(j) {
 
 function agreementData(j) {
 
+    var jwt = parseJwt(authtoken);
+    
 	var d = new google.visualization.DataTable();
+	d.addColumn('string', '');
 	d.addColumn('string', 'Agreement ID');
 	d.addColumn('datetime', 'Last Update');
 	d.addColumn('string', 'Ticker');
@@ -70,7 +73,20 @@ function agreementData(j) {
 	d.addColumn('number', 'Value');
 
 	for (var i = 0; i < j.length; i++) {
-		d.addRow([j[i].agreementId
+		
+		var canSub = false;
+		for (var t = 0; t<j[i].trade.transactingParties.length; t++) {
+			if (j[i].trade.transactingParties[t].partyRole == 'LENDER' && j[i].trade.transactingParties[t].party.partyId == jwt.partyId) {
+				canSub = true;
+			}
+		}
+		
+		var btns = '<input type="button" value="Json" onclick="showJson(' + i + ', 1, \'/v1/ledger/agreements/\');return false;"/>';
+		if (canSub) {
+			btns += '<input type="button" value="Submit" onclick="createContract(' + i + ', 1, \'/v1/ledger/agreements/\');return false;"/>';
+		}
+		d.addRow([{v:'ButtonName', f:btns}
+			, j[i].agreementId
 			, new Date(Date.parse(j[i].lastUpdateDatetime))
 			, j[i].trade.instrument.ticker
 			, j[i].trade.instrument.cusip
@@ -83,7 +99,11 @@ function agreementData(j) {
 }
 
 function contractData(j) {
+	
+    var jwt = parseJwt(authtoken);
+
 	var d = new google.visualization.DataTable();
+	d.addColumn('string', '');
 	d.addColumn('string', 'Contract ID');
 	d.addColumn('datetime', 'Last Update');
 	d.addColumn('string', 'Status');
@@ -94,7 +114,39 @@ function contractData(j) {
 	d.addColumn('number', 'Value');
 
 	for (var i = 0; i < j.length; i++) {
-		d.addRow([j[i].contractId
+
+		var canAcc = false;
+		var canDec = false;
+		var canCan = false;
+		for (var t = 0; t<j[i].trade.transactingParties.length; t++) {
+			if (j[i].contractStatus == 'PROPOSED') {
+				
+				if (j[i].trade.transactingParties[t].partyRole == 'BORROWER'
+					&& j[i].trade.transactingParties[t].party.partyId == jwt.partyId) {
+					canAcc = true;
+					canDec = true;
+				}
+
+				if (j[i].trade.transactingParties[t].partyRole == 'LENDER'
+					&& j[i].trade.transactingParties[t].party.partyId == jwt.partyId) {
+					canCan = true;
+				}
+			}
+		}
+
+		var btns = '<input type="button" value="Json" onclick="showJson(' + i + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		if (canAcc) {
+			btns += '<input type="button" value="Accept" onclick="acceptContract(' + i + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+		if (canDec) {
+			btns += '<input type="button" value="Decline" onclick="declineContract(' + i + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+		if (canCan) {
+			btns += '<input type="button" value="Cancel" onclick="cancelContract(' + i + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+
+		d.addRow([{v:'ButtonName', f:btns}
+		    , j[i].contractId
 			, new Date(Date.parse(j[i].lastUpdateDatetime))
 			, j[i].contractStatus
 			, j[i].trade.instrument.ticker
@@ -107,11 +159,8 @@ function contractData(j) {
     return d;
 }
 
-function rowClick() {
-  //document.getElementById("img01").src = element.src;
-  var selection = table.getSelection();
-  var item = selection[0];
-  var uri = clickUriPrefix + data.getFormattedValue(item.row, clickIndx);
+function showJson(rowIndx, clickIndx, clickUriPrefix) {
+  var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
   
   $.ajax({
   	  type: 'GET',
@@ -126,6 +175,96 @@ function rowClick() {
   		  document.getElementById("caption").innerHTML = uri;
   		  document.getElementById("jsonobj").innerHTML = syntaxHighlight(j);
   	  }
+  	});
+}
+
+function createContract(rowIndx, clickIndx, clickUriPrefix) {
+  var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+  
+  $.ajax({
+  	  type: 'GET',
+  	  url: apiserver + uri,
+  	  headers: {
+        'Authorization':'Bearer ' + authtoken,
+	        'Content-Type':'application/json'
+			},
+  	  async: true,
+  	  success: function(j) {
+  		  document.getElementById("modal02").style.display = "block";
+  		  document.getElementById("caption02").innerHTML = 'Create Contract from Agreement ' + data.getFormattedValue(rowIndx, clickIndx);
+  		  
+  		  $('#cAgreementId').text(j.agreementId);
+  		  $('#cCounterparty').text(j.trade.instrument.ticker);
+  		  $('#cFigi').text(j.trade.instrument.figi);
+  		  $('#cTicker').text(j.trade.instrument.ticker);
+  		  $('#cCusip').text(j.trade.instrument.cusip);
+  		  $('#cSedol').text(j.trade.instrument.sedol);
+  		  $('#cRate').text(j.trade.rate.rebateBps);
+  		  $('#cQuantity').text(j.trade.quantity);
+  		  $('#cCurrency').text(j.trade.billingCurrency);
+  		  $('#cValue').text(j.trade.collateral.collateralValue);
+  		  $('#cTerm').text(j.trade.termType);
+
+  		  $('#fAgreementId').val(j.agreementId);
+  	  }
+  	});
+}
+
+function acceptContract(rowIndx, clickIndx, clickUriPrefix) {
+  alert('todo');
+}
+
+function declineContract(rowIndx, clickIndx, clickUriPrefix) {
+  alert('todo');
+}
+
+function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
+  alert('todo');
+}
+
+var cDialog;
+
+function createContractFromAgreement(id) {
+  var uri = '/v1/ledger/agreements/' + id;
+  
+  $.ajax({
+  	  type: 'GET',
+  	  url: apiserver + uri,
+  	  headers: {
+        'Authorization':'Bearer ' + authtoken,
+	        'Content-Type':'application/json'
+			},
+  	  async: false,
+  	  success: function(j) {
+        $('#cDialog').dialog({
+          "show": true,
+          "modal": true
+        });
+		postContract(j);
+  	  }
+  	});
+}
+
+function postContract(trade) {
+  var postUri = '/v1/ledger/contracts';
+  
+  $.ajax({
+  	  type: 'POST',
+  	  url: apiserver + postUri,
+      data: JSON.stringify(trade),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      headers: {
+        'Authorization':'Bearer ' + authtoken,
+	        'Content-Type':'application/json'
+	  },
+  	  async: false,
+  	  success: function(j) {
+	    $('#cDialogText').text('Contract created!');
+  	  },
+  	  error: function(x, s, e) {
+	    $('#cDialogText').text('Something went wrong.');
+      }
   	});
 }
 
@@ -173,4 +312,14 @@ function syntaxHighlight(json) {
 		}
 		return '<span class="' + cls + '">' + match + '</span>';
 	});
+}
+
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
 }
