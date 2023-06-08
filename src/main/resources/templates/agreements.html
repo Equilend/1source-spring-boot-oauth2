@@ -21,67 +21,13 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="/js/util.js"></script>
-  <script type="text/javascript">
+    <script type="text/javascript">
       google.charts.load('current', {'packages':['table']});
-      google.charts.setOnLoadCallback(loadAgreements);
+      google.charts.setOnLoadCallback(loadEvents);
 
       var authtoken = '[[${authtoken}]]';
-      var table;
-      var data;
-      //test
-      function loadAgreements() {
-
-        table = new google.visualization.Table(document.getElementById('table_div'));
-        google.visualization.events.addListener(table, 'page', pageTable);
-        google.visualization.events.addListener(table, 'select', rowClick);
-        
-		table.clearChart();
-
-      	var params = {'noCache': new Date().getTime()};
-      	var eventType = $("#sEventType").val();
-      	if (eventType != '_') {
-      		params['eventType'] = eventType;
-      	}
-      	params['size'] = 1000;
-      	
-      	$.ajax({
-      	  type: 'GET',
-      	  url: 'http://demoapi.1sourceeq.com/v1/ledger/agreements',
-      	  headers: {
-            'Authorization':'Bearer ' + authtoken,
-		        'Content-Type':'application/json'
-    			},
-      	  data: params,
-      	  async: true,
-      	  success: function(j) {
-      	  	//{eventId: 100000000, eventType: 'TRADE', eventDatetime: '2023-05-08T12:29:39.1819886-04:00', resourceUri: '/v1/ledger/agreements/A1683563379179'}
-     
-        		data = new google.visualization.DataTable();
-        		data.addColumn('string', 'Agreement ID');
-        		data.addColumn('datetime', 'Last Update');
-    		    data.addColumn('string', 'Ticker');
-		        data.addColumn('string', 'Cusip');
-        		data.addColumn('number', 'Rate');
-        		data.addColumn('number', 'Quantity');
-        		data.addColumn('number', 'Value');
-      	
-      	    for (var i=0; i < j.length; i++) {
-	      		  data.addRow([j[i].agreementId
-	      			  , new Date(Date.parse(j[i].lastUpdateDatetime))
-	      		      , j[i].trade.instrument.ticker
-	      		      , j[i].trade.instrument.cusip
-	      		      , j[i].trade.rate.rebateBps
-	      		      , j[i].trade.quantity
-	      		      , j[i].trade.collateral.collateralValue]);
-	      	  }
-	      		
-            table.draw(data, {showRowNumber: true, width: '100%', height: '90%', page: 'enable', pageSize: 10});
-      	  }
-      	});
-      }
-      
-      function pageTable(p) {
-//      	alert(p.page);
+      function loadEvents() {
+    	loadData(authtoken, '/v1/ledger/agreements', agreementData, 0, '/v1/ledger/agreements/');
       }
     </script>
 </head>
@@ -96,7 +42,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
   <div class="w3-bar-block">
     <a href="/" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
     <a href="/events" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Events</a> 
-    <a href="/#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Agreements</a> 
+    <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Agreements</a> 
     <a href="/contracts" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
     <a href="/logout" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Logout</a>
   </div>
@@ -135,53 +81,6 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 
 <!-- W3.CSS Container -->
 <div class="w3-light-grey w3-container w3-padding-32" style="margin-top:75px;padding-right:58px"><p class="w3-right">Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-opacity">w3.css</a></p></div>
-
-<script>
-// Script to open and close sidebar
-function w3_open() {
-  document.getElementById("mySidebar").style.display = "block";
-  document.getElementById("myOverlay").style.display = "block";
-}
- 
-function w3_close() {
-  document.getElementById("mySidebar").style.display = "none";
-  document.getElementById("myOverlay").style.display = "none";
-}
-
-// Modal Image Gallery
-function onClick(element) {
-  document.getElementById("img01").src = element.src;
-  document.getElementById("modal01").style.display = "block";
-  var captionText = document.getElementById("caption");
-  captionText.innerHTML = element.alt;
-}
-
-//Modal Image Gallery
-function rowClick() {
-  //document.getElementById("img01").src = element.src;
-  var selection = table.getSelection();
-  var item = selection[0];
-  var uri = data.getFormattedValue(item.row, 0);
-  
-  $.ajax({
-  	  type: 'GET',
-  	  url: 'http://demoapi.1sourceeq.com/v1/ledger/agreements/' + uri,
-  	  headers: {
-        'Authorization':'Bearer ' + authtoken,
-	        'Content-Type':'application/json'
-			},
-  	  async: true,
-  	  success: function(j) {
-  		  document.getElementById("modal01").style.display = "block";
-  		  var captionText = document.getElementById("caption");
-  		  captionText.innerHTML = uri;
-  		  var jsonObj = document.getElementById("jsonobj");
-  		  jsonobj.innerHTML = syntaxHighlight(j);
-  	  }
-  	});
-}
-
-</script>
 
 </body>
 </html>
