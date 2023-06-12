@@ -25,11 +25,11 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     <script type="text/javascript" src="/js/util.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['table']});
-      google.charts.setOnLoadCallback(loadEvents);
+      google.charts.setOnLoadCallback(loadAgreements);
 
       var authtoken = '[[${authtoken}]]';
-      function loadEvents() {
-    	loadData(authtoken, '/v1/ledger/agreements', agreementData);
+      function loadAgreements() {
+    	loadData(authtoken, '/v1/ledger/agreements', agreementData, agreementParams);
       }
     </script>
 </head>

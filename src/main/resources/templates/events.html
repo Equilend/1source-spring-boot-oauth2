@@ -28,7 +28,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
       var authtoken = '[[${authtoken}]]';
       //test
       function loadEvents() {
-		loadData(authtoken, '/v1/ledger/events', eventData);
+		loadData(authtoken, '/v1/ledger/events', eventData, eventParams);
       }
       
     </script>
@@ -66,7 +66,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
   <div class="w3-container" id="contact" style="margin-top:45px">
     <h1 class="w3-xxxlarge w3-text-red"><b>Events.</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
-  	<div id="filter_div" style="height:35px;"><form>Event Type <select id="sEventType" onchange="loadEvents()">
+  	<div id="filter_div" style="height:35px;"><form>Event Type <select id="sEventType">
   	<option value="_">All Events</option>
   	<option value="TRADE">TRADE</option>
   	<option value="TRADE_CANCEL">TRADE_CANCEL</option>
@@ -75,7 +75,13 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
   	<option value="CONTRACT_APPROVE">CONTRACT_APPROVE</option>
   	<option value="CONTRACT_CANCEL">CONTRACT_CANCEL</option>
   	<option value="CONTRACT_DECLINE">CONTRACT_DECLINE</option>
-  	</select></form></div>
+  	</select>&nbsp;&nbsp;
+  	For Last <select id="sTimeSince">
+  	<option value="5">5 Minutes</option>
+  	<option value="15">15 Minutes</option>
+  	<option value="60">1 Hour</option>
+  	<option value="180">3 Hours</option>
+  	</select>&nbsp;&nbsp;<input type="checkbox" id="cUseLastEventId" name="cUseLastEventId" onchange="toggleLastEventId();">&nbsp;Since Last Event: <input type="text" id="tLastEventId" name="tLastEventId" disabled>&nbsp;<input type="button" value="Submit" onclick="loadEvents();"></form></div>
     <div id="table_div" style="height:70vh;"></div>
   </div>
 

@@ -3,23 +3,13 @@ var data;
 var authtoken;
 var apiserver = 'http://demoapi.1sourceeq.com';
 
-function loadData(token, uri, dFunction) {
+function loadData(token, uri, dFunction, pFunction) {
 
     authtoken = token;
 	table = new google.visualization.Table(document.getElementById('table_div'));
 	google.visualization.events.addListener(table, 'page', pageTable);
 
 	table.clearChart();
-
-	var params = { 'noCache': new Date().getTime() };
-	var eventType = $("#sEventType").val();
-	if (eventType != '_') {
-		params['eventType'] = eventType;
-	}
-	params['size'] = 1000;
-	//      	if (lastEventId) {
-	//      		params['fromEventId'] = lastEventId;
-	//      	}
 
 	$.ajax({
 		type: 'GET',
@@ -28,7 +18,7 @@ function loadData(token, uri, dFunction) {
 			'Authorization': 'Bearer ' + authtoken,
 			'Content-Type': 'application/json'
 		},
-		data: params,
+		data: pFunction(),
 		async: true,
 		success: function(j) {
 			data = dFunction(j);
@@ -36,6 +26,8 @@ function loadData(token, uri, dFunction) {
 		}
 	});
 }
+
+var lastEventId;
 
 function eventData(j) {
 
@@ -55,7 +47,42 @@ function eventData(j) {
 		lastEventId = j[i].eventId;
 	}
 
+	toggleLastEventId();
+
 	return d;
+}
+
+function toggleLastEventId() {
+	if ($('#cUseLastEventId').prop('checked')) {
+	    $('#tLastEventId').val(lastEventId);
+	} else {
+		$('#tLastEventId').val('');
+	}	
+}
+
+function eventParams() {
+
+	var params = { 'noCache': new Date().getTime() };
+	params['size'] = 1000;
+
+	var eventType = $("#sEventType").val();
+	if (eventType != '_') {
+		params['eventType'] = eventType;
+	}
+
+	var minutesSince = $("#sTimeSince").val();
+	if (minutesSince && minutesSince > 0) {
+		var sinceDatetime = new Date(Date.now() - (minutesSince*60*1000));
+		params['since'] = toIsoString(sinceDatetime);
+	}
+	
+	if ($('#cUseLastEventId').prop('checked')) {
+		if (lastEventId) {
+	  	    params['fromEventId'] = lastEventId+1;
+		}
+	}
+
+	return params;	
 }
 
 function agreementData(j) {
@@ -96,6 +123,13 @@ function agreementData(j) {
 	}
 
 	return d;
+}
+
+function agreementParams() {
+
+	var params = { 'noCache': new Date().getTime() };
+
+	return params;	
 }
 
 function contractData(j) {
@@ -159,6 +193,13 @@ function contractData(j) {
     return d;
 }
 
+function contractParams() {
+
+	var params = { 'noCache': new Date().getTime() };
+
+	return params;	
+}
+
 function showJson(rowIndx, clickIndx, clickUriPrefix) {
   var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
   
@@ -219,10 +260,26 @@ function declineContract(rowIndx, clickIndx, clickUriPrefix) {
 }
 
 function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
-  alert('todo');
-}
 
-var cDialog;
+  var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+	
+    $.ajax({
+  	  type: 'POST',
+  	  url: apiserver + uri + '/cancel',
+      headers: {
+        'Authorization':'Bearer ' + authtoken,
+	        'Content-Type':'application/json'
+	  },
+  	  async: false,
+  	  success: function(j) {
+	    $('#cDialogText').text('Contract canceled!');
+  	  },
+  	  error: function(x, s, e) {
+	    $('#cDialogText').text('Something went wrong.');
+      }
+  	});
+
+}
 
 function createContractFromAgreement(id) {
   var uri = '/v1/ledger/agreements/' + id;
@@ -322,4 +379,21 @@ function parseJwt (token) {
     }).join(''));
 
     return JSON.parse(jsonPayload);
+}
+
+function toIsoString(date) {
+  var tzo = -date.getTimezoneOffset(),
+      dif = tzo >= 0 ? '+' : '-',
+      pad = function(num) {
+          return (num < 10 ? '0' : '') + num;
+      };
+
+  return date.getFullYear() +
+      '-' + pad(date.getMonth() + 1) +
+      '-' + pad(date.getDate()) +
+      'T' + pad(date.getHours()) +
+      ':' + pad(date.getMinutes()) +
+      ':' + pad(date.getSeconds()) +
+      dif + pad(Math.floor(Math.abs(tzo) / 60)) +
+      ':' + pad(Math.abs(tzo) % 60);
 }
