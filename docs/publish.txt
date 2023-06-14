@@ -1,0 +1,7 @@
+#login to elastic container registry
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 856307828688.dkr.ecr.us-east-1.amazonaws.com
+
+#build the docker image. increase version as desired. for example next version after 1.0.7 shoulde be 1.0.8
+docker build -t 1source-spring-boot-oauth2:1.0.7 .
+docker tag 1source-spring-boot-oauth2:1.0.7 856307828688.dkr.ecr.us-east-1.amazonaws.com/1source-spring-boot-oauth2:1.0.7
+docker push 856307828688.dkr.ecr.us-east-1.amazonaws.com/1source-spring-boot-oauth2:1.0.7

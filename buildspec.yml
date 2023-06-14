@@ -1,0 +1,33 @@
+version: 0.2
+
+
+phases:
+    install:
+        runtime-versions:
+            java: corretto17
+    pre_build:
+        commands:
+          - cd 1source-spring-boot-oauth2
+          - mvn clean install
+          - echo Logging in to Amazon ECR...
+          - aws --version
+          - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 856307828688.dkr.ecr.us-east-1.amazonaws.com
+          - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+    build:
+        commands:
+        - echo Build started on `date`
+        - echo Building the Docker image...
+        - docker build -t 1source-oauth2:latest .
+        - docker tag 1source-spring-boot-oauth2:latest 856307828688.dkr.ecr.us-east-1.amazonaws.com/1source-spring-boot-oauth2:latest
+    post_build:
+        commands:
+         - echo Build completed on `date`
+         - echo Pushing the Docker images...
+         - docker push 856307828688.dkr.ecr.us-east-1.amazonaws.com/1source-spring-boot-oauth2:latest
+         - docker push 856307828688.dkr.ecr.us-east-1.amazonaws.com/1source-spring-boot-oauth2:$IMAGE_TAG
+         - echo Writing image definitions file...
+         - printf '[{"name":"first-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+         - cat imagedefinitions.json
+artifacts:
+  files:
+   - 1source-spring-boot-oauth2/imagedefinitions.json
