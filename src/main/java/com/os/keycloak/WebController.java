@@ -35,6 +35,11 @@ public class WebController {
         return "redirect:/";
     }
 
+    @GetMapping("/user-logout")
+    public String userLogout(HttpServletRequest request) throws Exception {
+        return "user-logout";
+    }
+
     @GetMapping(path = "/events")
     public String events(Principal principal, Model model) {
         

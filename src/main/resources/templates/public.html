@@ -6,12 +6,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
 <style>
 body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
 body {font-size:16px;}
 .w3-half img{margin-bottom:-6px;margin-top:16px;opacity:0.8;cursor:pointer}
 .w3-half img:hover{opacity:1}
 </style>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/js/auth.js"></script>
 </head>
 <body>
 
@@ -19,13 +23,13 @@ body {font-size:16px;}
 <nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
   <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
   <div class="w3-container">
-    <h3 class="w3-padding-64"><b>1Source Ledger</b><span th:if="${username}"><br>Hello, <span th:text="${username}">--name--</span></h3></span>
+    <h3 class="w3-padding-64"><b>1Source Ledger</b><span sec:authorize="isAuthenticated()"><div>Hello, <span sec:authentication="name"></span></h3></span>
   </div>
   <div class="w3-bar-block">
-    <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
-    <a href="/events" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Events</a> 
-    <a href="/agreements" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Agreements</a> 
-    <a href="/contracts" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
+    <a href="#" onclick="w3_close();" class="w3-bar-item w3-button w3-hover-white">Home</a> 
+    <a href="/events" onclick="return checkAuth();" class="w3-bar-item w3-button w3-hover-white">Events</a> 
+    <a href="/agreements" onclick="return checkAuth();" class="w3-bar-item w3-button w3-hover-white">Agreements</a> 
+    <a href="/contracts" onclick="return checkAuth();" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
     <span th:if="${username}"><a href="/logout" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Logout</a></span>
   </div>
 </nav>
@@ -98,6 +102,7 @@ function onClick(element) {
   captionText.innerHTML = element.alt;
 }
 </script>
-
+<div id="cDialog" title="Authorization" style='display:none;'><div id="cDialogText">You don't have access to the authorization server. Please check that your network has access to https://stageauth.equilend.com.</div></div>
+<img src="https://stageauth.equilend.com/auth/resources/903j9/welcome/rh-sso/logo.png" hidden="hidden" onerror="noAuth()">
 </body>
 </html>

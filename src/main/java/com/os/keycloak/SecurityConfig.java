@@ -34,12 +34,16 @@ class SecurityConfig {
             .hasRole("USER")
             .anyRequest()
             .permitAll();
+        
         http.oauth2Login()
             .and()
             .logout()
+            .logoutUrl("/user-logout")
             .addLogoutHandler(keycloakLogoutHandler)
-            .logoutSuccessUrl("/");
+            .logoutSuccessUrl("/").permitAll();
+        
         http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+        
         return http.build();
     }
 
