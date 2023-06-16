@@ -235,7 +235,13 @@ function createContract(rowIndx, clickIndx, clickUriPrefix) {
   		  document.getElementById("caption02").innerHTML = 'Create Contract from Agreement ' + data.getFormattedValue(rowIndx, clickIndx);
   		  
   		  $('#cAgreementId').text(j.agreementId);
-  		  $('#cCounterparty').text(j.trade.instrument.ticker);
+  		  for (var t=0; t<j.trade.transactingParties.length; t++) {
+			if (j.trade.transactingParties[t].partyRole == 'BORROWER') {
+  		  		$('#cBorrower').text(j.trade.transactingParties[t].party.partyName);
+  		  	} else if (j.trade.transactingParties[t].partyRole == 'LENDER') {
+  		  		$('#cLender').text(j.trade.transactingParties[t].party.partyName);
+  		  	}
+  		  }
   		  $('#cFigi').text(j.trade.instrument.figi);
   		  $('#cTicker').text(j.trade.instrument.ticker);
   		  $('#cCusip').text(j.trade.instrument.cusip);
