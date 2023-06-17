@@ -99,18 +99,31 @@ function agreementData(j) {
 	d.addColumn('number', 'Quantity');
 	d.addColumn('number', 'Value');
 
+    var counterpartyFilter = $("#sCounterparty").val();
+    var rowIdx = 0;
 	for (var i = 0; i < j.length; i++) {
 		
+		var matchesFilter = false;
 		var canSub = false;
+
 		for (var t = 0; t<j[i].trade.transactingParties.length; t++) {
+			
+			if (counterpartyFilter == '_' || counterpartyFilter == j[i].trade.transactingParties[t].party.partyId) {
+				matchesFilter = true;
+			} 
+			
 			if (j[i].trade.transactingParties[t].partyRole == 'LENDER' && j[i].trade.transactingParties[t].party.partyId == jwt.partyId) {
 				canSub = true;
 			}
 		}
 		
-		var btns = '<input type="button" value="Json" onclick="showJson(' + i + ', 1, \'/v1/ledger/agreements/\');return false;"/>';
+		if (!matchesFilter) {
+			continue;
+		}
+		
+		var btns = '<input type="button" value="Json" onclick="showJson(' + rowIdx + ', 1, \'/v1/ledger/agreements/\');return false;"/>';
 		if (canSub) {
-			btns += '<input type="button" value="Submit" onclick="createContract(' + i + ', 1, \'/v1/ledger/agreements/\');return false;"/>';
+			btns += '<input type="button" value="Submit" onclick="createContract(' + rowIdx + ', 1, \'/v1/ledger/agreements/\');return false;"/>';
 		}
 		d.addRow([{v:'ButtonName', f:btns}
 			, j[i].agreementId
@@ -120,6 +133,8 @@ function agreementData(j) {
 			, j[i].trade.rate.rebateBps
 			, j[i].trade.quantity
 			, j[i].trade.collateral.collateralValue]);
+			
+		rowIdx++;
 	}
 
 	return d;
@@ -129,6 +144,14 @@ function agreementParams() {
 
 	var params = { 'noCache': new Date().getTime() };
 
+	params['size'] = 1000;
+
+	var minutesSince = $("#sTimeSince").val();
+	if (minutesSince && minutesSince > 0) {
+		var sinceDatetime = new Date(Date.now() - (minutesSince*60*1000));
+		params['since'] = toIsoString(sinceDatetime);
+	}
+	
 	return params;	
 }
 
@@ -147,12 +170,22 @@ function contractData(j) {
 	d.addColumn('number', 'Quantity');
 	d.addColumn('number', 'Value');
 
+    var counterpartyFilter = $("#sCounterparty").val();
+    var rowIdx = 0;
+
 	for (var i = 0; i < j.length; i++) {
 
+		var matchesFilter = false;
 		var canAcc = false;
 		var canDec = false;
 		var canCan = false;
+
 		for (var t = 0; t<j[i].trade.transactingParties.length; t++) {
+			
+			if (counterpartyFilter == '_' || counterpartyFilter == j[i].trade.transactingParties[t].party.partyId) {
+				matchesFilter = true;
+			} 
+
 			if (j[i].contractStatus == 'PROPOSED') {
 				
 				if (j[i].trade.transactingParties[t].partyRole == 'BORROWER'
@@ -168,15 +201,19 @@ function contractData(j) {
 			}
 		}
 
-		var btns = '<input type="button" value="Json" onclick="showJson(' + i + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		if (!matchesFilter) {
+			continue;
+		}
+
+		var btns = '<input type="button" value="Json" onclick="showJson(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
 		if (canAcc) {
-			btns += '<input type="button" value="Accept" onclick="acceptContract(' + i + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+			btns += '<input type="button" value="Approve" onclick="approveContract(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
 		}
 		if (canDec) {
-			btns += '<input type="button" value="Decline" onclick="declineContract(' + i + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+			btns += '<input type="button" value="Decline" onclick="declineContract(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
 		}
 		if (canCan) {
-			btns += '<input type="button" value="Cancel" onclick="cancelContract(' + i + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+			btns += '<input type="button" value="Cancel" onclick="cancelContract(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
 		}
 
 		d.addRow([{v:'ButtonName', f:btns}
@@ -188,6 +225,8 @@ function contractData(j) {
 			, j[i].trade.rate.rebateBps
 			, j[i].trade.quantity
 			, j[i].trade.collateral.collateralValue]);
+	
+		rowIdx++;
 	}
 
     return d;
@@ -257,12 +296,62 @@ function createContract(rowIndx, clickIndx, clickUriPrefix) {
   	});
 }
 
-function acceptContract(rowIndx, clickIndx, clickUriPrefix) {
-  alert('todo');
+function approveContract(rowIndx, clickIndx, clickUriPrefix) {
+  var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+	
+    $.ajax({
+  	  type: 'POST',
+  	  url: apiserver + uri + '/approve',
+      headers: {
+        'Authorization':'Bearer ' + authtoken,
+	        'Content-Type':'application/json'
+	  },
+  	  async: false,
+  	  success: function(j) {
+	    $('#cDialogText').text('Contract approved!');
+        $('#cDialog').dialog({
+          "show": true,
+          "modal": true,
+          "close": loadContracts()
+        });
+  	  },
+  	  error: function(x, s, e) {
+	    $('#cDialogText').text('Something went wrong.');
+        $('#cDialog').dialog({
+          "show": true,
+          "modal": true
+        });
+      }
+  	});
 }
 
 function declineContract(rowIndx, clickIndx, clickUriPrefix) {
-  alert('todo');
+  var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+	
+    $.ajax({
+  	  type: 'POST',
+  	  url: apiserver + uri + '/decline',
+      headers: {
+        'Authorization':'Bearer ' + authtoken,
+	        'Content-Type':'application/json'
+	  },
+  	  async: false,
+  	  success: function(j) {
+	    $('#cDialogText').text('Contract declined!');
+        $('#cDialog').dialog({
+          "show": true,
+          "modal": true,
+          "close": loadContracts()
+        });
+  	  },
+  	  error: function(x, s, e) {
+	    $('#cDialogText').text('Something went wrong.');
+        $('#cDialog').dialog({
+          "show": true,
+          "modal": true
+        });
+      }
+  	});
 }
 
 function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
@@ -279,9 +368,18 @@ function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
   	  async: false,
   	  success: function(j) {
 	    $('#cDialogText').text('Contract canceled!');
+        $('#cDialog').dialog({
+          "show": true,
+          "modal": true,
+          "close": loadContracts()
+        });
   	  },
   	  error: function(x, s, e) {
 	    $('#cDialogText').text('Something went wrong.');
+        $('#cDialog').dialog({
+          "show": true,
+          "modal": true
+        });
       }
   	});
 
@@ -402,4 +500,39 @@ function toIsoString(date) {
       ':' + pad(date.getSeconds()) +
       dif + pad(Math.floor(Math.abs(tzo) / 60)) +
       ':' + pad(Math.abs(tzo) % 60);
+}
+
+function loadPartylist(selobj) {
+	
+	var jwt = parseJwt(authtoken);
+	
+    $('#sCounterparty').empty();
+
+            $('#sCounterparty').append(
+                 $('<option></option>')
+                        .val('_')
+                        .html('All'));
+ 
+	$.ajax({
+		type: 'GET',
+		url: apiserver + '/v1/ledger/parties',
+		headers: {
+			'Authorization': 'Bearer ' + authtoken,
+			'Content-Type': 'application/json'
+		},
+		async: true,
+		success: function(j) {
+			$.each(j, function(i, obj) {
+				if (obj.partyId != jwt.partyId) {
+					$('#sCounterparty').append(
+						$('<option></option>')
+							.val(obj.partyId)
+							.html(obj.partyName));
+							}
+			});
+			$('#sCounterparty').html($("#sCounterparty option").sort(function(a, b) {
+				return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
+			}))
+		}
+	});
 }

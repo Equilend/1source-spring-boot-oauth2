@@ -66,6 +66,15 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
   <div class="w3-container" id="contact" style="margin-top:45px">
     <h1 class="w3-xxxlarge w3-text-red"><b>Contracts.</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
+  	<div id="filter_div" style="height:35px;"><form>Counterparty <select id="sCounterparty">
+  	<option value="_">All Parties</option>
+  	</select>&nbsp;&nbsp;
+  	For Last <select id="sTimeSince">
+  	<option value="5">5 Minutes</option>
+  	<option value="15">15 Minutes</option>
+  	<option value="60">1 Hour</option>
+  	<option value="180">3 Hours</option>
+  	</select>&nbsp;<input type="button" value="Submit" onclick="loadContracts();"></form></div>
     <div id="table_div" style="height:70vh;"></div>
   </div>
 
@@ -84,6 +93,11 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 
 <!-- W3.CSS Container -->
 <div class="w3-light-grey w3-container w3-padding-32" style="margin-top:75px;padding-right:58px"><p class="w3-right">Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-opacity">w3.css</a></p></div>
+<script>
+$(function() {
+	  loadPartylist('sCounterparty');
+	});
+</script>
 
 </body>
 </html>
