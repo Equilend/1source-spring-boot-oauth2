@@ -1,7 +1,10 @@
 var table;
 var data;
 var authtoken;
-var apiserver = 'http://demoapi.1sourceeq.com';
+//var apiserver = 'http://demoapi.1sourceeq.com';
+//var apiserver = 'https://stageapi.equilend.com';
+//var apiserver = 'http://localhost:8080';
+var apiserver = '';
 
 function loadData(token, uri, dFunction, pFunction) {
 
@@ -15,7 +18,6 @@ function loadData(token, uri, dFunction, pFunction) {
 		type: 'GET',
 		url: apiserver + uri,
 		headers: {
-			'Authorization': 'Bearer ' + authtoken,
 			'Content-Type': 'application/json'
 		},
 		data: pFunction(),
@@ -23,11 +25,33 @@ function loadData(token, uri, dFunction, pFunction) {
 		success: function(j) {
 			data = dFunction(j);
 			table.draw(data, { allowHtml: true, showRowNumber: true, width: '100%', height: '90%', page: 'enable', pageSize: 10 });
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			if (xhr.status == 404) {
+				table.draw(noResultData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '90%', page: 'disable'});
+			} else {
+				table.draw(errorData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '90%', page: 'disable'});
+			}
 		}
 	});
 }
 
 var lastEventId;
+
+function errorData() {
+	var d = new google.visualization.DataTable();
+	d.addColumn('string', '');
+	d.addRow(['An unexpected error occurred. Contact support or try again later.']);
+	return d;
+}
+
+function noResultData() {
+	var d = new google.visualization.DataTable();
+	d.addColumn('string', '');
+	d.addRow(['No results found. Change query or try again later.']);
+	return d;
+}
+
 
 function eventData(j) {
 
@@ -127,7 +151,7 @@ function agreementData(j) {
 		}
 		d.addRow([{v:'ButtonName', f:btns}
 			, j[i].agreementId
-			, new Date(Date.parse(j[i].lastUpdateDatetime))
+			, new Date(Date.parse(j[i].lastUpdateDateTime))
 			, j[i].trade.instrument.ticker
 			, j[i].trade.instrument.cusip
 			, j[i].trade.rate.rebateBps
@@ -218,7 +242,7 @@ function contractData(j) {
 
 		d.addRow([{v:'ButtonName', f:btns}
 		    , j[i].contractId
-			, new Date(Date.parse(j[i].lastUpdateDatetime))
+			, new Date(Date.parse(j[i].lastUpdateDateTime))
 			, j[i].contractStatus
 			, j[i].trade.instrument.ticker
 			, j[i].trade.instrument.cusip
@@ -246,7 +270,6 @@ function showJson(rowIndx, clickIndx, clickUriPrefix) {
   	  type: 'GET',
   	  url: apiserver + uri,
   	  headers: {
-        'Authorization':'Bearer ' + authtoken,
 	        'Content-Type':'application/json'
 			},
   	  async: true,
@@ -265,7 +288,6 @@ function createContract(rowIndx, clickIndx, clickUriPrefix) {
   	  type: 'GET',
   	  url: apiserver + uri,
   	  headers: {
-        'Authorization':'Bearer ' + authtoken,
 	        'Content-Type':'application/json'
 			},
   	  async: true,
@@ -303,7 +325,6 @@ function approveContract(rowIndx, clickIndx, clickUriPrefix) {
   	  type: 'POST',
   	  url: apiserver + uri + '/approve',
       headers: {
-        'Authorization':'Bearer ' + authtoken,
 	        'Content-Type':'application/json'
 	  },
   	  async: false,
@@ -332,7 +353,6 @@ function declineContract(rowIndx, clickIndx, clickUriPrefix) {
   	  type: 'POST',
   	  url: apiserver + uri + '/decline',
       headers: {
-        'Authorization':'Bearer ' + authtoken,
 	        'Content-Type':'application/json'
 	  },
   	  async: false,
@@ -362,7 +382,6 @@ function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
   	  type: 'POST',
   	  url: apiserver + uri + '/cancel',
       headers: {
-        'Authorization':'Bearer ' + authtoken,
 	        'Content-Type':'application/json'
 	  },
   	  async: false,
@@ -392,7 +411,6 @@ function createContractFromAgreement(id) {
   	  type: 'GET',
   	  url: apiserver + uri,
   	  headers: {
-        'Authorization':'Bearer ' + authtoken,
 	        'Content-Type':'application/json'
 			},
   	  async: false,
@@ -416,7 +434,6 @@ function postContract(trade) {
       contentType: "application/json; charset=utf-8",
       dataType: "json",
       headers: {
-        'Authorization':'Bearer ' + authtoken,
 	        'Content-Type':'application/json'
 	  },
   	  async: false,
@@ -517,7 +534,6 @@ function loadPartylist(selobj) {
 		type: 'GET',
 		url: apiserver + '/v1/ledger/parties',
 		headers: {
-			'Authorization': 'Bearer ' + authtoken,
 			'Content-Type': 'application/json'
 		},
 		async: true,
@@ -527,7 +543,7 @@ function loadPartylist(selobj) {
 					$('#sCounterparty').append(
 						$('<option></option>')
 							.val(obj.partyId)
-							.html(obj.partyName));
+							.html(obj.partyId + ' - ' + obj.gleifLei));
 							}
 			});
 			$('#sCounterparty').html($("#sCounterparty option").sort(function(a, b) {
