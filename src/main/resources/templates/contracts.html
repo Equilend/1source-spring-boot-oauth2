@@ -36,7 +36,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 <body>
 
 <!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+<nav class="w3-sidebar w3-purple w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
   <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
   <div class="w3-container">
     <h3 class="w3-padding-64"><b>1Source Ledger</b><span sec:authorize="isAuthenticated()"><div>Hello, <span sec:authentication="name"></span></h3></span>
@@ -46,13 +46,13 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     <a href="/events" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Events</a> 
     <a href="/agreements" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Agreements</a> 
     <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
-    <span th:if="${username}"><a href="/user-logout" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Logout</a></span>
+    <span sec:authorize="isAuthenticated()"><a href="/user-logout" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Logout</a></span>
   </div>
 </nav>
 
 <!-- Top menu on small screens -->
-<header class="w3-container w3-top w3-hide-large w3-red w3-xlarge w3-padding">
-  <a href="javascript:void(0)" class="w3-button w3-red w3-margin-right" onclick="w3_open()">☰</a>
+<header class="w3-container w3-top w3-hide-large w3-purple w3-xlarge w3-padding">
+  <a href="javascript:void(0)" class="w3-button w3-purple w3-margin-right" onclick="w3_open()">☰</a>
   <span>1Source Ledger</span>
 </header>
 
@@ -64,8 +64,8 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 
   <!-- Contracts -->
   <div class="w3-container" id="contact" style="margin-top:45px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Contracts.</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
+    <h1 class="w3-xxxlarge w3-text-purple"><b>Contracts.</b></h1>
+    <hr style="width:50px;border:5px solid purple" class="w3-round">
   	<div id="filter_div" style="height:35px;"><form>Counterparty <select id="sCounterparty">
   	<option value="_">All Parties</option>
   	</select>&nbsp;&nbsp;

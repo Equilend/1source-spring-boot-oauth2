@@ -20,7 +20,7 @@ body {font-size:16px;}
 <body>
 
 <!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+<nav class="w3-sidebar w3-blue w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
   <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
   <div class="w3-container">
     <h3 class="w3-padding-64"><b>1Source Ledger</b><span sec:authorize="isAuthenticated()"><div>Hello, <span sec:authentication="name"></span></h3></span>
@@ -30,13 +30,13 @@ body {font-size:16px;}
     <a href="/events" onclick="return checkAuth();" class="w3-bar-item w3-button w3-hover-white">Events</a> 
     <a href="/agreements" onclick="return checkAuth();" class="w3-bar-item w3-button w3-hover-white">Agreements</a> 
     <a href="/contracts" onclick="return checkAuth();" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
-    <span th:if="${username}"><a href="/logout" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Logout</a></span>
+    <span sec:authorize="isAuthenticated()"><a href="/user-logout" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Logout</a></span>
   </div>
 </nav>
 
 <!-- Top menu on small screens -->
-<header class="w3-container w3-top w3-hide-large w3-red w3-xlarge w3-padding">
-  <a href="javascript:void(0)" class="w3-button w3-red w3-margin-right" onclick="w3_open()">☰</a>
+<header class="w3-container w3-top w3-hide-large w3-blue w3-xlarge w3-padding">
+  <a href="javascript:void(0)" class="w3-button w3-blue w3-margin-right" onclick="w3_open()">☰</a>
   <span>1Source Ledger</span>
 </header>
 
@@ -49,15 +49,15 @@ body {font-size:16px;}
   <!-- Header -->
   <div class="w3-container" style="margin-top:80px" id="showcase">
     <h1 class="w3-jumbo"><b>The Art of the Possible</b></h1>
-    <h1 class="w3-xxxlarge w3-text-red"><b>Welcome.</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
+    <h1 class="w3-xxxlarge w3-text-blue"><b>Welcome.</b></h1>
+    <hr style="width:50px;border:5px solid blue" class="w3-round">
     <p>Distributed ledger technology (DLT) continues to find a foothold in the securities finance space. To that end, EquiLend launched a distributed ledger initiative named 1Source that will revolutionize how counterparties manage securities finance transactions. We feel the data privacy and security provided by a properly architected shared ledger solves several pain points in the industry.
   </div>
   
   <!-- Contact -->
   <div class="w3-container" id="contact" style="margin-top:45px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Contact.</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
+    <h1 class="w3-xxxlarge w3-text-blue"><b>Contact.</b></h1>
+    <hr style="width:50px;border:5px solid blue" class="w3-round">
     <p>The best team in the world.</p>
     <form action="#">
       <div class="w3-section">
@@ -72,7 +72,7 @@ body {font-size:16px;}
         <label>Message</label>
         <input class="w3-input w3-border" type="text" name="Message" required>
       </div>
-      <button type="submit" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom">Send Message</button>
+      <button type="submit" class="w3-button w3-block w3-padding-large w3-blue w3-margin-bottom">Send Message</button>
     </form>  
   </div>
 
