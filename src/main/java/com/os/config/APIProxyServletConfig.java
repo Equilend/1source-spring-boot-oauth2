@@ -1,4 +1,4 @@
-package com.os.keycloak;
+package com.os.config;
 
 import java.util.Properties;
 

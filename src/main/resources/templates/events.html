@@ -25,10 +25,9 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
       google.charts.load('current', {'packages':['table']});
       google.charts.setOnLoadCallback(loadEvents);
 
-      var authtoken = '[[${authtoken}]]';
-      //test
+      var parties = '[(${parties})]';
       function loadEvents() {
-		loadData(authtoken, '/v1/ledger/events', eventData, eventParams);
+		loadData(parties, '/v1/ledger/events', eventData, eventParams);
       }
       
     </script>
@@ -43,6 +42,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
   </div>
   <div class="w3-bar-block">
     <a href="/" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
+    <a href="/parties" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Parties</a> 
     <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Events</a> 
     <a href="/agreements" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Agreements</a> 
     <a href="/contracts" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
@@ -64,7 +64,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 
   <!-- Events -->
   <div class="w3-container" id="contact" style="margin-top:45px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Events.</b></h1>
+    <h1 class="w3-xxxlarge w3-text-red" style="margin-top:45px"><b>Events.</b></h1>
     <hr style="width:50px;border:5px solid red" class="w3-round">
   	<div id="filter_div" style="height:35px;"><form>Event Type <select id="sEventType">
   	<option value="_">All Events</option>

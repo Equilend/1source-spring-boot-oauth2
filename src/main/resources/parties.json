@@ -1,0 +1,37 @@
+[
+    {
+        "partyId": "GSI",
+        "gleifLei": "W22LROWP2IHZNBB6K528",
+        "users": ["goldmanstageuser1"]
+    },
+    {
+        "partyId": "BlackRock US Intl.",
+        "gleifLei": "549300RK1FB0VMTPD087",
+        "users": ["blackrockstageuser1"]
+    },
+    {
+        "partyId": "TLEN-US",
+        "gleifLei": "K6Q0W1PS1L1O4IQL9C32",
+        "users": ["TestLender1User"]
+    },
+    {
+        "partyId": "TBORR-US",
+        "gleifLei": "W22LROWP2IHZNBB6K528",
+        "users": ["TestBorrower1User"]
+    },
+    {
+        "partyId": "GSCO US",
+        "gleifLei": "FOR8UP27PHTHYVLBNG30",
+        "users": ["goldmanstageuser1"]
+    },
+    {
+        "partyId": "BlackRock US Dom",
+        "gleifLei": "549300RK1FB0VMTPD087",
+        "users": ["blackrockstageuser1"]
+    },
+    {
+        "partyId": "MSCO LLC",
+        "gleifLei": "9R7GPTSO7KV3UQJZQ078",
+        "users": ["msstageuser1"]
+    }
+]

@@ -1,14 +1,12 @@
 var table;
 var data;
-var authtoken;
 //var apiserver = 'http://demoapi.1sourceeq.com';
 //var apiserver = 'https://stageapi.equilend.com';
 //var apiserver = 'http://localhost:8080';
 var apiserver = '';
 
-function loadData(token, uri, dFunction, pFunction) {
+function loadData(parties, uri, dFunction, pFunction) {
 
-    authtoken = token;
 	table = new google.visualization.Table(document.getElementById('table_div'));
 	google.visualization.events.addListener(table, 'page', pageTable);
 
@@ -23,7 +21,7 @@ function loadData(token, uri, dFunction, pFunction) {
 		data: pFunction(),
 		async: true,
 		success: function(j) {
-			data = dFunction(j);
+			data = dFunction(j, parties);
 			table.draw(data, { allowHtml: true, showRowNumber: true, width: '100%', height: '90%', page: 'enable', pageSize: 10 });
 		},
 		error: function(xhr, ajaxOptions, thrownError) {
@@ -52,8 +50,50 @@ function noResultData() {
 	return d;
 }
 
+function partyData(j, parties) {
 
-function eventData(j) {
+	var d = new google.visualization.DataTable();
+	d.addColumn('string', '');
+	d.addColumn('string', 'Party ID');
+	d.addColumn('string', 'LEI');
+
+    var rowIdx = 0;
+	for (var i = 0; i < j.length; i++) {
+		
+		var canSub = false;
+
+		if (!JSON.parse(parties).includes(j[i].partyId)) {
+			canSub = true;
+		}
+		
+		var btns = '';
+		if (canSub) {
+			btns += '<input type="button" value="Trade" onclick="createAgreement(' + rowIdx + ', 1, \'/v1/ledger/agreements/\');return false;"/>';
+		}
+		d.addRow([{v:'ButtonName', f:btns}
+			, j[i].partyId
+			, j[i].gleifLei]);
+			
+		rowIdx++;
+	}
+
+	return d;
+}
+
+function partyParams() {
+
+	var params = { 'noCache': new Date().getTime() };
+
+	return params;	
+}
+
+function createAgreement(rowIndx, clickIndx, clickUriPrefix) {
+  var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+  
+  alert('create a trade agreement');
+}
+
+function eventData(j, parties) {
 
 	var d = new google.visualization.DataTable();
 	d.addColumn('string', '');
@@ -109,10 +149,8 @@ function eventParams() {
 	return params;	
 }
 
-function agreementData(j) {
+function agreementData(j, parties) {
 
-    var jwt = parseJwt(authtoken);
-    
 	var d = new google.visualization.DataTable();
 	d.addColumn('string', '');
 	d.addColumn('string', 'Agreement ID');
@@ -136,7 +174,7 @@ function agreementData(j) {
 				matchesFilter = true;
 			} 
 			
-			if (j[i].trade.transactingParties[t].partyRole == 'LENDER' && j[i].trade.transactingParties[t].party.partyId == jwt.partyId) {
+			if (j[i].trade.transactingParties[t].partyRole == 'LENDER' && JSON.parse(parties).includes(j[i].trade.transactingParties[t].party.partyId)) {
 				canSub = true;
 			}
 		}
@@ -179,10 +217,8 @@ function agreementParams() {
 	return params;	
 }
 
-function contractData(j) {
+function contractData(j, parties) {
 	
-    var jwt = parseJwt(authtoken);
-
 	var d = new google.visualization.DataTable();
 	d.addColumn('string', '');
 	d.addColumn('string', 'Contract ID');
@@ -213,13 +249,13 @@ function contractData(j) {
 			if (j[i].contractStatus == 'PROPOSED') {
 				
 				if (j[i].trade.transactingParties[t].partyRole == 'BORROWER'
-					&& j[i].trade.transactingParties[t].party.partyId == jwt.partyId) {
+					&& JSON.parse(parties).includes(j[i].trade.transactingParties[t].party.partyId)) {
 					canAcc = true;
 					canDec = true;
 				}
 
 				if (j[i].trade.transactingParties[t].partyRole == 'LENDER'
-					&& j[i].trade.transactingParties[t].party.partyId == jwt.partyId) {
+					&& JSON.parse(parties).includes(j[i].trade.transactingParties[t].party.partyId)) {
 					canCan = true;
 				}
 			}
@@ -492,16 +528,6 @@ function syntaxHighlight(json) {
 	});
 }
 
-function parseJwt (token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-
-    return JSON.parse(jsonPayload);
-}
-
 function toIsoString(date) {
   var tzo = -date.getTimezoneOffset(),
       dif = tzo >= 0 ? '+' : '-',
@@ -519,9 +545,7 @@ function toIsoString(date) {
       ':' + pad(Math.abs(tzo) % 60);
 }
 
-function loadPartylist(selobj) {
-	
-	var jwt = parseJwt(authtoken);
+function loadPartylist(selobj, parties) {
 	
     $('#sCounterparty').empty();
 
@@ -539,7 +563,7 @@ function loadPartylist(selobj) {
 		async: true,
 		success: function(j) {
 			$.each(j, function(i, obj) {
-				if (obj.partyId != jwt.partyId) {
+				if (!JSON.parse(parties).includes(obj.partyId)) {
 					$('#sCounterparty').append(
 						$('<option></option>')
 							.val(obj.partyId)
