@@ -88,9 +88,57 @@ function partyParams() {
 }
 
 function createAgreement(rowIndx, clickIndx, clickUriPrefix) {
-  var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+
+    document.getElementById("modal02").style.display = "block";
+  	document.getElementById("caption02").innerHTML = 'Create Agreement';
+  		  
+	$('#cMyParty').text(JSON.parse(parties)[0]);
+	$('#cCounterparty').text(data.getFormattedValue(rowIndx, clickIndx));
+	$('#hMyParty').val(JSON.parse(parties)[0]);
+	$('#hCounterparty').val(data.getFormattedValue(rowIndx, clickIndx));
+}
+
+function validateAgreement(frm) {
+	$.ajax({
+  	  type: 'POST',
+      url: "/util/agreementgen",
+      data: frm.serialize(),
+      dataType: "json",
+  	  async: false,
+  	  success: function(j) {
+	    postAgreement(j);
+  	  },
+  	  error: function(x, s, e) {
+	    $('#cDialogText').text('Something went wrong.');
+        $('#cDialog').dialog({
+          "show": true,
+          "modal": true
+        });
+      }
+  	});
+
+}
+
+function postAgreement(agreement) {
+  var postUri = '/v1/ledger/agreements';
   
-  alert('create a trade agreement');
+  $.ajax({
+  	  type: 'POST',
+  	  url: apiserver + postUri,
+      data: JSON.stringify(agreement),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      headers: {
+	        'Content-Type':'application/json'
+	  },
+  	  async: false,
+  	  success: function(j) {
+	    $('#cDialogText').text('Agreement created!');
+  	  },
+  	  error: function(x, s, e) {
+	    $('#cDialogText').text('Something went wrong.');
+      }
+  	});
 }
 
 function eventData(j, parties) {

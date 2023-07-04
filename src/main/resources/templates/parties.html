@@ -79,40 +79,96 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     </div>
   </div>
 
-  <!-- Modal for contract form display on click-->
+  <!-- Modal for agreement form display on click-->
   <div id="modal02" class="w3-modal w3-white" style="padding-top:0">
     <span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal02').hide();">×</span>
     <div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
       <p id="caption02"></p>
-      <form id="createContractForm">
+      <form id="createAgreementForm">
       <table>
-      	<tr><td><b>Agreement ID:</b></td><td colspan="2"><p id="cAgreementId"></p></td></tr>
-      	<tr><td><b>Borrower:</b></td><td colspan="2"><p id="cBorrower"></p></td></tr>
-      	<tr><td><b>Lender:</b></td><td colspan="2"><p id="cLender"></p></td></tr>
-      	<tr><td><b>Instrument</b></td><td colspan="2">&nbsp;</td></tr>
-      	<tr><td>&nbsp;</td><td><b>FIGI:</b></td><td><p id="cFigi"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Ticker:</b></td><td><p id="cTicker"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>CUSIP:</b></td><td><p id="cCusip"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>SEDOL:</b></td><td><p id="cSedol"></p></td></tr>
-      	<tr><td><b>Terms</b></td><td colspan="2">&nbsp;</td></tr>
-      	<tr><td>&nbsp;</td><td><b>Rate:</b></td><td><p id="cRate"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Quantity:</b></td><td><p id="cQuantity"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Currency:</b></td><td><p id="cCurrency"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Value:</b></td><td><p id="cValue"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Term:</b></td><td><p id="cTerm"></p></td></tr>
-      	<tr><td colspan="3"><input type="submit"></td></tr>
+      	<tr><td><b>My Party:</b></td><td><p id="cMyParty"></p></td></tr>
+      	<tr><td><b>Direction:</b></td><td><select name="direction" id="sDirection">
+  	<option value="BORROWER">Borrowing From</option>
+  	<option value="LENDER">Lending To</option>
+  	</select></td></tr>
+      	<tr><td><b>Counterparty:</b></td><td><p id="cCounterparty"></p></td></tr>
+      	<tr><td><b>Instrument:</b></td><td><input type="text" name="instrument" id="tInstrument" maxlength="100" style="width:140px;"></td></tr>
+      	<tr><td><b>Rate:</b></td><td><input type="text" name="rate" id="tRate"></td></tr>
+      	<tr><td><b>Quantity:</b></td><td><input type="text" name="quantity" id="tQuantity"></td></tr>
+      	<tr><td colspan="2"><input type="submit"></td></tr>
       </table>
-      <input type="hidden" id="fAgreementId" name="fAgreementId">
+<input type="hidden" name="myParty" id="hMyParty"> 
+<input type="hidden" name="counterparty" id="hCounterparty"> 
+
+<input 
+  type="hidden" 
+  th:name="${_csrf.parameterName}" 
+  th:value="${_csrf.token}" />
       </form>
     </div>
   </div>
 
-<div id="cDialog" title="Proposing Contract" style='display:none;'><div id="cDialogText">Waiting for ledger response...</div></div>
+<div id="cDialog" title="Submit Agreement" style='display:none;'><div id="cDialogText">Waiting for ledger response...</div></div>
 <!-- End page content -->
 </div>
 
 <!-- W3.CSS Container -->
 <div class="w3-light-grey w3-container w3-padding-32" style="margin-top:75px;padding-right:58px"><p class="w3-right">Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-opacity">w3.css</a></p></div>
+
+<script>
+$(function() {
+	  $('#createAgreementForm').on("submit", function(e) {
+	    e.preventDefault(); // cancel the actual submit
+		$('#modal02').hide();
+		validateAgreement($(this));
+	  });
+	  
+	    var autoItemSelected = false;
+	    $( "#tInstrument" ).autocomplete({
+	        source: function( request, response ) {
+	            $.ajax({
+	                url: "/util/instruments",
+	                dataType: "json",
+	                data: {
+	                    q: request.term.replace(/\'/g, "%27"),
+	                    vNoCache: new Date().getTime()
+	                },
+	                success: function( data ) {
+	                    autoItemSelected = false;
+	                    response( $.map( data, function( item ) {
+	                        return {
+	                            label: item.label,
+	                            value: item.value,
+	                            id: item.id
+	                        }
+	                    }));
+	                }
+	            });
+	        },
+	        minLength: 1,
+	        select: function( event, ui ) {
+	            autoItemSelected = true;
+	            $('#tInstrument').val(ui.item.value);
+	        },
+	        search: function(event, ui) {
+	            
+	        }
+	    });
+
+	    $("#tInstrument").keydown(function(event) {
+	        if (event.keyCode == 13) {
+	            if (!autoItemSelected) {
+	                $("#tInstrument").blur();
+	                $("#tInstrument").autocomplete('close');
+	            }
+	            $("#tInstrument").focus();
+	            $("#tInstrument").select();
+	            autoItemSelected = false;
+	            return false;
+	        }
+	    });
+});
+</script>
 
 </body>
 </html>

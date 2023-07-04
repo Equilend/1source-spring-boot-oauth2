@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.os.api.Party;
+import com.os.api.model.Party;
 import com.os.util.LedgerPartyRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +29,8 @@ public class WebController {
 	@Autowired
 	RestTemplate restTemplate;
 
-	@Autowired
-	private OAuth2AuthorizedClientService authorizedClientService;
+//	@Autowired
+//	private OAuth2AuthorizedClientService authorizedClientService;
 
 	@Autowired
 	private LedgerPartyRepository ledgerPartyRepository;
