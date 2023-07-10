@@ -3,7 +3,9 @@ package com.os.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,7 +36,7 @@ public class WebController {
 
 	@Autowired
 	private LedgerPartyRepository ledgerPartyRepository;
-	
+		
 	@GetMapping(path = "/")
 	public String index(Principal principal, Model model) {
 		if (principal != null) {
@@ -56,7 +58,7 @@ public class WebController {
 	}
 
 	@GetMapping(path = "/parties")
-	public String parties(OAuth2AuthenticationToken authentication, Principal principal, Model model) {
+	public String parties(OAuth2AuthenticationToken authentication, Principal principal, Model model, @RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient) {
 
 		decorateAuth(authentication, principal, model);
 
@@ -88,10 +90,6 @@ public class WebController {
 	}
 
 	private void decorateAuth(OAuth2AuthenticationToken authentication, Principal principal, Model model) {
-//		OAuth2AuthorizedClient authorizedClient = this.authorizedClientService
-//				.loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
-//
-//		OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
 		
 		List<Party> parties = ledgerPartyRepository.getPartiesByUser(principal.getName());
 		List<String> partyList = new ArrayList<>();
@@ -101,7 +99,6 @@ public class WebController {
 			}
 		}
 		try {
-			ObjectMapper mapper = new ObjectMapper();
 			model.addAttribute("parties", (new ObjectMapper()).writeValueAsString(partyList));
 		} catch (JsonProcessingException e) {
 			logger.error("Error converting party list", e);
