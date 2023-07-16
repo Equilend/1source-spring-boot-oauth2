@@ -4,6 +4,8 @@
 <title>1Source Ledger - Parties</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
@@ -84,26 +86,27 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     <span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal02').hide();">×</span>
     <div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
       <p id="caption02"></p>
-      <form id="createAgreementForm">
+      <form id="createProposalForm">
       <table>
       	<tr><td><b>My Party:</b></td><td><p id="cMyParty"></p></td></tr>
-      	<tr><td><b>Direction:</b></td><td><select name="direction" id="sDirection">
-  	<option value="BORROWER">Borrowing From</option>
-  	<option value="LENDER">Lending To</option>
-  	</select></td></tr>
+      	<tr><td><b>Direction:</b></td><td>Lending To</td></tr>
       	<tr><td><b>Counterparty:</b></td><td><p id="cCounterparty"></p></td></tr>
-      	<tr><td><b>Instrument:</b></td><td><input type="text" name="instrument" id="tInstrument" maxlength="100" style="width:140px;" value="MSFT"></td></tr>
+      	<tr><td><b>Instrument:</b></td><td><select name="instrument" id="sInstrument" style="width:140px;"></select></td></tr>
       	<tr><td><b>Rate (%):</b></td><td><input type="text" name="rate" id="tRate" value="0.15"></td></tr>
       	<tr><td><b>Quantity:</b></td><td><input type="text" name="quantity" id="tQuantity" value="5000"></td></tr>
+      	<tr><td><b>Price:</b></td><td><input type="text" name="price" id="tPrice" value="50.5"></td></tr>
+      	<tr><td><b>Settlement BIC:</b></td><td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120" style="width:120px;" value="XXXXXXXX"></td></tr>
+      	<tr><td><b>Local Agent BIC:</b></td><td><input type="text" name="localAgentBic" id="tLocalAgentBic" maxlength="120" style="width:120px;" value="YYYYYYYY"></td></tr>
+      	<tr><td><b>Local Agent Name:</b></td><td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140" style="width:140px;" value="ZZZ Clearing"></td></tr>
+      	<tr><td><b>Local Agent Account:</b></td><td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100" style="width:100px;" value="2468999"></td></tr>
+      	<tr><td><b>Local Market Field 1 Name:</b></td><td><input type="text" name="localFieldName1" id="tLocalFieldName1" maxlength="100" style="width:100px;" value="DTCYUS00"></td></tr>
+      	<tr><td><b>Local Market Field 1 Value:</b></td><td><input type="text" name="localFieldValue1" id="tLocalFieldValue1" maxlength="100" style="width:100px;" value="00001"></td></tr>
+      	<tr><td><b>Local Market Field 2 Name:</b></td><td><input type="text" name="localFieldName2" id="tLocalFieldName2" maxlength="100" style="width:100px;" value="DVPCCY"></td></tr>
+      	<tr><td><b>Local Market Field 2 Value:</b></td><td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100" style="width:100px;" value="USD"></td></tr>
       	<tr><td colspan="2"><input type="submit"></td></tr>
       </table>
 <input type="hidden" name="myParty" id="hMyParty"> 
 <input type="hidden" name="counterparty" id="hCounterparty"> 
-
-<input 
-  type="hidden" 
-  th:name="${_csrf.parameterName}" 
-  th:value="${_csrf.token}" />
       </form>
     </div>
   </div>
@@ -117,56 +120,13 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 
 <script>
 $(function() {
-	  $('#createAgreementForm').on("submit", function(e) {
+	  loadInstrumentlist();
+	  $('#createProposalForm').on("submit", function(e) {
 	    e.preventDefault(); // cancel the actual submit
 		$('#modal02').hide();
-		validateAgreement($(this));
-	  });
-	  
-	    var autoItemSelected = false;
-	    $( "#tInstrument" ).autocomplete({
-	        source: function( request, response ) {
-	            $.ajax({
-	                url: "/util/instruments",
-	                dataType: "json",
-	                data: {
-	                    q: request.term.replace(/\'/g, "%27"),
-	                    vNoCache: new Date().getTime()
-	                },
-	                success: function( data ) {
-	                    autoItemSelected = false;
-	                    response( $.map( data, function( item ) {
-	                        return {
-	                            label: item.label,
-	                            value: item.value,
-	                            id: item.id
-	                        }
-	                    }));
-	                }
-	            });
-	        },
-	        minLength: 1,
-	        select: function( event, ui ) {
-	            autoItemSelected = true;
-	            $('#tInstrument').val(ui.item.value);
-	        },
-	        search: function(event, ui) {
-	            
-	        }
-	    });
-
-	    $("#tInstrument").keydown(function(event) {
-	        if (event.keyCode == 13) {
-	            if (!autoItemSelected) {
-	                $("#tInstrument").blur();
-	                $("#tInstrument").autocomplete('close');
-	            }
-	            $("#tInstrument").focus();
-	            $("#tInstrument").select();
-	            autoItemSelected = false;
-	            return false;
-	        }
-	    });
+		validateProposal($(this));
+	  });	  
+      setTimeout(ping, 1000*30);
 });
 </script>
 

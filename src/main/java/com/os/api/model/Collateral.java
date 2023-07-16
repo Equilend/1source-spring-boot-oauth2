@@ -36,6 +36,12 @@ public class Collateral   {
   @JsonProperty("margin")
   private Integer margin = null;
 
+  @JsonProperty("roundingRule")
+  private Integer roundingRule = null;
+  
+  @JsonProperty("roundingMode")
+  private RoundingMode roundingMode = null;
+  
   public Collateral contractPrice(Double contractPrice) {
     this.contractPrice = contractPrice;
     return this;
@@ -174,6 +180,44 @@ public class Collateral   {
     this.margin = margin;
   }
 
+  public Collateral roundingRule(Integer roundingRule) {
+	    this.roundingRule = roundingRule;
+	    return this;
+	  }
+
+	  /**
+	   * Get roundingRule
+	   * @return roundingRule
+	   **/
+	  @Schema(description = "")
+	  
+	    public Integer getRoundingRule() {
+	    return roundingRule;
+	  }
+
+	  public void setRoundingRule(Integer roundingRule) {
+	    this.roundingRule = roundingRule;
+	  }
+
+	  public Collateral roundingMode(RoundingMode roundingMode) {
+		    this.roundingMode = roundingMode;
+		    return this;
+		  }
+
+		  /**
+		   * Get roundingMode
+		   * @return roundingMode
+		   **/
+		  @Schema(description = "")
+		  
+		    public RoundingMode getRoundingMode() {
+		    return roundingMode;
+		  }
+
+		  public void setRoundingMode(RoundingMode roundingMode) {
+		    this.roundingMode = roundingMode;
+		  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -190,12 +234,14 @@ public class Collateral   {
         Objects.equals(this.currency, collateral.currency) &&
         Objects.equals(this.type, collateral.type) &&
         Objects.equals(this.descriptionCd, collateral.descriptionCd) &&
-        Objects.equals(this.margin, collateral.margin);
+        Objects.equals(this.margin, collateral.margin) &&
+    Objects.equals(this.roundingRule, collateral.roundingRule) &&
+    Objects.equals(this.roundingMode, collateral.roundingMode);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(contractPrice, contractValue, collateralValue, currency, type, descriptionCd, margin);
+    return Objects.hash(contractPrice, contractValue, collateralValue, currency, type, descriptionCd, margin, roundingRule, roundingMode);
   }
 
   @Override
@@ -210,6 +256,8 @@ public class Collateral   {
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    descriptionCd: ").append(toIndentedString(descriptionCd)).append("\n");
     sb.append("    margin: ").append(toIndentedString(margin)).append("\n");
+    sb.append("    roundingRule: ").append(toIndentedString(roundingRule)).append("\n");
+    sb.append("    roundingMode: ").append(toIndentedString(roundingMode)).append("\n");
     sb.append("}");
     return sb.toString();
   }

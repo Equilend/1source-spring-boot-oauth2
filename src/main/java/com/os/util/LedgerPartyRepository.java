@@ -14,26 +14,25 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.os.api.SearchParty;
-import com.os.api.model.Party;
 
 @Component
 public class LedgerPartyRepository implements PartyRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(LedgerPartyRepository.class);
 
-	private static Map<String, Party> partyMap = null;
-	private static Map<String, List<Party>> userPartyMap = null;
+	private static Map<String, SearchParty> partyMap = null;
+	private static Map<String, List<SearchParty>> userPartyMap = null;
 
 	@Override
-	public Party getParty(String partyId) {
+	public SearchParty getParty(String partyId) {
 		return partyMap.get(partyId);
 	}
 	
 	
 	@Override
-	public List<Party> getPartiesByUser(String username) {
+	public List<SearchParty> getPartiesByUser(String username) {
 		
-		List<Party> parties = null;
+		List<SearchParty> parties = null;
 		
 		if (userPartyMap == null) {
 			try {
@@ -52,8 +51,8 @@ public class LedgerPartyRepository implements PartyRepository {
 
 	private void loadParties() throws Exception {
 
-		partyMap = new ConcurrentHashMap<String, Party>();
-		userPartyMap = new ConcurrentHashMap<String, List<Party>>();
+		partyMap = new ConcurrentHashMap<String, SearchParty>();
+		userPartyMap = new ConcurrentHashMap<String, List<SearchParty>>();
 
 		List<SearchParty> list = new ArrayList<>();
 		File file = new ClassPathResource("parties.json").getFile();
@@ -65,9 +64,9 @@ public class LedgerPartyRepository implements PartyRepository {
 				partyMap.put(p.getPartyId(), p);
 				
 				for (String user : p.getUsers()) {
-					List<Party> userParties = userPartyMap.get(user.toLowerCase());
+					List<SearchParty> userParties = userPartyMap.get(user.toLowerCase());
 					if (userParties == null) {
-						userParties = new ArrayList<Party>();
+						userParties = new ArrayList<SearchParty>();
 						userPartyMap.put(user.toLowerCase(), userParties);
 					}
 					userParties.add(p);

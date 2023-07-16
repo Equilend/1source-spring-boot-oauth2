@@ -1,37 +1,58 @@
 [
     {
-        "partyId": "GSI",
-        "gleifLei": "W22LROWP2IHZNBB6K528",
-        "users": ["goldmanstageuser1"]
-    },
-    {
-        "partyId": "BlackRock US Intl.",
-        "gleifLei": "549300RK1FB0VMTPD087",
-        "users": ["blackrockstageuser1"]
-    },
-    {
         "partyId": "TLEN-US",
+        "partyName": "Test Lender US",
+        "partyRole": "LENDER",
         "gleifLei": "K6Q0W1PS1L1O4IQL9C32",
         "users": ["TestLender1User"]
     },
     {
         "partyId": "TBORR-US",
-        "gleifLei": "W22LROWP2IHZNBB6K528",
+        "partyName": "Test Borrower US",
+        "partyRole": "BORROWER",
+        "gleifLei": "KTB500SKZSDI75VSFU40",
         "users": ["TestBorrower1User"]
     },
     {
         "partyId": "GSCO US",
+        "partyName": "Goldman Sachs and Co-US",
+        "partyRole": "BORROWER",
         "gleifLei": "FOR8UP27PHTHYVLBNG30",
         "users": ["goldmanstageuser1"]
     },
     {
         "partyId": "BlackRock US Dom",
+        "partyName": "BlackRock Inst. Trust Co., N.A. Domestic",
+        "partyRole": "LENDER",
         "gleifLei": "549300RK1FB0VMTPD087",
         "users": ["blackrockstageuser1"]
     },
     {
         "partyId": "MSCO LLC",
+        "partyName": "Morgan Stanley and CO LLC",
+        "partyRole": "BORROWER",
         "gleifLei": "9R7GPTSO7KV3UQJZQ078",
         "users": ["msstageuser1"]
+    },
+    {
+        "partyId": "JPMC",
+        "partyName": "JPMorgan Chase",
+        "partyRole": "LENDER",
+        "gleifLei": "8I5DZWZKVSZI1NUHU748",
+        "users": ["jpmstageuser1"]
+    },
+    {
+        "partyId": "BNYMELLON",
+        "partyName": "BNY Mellon",
+        "partyRole": "LENDER",
+        "gleifLei": "WFLLPEPC7FZXENRZV188",
+        "users": ["bnystageuser1"]
+    },
+    {
+        "partyId": "NBF Inc.",
+        "partyName": "National Bank of Canada",
+        "partyRole": "LENDER",
+        "gleifLei": "549300D83GR71RNG0O65",
+        "users": ["nbfstageuser1"]
     }
 ]

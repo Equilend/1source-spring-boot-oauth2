@@ -4,6 +4,8 @@
 <title>1Source Ledger - Contracts</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
@@ -70,11 +72,19 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
   	<div id="filter_div" style="height:35px;"><form>Counterparty <select id="sCounterparty">
   	<option value="_">All Parties</option>
   	</select>&nbsp;&nbsp;
-  	For Last <select id="sTimeSince">
+  	Since <select id="sTimeSince">
+  	<option value="_" selected>Start of Day</option>
   	<option value="5">5 Minutes</option>
   	<option value="15">15 Minutes</option>
   	<option value="60">1 Hour</option>
   	<option value="180">3 Hours</option>
+  	</select>&nbsp;&nbsp;
+  	With Status <select id="sStatus">
+  	<option value="_" selected>All</option>
+  	<option value="PROPOSED">Proposed</option>
+  	<option value="APPROVED">Approved</option>
+  	<option value="DECLINED">Declined</option>
+  	<option value="CANCELED">Canceled</option>
   	</select>&nbsp;<input type="button" value="Submit" onclick="loadContracts();"></form></div>
     <div id="table_div" style="height:70vh;"></div>
   </div>
@@ -88,6 +98,32 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     </div>
   </div>
 
+  <!-- Modal for agreement form display on click-->
+  <div id="modal02" class="w3-modal w3-white" style="padding-top:0">
+    <span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal02').hide();">×</span>
+    <div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
+      <p id="caption02"></p>
+      <form id="createAcceptForm">
+      <table>
+      	<tr><td><b>My Party:</b></td><td><p id="cMyParty"></p></td></tr>
+      	<tr><td><b>Counterparty:</b></td><td><p id="cCounterparty"></p></td></tr>
+      	<tr><td><b>Settlement BIC:</b></td><td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120" style="width:120px;" value="XXXXXXXX"></td></tr>
+      	<tr><td><b>Local Agent BIC:</b></td><td><input type="text" name="localAgentBic" id="tLocalAgentBic" maxlength="120" style="width:120px;" value="YYYYYYYY"></td></tr>
+      	<tr><td><b>Local Agent Name:</b></td><td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140" style="width:140px;" value="ZZZ Clearing"></td></tr>
+      	<tr><td><b>Local Agent Account:</b></td><td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100" style="width:100px;" value="2468999"></td></tr>
+      	<tr><td><b>Local Market Field 1 Name:</b></td><td><input type="text" name="localFieldName1" id="tLocalFieldName1" maxlength="100" style="width:100px;" value="DTCYUS00"></td></tr>
+      	<tr><td><b>Local Market Field 1 Value:</b></td><td><input type="text" name="localFieldValue1" id="tLocalFieldValue1" maxlength="100" style="width:100px;" value="00001"></td></tr>
+      	<tr><td><b>Local Market Field 2 Name:</b></td><td><input type="text" name="localFieldName2" id="tLocalFieldName2" maxlength="100" style="width:100px;" value="DVPCCY"></td></tr>
+      	<tr><td><b>Local Market Field 2 Value:</b></td><td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100" style="width:100px;" value="USD"></td></tr>
+      	<tr><td colspan="2"><input type="submit" value="Approve Contract"></td></tr>
+      </table>
+<input type="hidden" name="myParty" id="hMyParty"> 
+<input type="hidden" name="counterparty" id="hCounterparty"> 
+      <input type="hidden" name="contractId" id="hContractId">
+      </form>
+    </div>
+  </div>
+
 <div id="cDialog" title="Updating Contract" style='display:none;'><div id="cDialogText">Waiting for ledger response...</div></div>
 <!-- End page content -->
 </div>
@@ -97,6 +133,12 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 <script>
 $(function() {
 	  loadPartylist('sCounterparty', parties);
+	  $('#createAcceptForm').on("submit", function(e) {
+		    e.preventDefault(); // cancel the actual submit
+			$('#modal02').hide();
+			validateAccept($(this));
+		  });	  
+	  setTimeout(ping, 1000*30);
 	});
 </script>
 

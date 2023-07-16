@@ -76,7 +76,8 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
   	<option value="CONTRACT_CANCEL">CONTRACT_CANCEL</option>
   	<option value="CONTRACT_DECLINE">CONTRACT_DECLINE</option>
   	</select>&nbsp;&nbsp;
-  	For Last <select id="sTimeSince">
+  	Since <select id="sTimeSince">
+  	<option value="_" selected>Start of Day</option>
   	<option value="5">5 Minutes</option>
   	<option value="15">15 Minutes</option>
   	<option value="60">1 Hour</option>
@@ -99,5 +100,10 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 <!-- W3.CSS Container -->
 <div class="w3-light-grey w3-container w3-padding-32" style="margin-top:75px;padding-right:58px"><p class="w3-right">Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-opacity">w3.css</a></p></div>
 
+<script>
+$(function() {
+	  setTimeout(ping, 1000*30);
+	});
+</script>
 </body>
 </html>

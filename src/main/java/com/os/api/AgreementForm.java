@@ -6,7 +6,6 @@ public class AgreementForm {
 	private String rate;
 	private String quantity;
 	private String myParty;
-	private String direction;
 	private String counterparty;
 
 	public String getInstrument() {
@@ -39,14 +38,6 @@ public class AgreementForm {
 
 	public void setMyParty(String myParty) {
 		this.myParty = myParty;
-	}
-
-	public String getDirection() {
-		return direction;
-	}
-
-	public void setDirection(String direction) {
-		this.direction = direction;
 	}
 
 	public String getCounterparty() {

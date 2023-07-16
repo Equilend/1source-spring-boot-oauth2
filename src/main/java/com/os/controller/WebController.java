@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.os.api.model.Party;
+import com.os.api.SearchParty;
 import com.os.util.LedgerPartyRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -91,15 +90,10 @@ public class WebController {
 
 	private void decorateAuth(OAuth2AuthenticationToken authentication, Principal principal, Model model) {
 		
-		List<Party> parties = ledgerPartyRepository.getPartiesByUser(principal.getName());
-		List<String> partyList = new ArrayList<>();
-		if (parties != null) {
-			for (Party p : parties) {
-				partyList.add(p.getPartyId());
-			}
-		}
+		List<SearchParty> myPartyList = ledgerPartyRepository.getPartiesByUser(principal.getName());
+
 		try {
-			model.addAttribute("parties", (new ObjectMapper()).writeValueAsString(partyList));
+			model.addAttribute("parties", (new ObjectMapper()).writeValueAsString(myPartyList));
 		} catch (JsonProcessingException e) {
 			logger.error("Error converting party list", e);
 			model.addAttribute("parties", "[]");
