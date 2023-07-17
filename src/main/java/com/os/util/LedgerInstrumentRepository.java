@@ -9,7 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,9 @@ import com.os.api.SearchInstrument;
 public class LedgerInstrumentRepository implements InstrumentRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(LedgerInstrumentRepository.class);
+
+    @Value("classpath:instruments.json")
+    Resource instrumentsFile;
 
 	private static List<SearchInstrument> instruments = null;
 	private static Map<String, SearchInstrument> instrumentMap = null;
@@ -66,9 +70,8 @@ public class LedgerInstrumentRepository implements InstrumentRepository {
 
 	private void loadInstruments() throws Exception {
 
-		File file = new ClassPathResource("instruments.json").getFile();
 		ObjectMapper objectMapper = new ObjectMapper();
-		instruments = Arrays.asList(objectMapper.readValue(file, SearchInstrument[].class));
+		instruments = Arrays.asList(objectMapper.readValue(instrumentsFile.getInputStream(), SearchInstrument[].class));
 		instrumentMap = new ConcurrentHashMap<>();
 		for (SearchInstrument s : instruments) {
 			instrumentMap.put(s.getId(), s);

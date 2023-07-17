@@ -9,7 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +21,9 @@ public class LedgerPartyRepository implements PartyRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(LedgerPartyRepository.class);
 
+    @Value("classpath:parties.json")
+    Resource partiesFile;
+    
 	private static Map<String, SearchParty> partyMap = null;
 	private static Map<String, List<SearchParty>> userPartyMap = null;
 
@@ -55,9 +59,8 @@ public class LedgerPartyRepository implements PartyRepository {
 		userPartyMap = new ConcurrentHashMap<String, List<SearchParty>>();
 
 		List<SearchParty> list = new ArrayList<>();
-		File file = new ClassPathResource("parties.json").getFile();
 		ObjectMapper objectMapper = new ObjectMapper();
-		list = Arrays.asList(objectMapper.readValue(file, SearchParty[].class));
+		list = Arrays.asList(objectMapper.readValue(partiesFile.getInputStream(), SearchParty[].class));
 		
 		if (list != null) {
 			for (SearchParty p : list) {
