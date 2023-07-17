@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>1Source Ledger - Contracts</title>
+<title>1Source Ledger - Parties</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
@@ -19,7 +19,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 .number { color: darkorange; }
 .boolean { color: blue; }
 .null { color: magenta; }
-.key { color: red; }
+.key { color: green; }
 </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -27,35 +27,35 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     <script type="text/javascript" src="/js/util-min.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['table']});
-      google.charts.setOnLoadCallback(loadContracts);
+      google.charts.setOnLoadCallback(loadParties);
 
       var parties = '[(${parties})]';
-      function loadContracts() {
-    	loadData(parties, '/v1/ledger/contracts', contractData, contractParams);
+      function loadParties() {
+    	loadData(parties, '/v1/ledger/parties', partyData, partyParams);
       }
     </script>
 </head>
 <body>
 
 <!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-purple w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+<nav class="w3-sidebar w3-orange w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
   <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
   <div class="w3-container">
     <h3 class="w3-padding-64"><b>1Source Ledger</b><span sec:authorize="isAuthenticated()"><div>Hello, <span sec:authentication="name"></span></h3></span>
   </div>
   <div class="w3-bar-block">
     <a href="/" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
-    <a href="/parties" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Parties</a> 
+    <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Parties</a> 
     <a href="/events" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Events</a> 
     <a href="/agreements" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Agreements</a> 
-    <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
+    <a href="/contracts" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
     <span sec:authorize="isAuthenticated()"><a href="/user-logout" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Logout</a></span>
   </div>
 </nav>
 
 <!-- Top menu on small screens -->
-<header class="w3-container w3-top w3-hide-large w3-purple w3-xlarge w3-padding">
-  <a href="javascript:void(0)" class="w3-button w3-purple w3-margin-right" onclick="w3_open()">☰</a>
+<header class="w3-container w3-top w3-hide-large w3-orange w3-xlarge w3-padding">
+  <a href="javascript:void(0)" class="w3-button w3-orange w3-margin-right" onclick="w3_open()">☰</a>
   <span>1Source Ledger</span>
 </header>
 
@@ -65,33 +65,16 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
 
-  <!-- Contracts -->
+  <!-- Parties -->
   <div class="w3-container" id="contact" style="margin-top:45px">
-    <h1 class="w3-xxxlarge w3-text-purple" style="margin-top:45px"><b>Contracts.</b></h1>
-    <hr style="width:50px;border:5px solid purple" class="w3-round">
-  	<div id="filter_div" style="height:35px;"><form>Counterparty <select id="sCounterparty">
-  	<option value="_">All Parties</option>
-  	</select>&nbsp;&nbsp;
-  	Since <select id="sTimeSince">
-  	<option value="_" selected>Start of Day</option>
-  	<option value="5">5 Minutes</option>
-  	<option value="15">15 Minutes</option>
-  	<option value="60">1 Hour</option>
-  	<option value="180">3 Hours</option>
-  	</select>&nbsp;&nbsp;
-  	With Status <select id="sStatus">
-  	<option value="_" selected>All</option>
-  	<option value="PROPOSED">Proposed</option>
-  	<option value="APPROVED">Approved</option>
-  	<option value="DECLINED">Declined</option>
-  	<option value="CANCELED">Canceled</option>
-  	</select>&nbsp;<input type="button" value="Submit" onclick="loadContracts();"></form></div>
+    <h1 class="w3-xxxlarge w3-text-orange" style="margin-top:45px"><b>Parties.</b></h1>
+    <hr style="width:50px;border:5px solid orange" class="w3-round">
     <div id="table_div" style="height:70vh;"></div>
   </div>
 
   <!-- Modal for json display on click-->
-  <div id="modal01" class="w3-modal w3-white" style="padding-top:0" onclick="this.style.display='none'">
-    <span class="w3-button w3-white w3-xxlarge w3-display-topright">×</span>
+  <div id="modal01" class="w3-modal w3-white" style="padding-top:0">
+    <span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal01').hide();">×</span>
     <div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
       <p id="caption"></p>
       <pre id="jsonobj"></pre>
@@ -103,10 +86,15 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     <span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal02').hide();">×</span>
     <div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
       <p id="caption02"></p>
-      <form id="createAcceptForm">
+      <form id="createProposalForm">
       <table>
       	<tr><td><b>My Party:</b></td><td><p id="cMyParty"></p></td></tr>
+      	<tr><td><b>Direction:</b></td><td>Lending To</td></tr>
       	<tr><td><b>Counterparty:</b></td><td><p id="cCounterparty"></p></td></tr>
+      	<tr><td><b>Instrument:</b></td><td><select name="instrument" id="sInstrument" style="width:140px;"></select></td></tr>
+      	<tr><td><b>Rate (%):</b></td><td><input type="text" name="rate" id="tRate" value="0.15"></td></tr>
+      	<tr><td><b>Quantity:</b></td><td><input type="text" name="quantity" id="tQuantity" value="5000"></td></tr>
+      	<tr><td><b>Price:</b></td><td><input type="text" name="price" id="tPrice" value="50.5"></td></tr>
       	<tr><td><b>Settlement BIC:</b></td><td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120" style="width:120px;" value="XXXXXXXX"></td></tr>
       	<tr><td><b>Local Agent BIC:</b></td><td><input type="text" name="localAgentBic" id="tLocalAgentBic" maxlength="120" style="width:120px;" value="YYYYYYYY"></td></tr>
       	<tr><td><b>Local Agent Name:</b></td><td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140" style="width:140px;" value="ZZZ Clearing"></td></tr>
@@ -115,31 +103,31 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
       	<tr><td><b>Local Market Field 1 Value:</b></td><td><input type="text" name="localFieldValue1" id="tLocalFieldValue1" maxlength="100" style="width:100px;" value="00001"></td></tr>
       	<tr><td><b>Local Market Field 2 Name:</b></td><td><input type="text" name="localFieldName2" id="tLocalFieldName2" maxlength="100" style="width:100px;" value="DVPCCY"></td></tr>
       	<tr><td><b>Local Market Field 2 Value:</b></td><td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100" style="width:100px;" value="USD"></td></tr>
-      	<tr><td colspan="2"><input type="submit" value="Approve Contract"></td></tr>
+      	<tr><td colspan="2"><input type="submit"></td></tr>
       </table>
 <input type="hidden" name="myParty" id="hMyParty"> 
 <input type="hidden" name="counterparty" id="hCounterparty"> 
-      <input type="hidden" name="contractId" id="hContractId">
       </form>
     </div>
   </div>
 
-<div id="cDialog" title="Updating Contract" style='display:none;'><div id="cDialogText">Waiting for ledger response...</div></div>
+<div id="cDialog" title="Submit Agreement" style='display:none;'><div id="cDialogText">Waiting for ledger response...</div></div>
 <!-- End page content -->
 </div>
 
 <!-- W3.CSS Container -->
 <div class="w3-light-grey w3-container w3-padding-32" style="margin-top:75px;padding-right:58px"><p class="w3-right">Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-opacity">w3.css</a></p></div>
+
 <script>
 $(function() {
-	  loadPartylist('sCounterparty', parties);
-	  $('#createAcceptForm').on("submit", function(e) {
-		    e.preventDefault(); // cancel the actual submit
-			$('#modal02').hide();
-			validateAccept($(this));
-		  });	  
-	  setTimeout(ping, 1000*30);
-	});
+	  loadInstrumentlist();
+	  $('#createProposalForm').on("submit", function(e) {
+	    e.preventDefault(); // cancel the actual submit
+		$('#modal02').hide();
+		validateProposal($(this));
+	  });	  
+      setTimeout(ping, 1000*30);
+});
 </script>
 
 </body>

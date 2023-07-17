@@ -4,6 +4,8 @@
 <title>1Source Ledger - Agreements</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
@@ -17,42 +19,43 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 .number { color: darkorange; }
 .boolean { color: blue; }
 .null { color: magenta; }
-.key { color: red; }
+.key { color: green; }
 </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="/js/util.js"></script>
+    <script type="text/javascript" src="/js/util-min.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['table']});
       google.charts.setOnLoadCallback(loadAgreements);
 
-      var authtoken = '[[${authtoken}]]';
+      var parties = '[(${parties})]';
       function loadAgreements() {
-    	loadData(authtoken, '/v1/ledger/agreements', agreementData, agreementParams);
+    	loadData(parties, '/v1/ledger/agreements', agreementData, agreementParams);
       }
     </script>
 </head>
 <body>
 
 <!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+<nav class="w3-sidebar w3-green w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
   <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
   <div class="w3-container">
     <h3 class="w3-padding-64"><b>1Source Ledger</b><span sec:authorize="isAuthenticated()"><div>Hello, <span sec:authentication="name"></span></h3></span>
   </div>
   <div class="w3-bar-block">
     <a href="/" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
+    <a href="/parties" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Parties</a> 
     <a href="/events" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Events</a> 
     <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Agreements</a> 
     <a href="/contracts" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
-    <span th:if="${username}"><a href="/user-logout" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Logout</a></span>
+    <span sec:authorize="isAuthenticated()"><a href="/user-logout" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Logout</a></span>
   </div>
 </nav>
 
 <!-- Top menu on small screens -->
-<header class="w3-container w3-top w3-hide-large w3-red w3-xlarge w3-padding">
-  <a href="javascript:void(0)" class="w3-button w3-red w3-margin-right" onclick="w3_open()">☰</a>
+<header class="w3-container w3-top w3-hide-large w3-green w3-xlarge w3-padding">
+  <a href="javascript:void(0)" class="w3-button w3-green w3-margin-right" onclick="w3_open()">☰</a>
   <span>1Source Ledger</span>
 </header>
 
@@ -64,12 +67,13 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 
   <!-- Agreements -->
   <div class="w3-container" id="contact" style="margin-top:45px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Agreements.</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
+    <h1 class="w3-xxxlarge w3-text-green" style="margin-top:45px"><b>Agreements.</b></h1>
+    <hr style="width:50px;border:5px solid green" class="w3-round">
   	<div id="filter_div" style="height:35px;"><form>Counterparty <select id="sCounterparty">
   	<option value="_">All Parties</option>
   	</select>&nbsp;&nbsp;
-  	For Last <select id="sTimeSince">
+  	Since <select id="sTimeSince">
+  	<option value="_" selected>Start of Day</option>
   	<option value="5">5 Minutes</option>
   	<option value="15">15 Minutes</option>
   	<option value="60">1 Hour</option>
@@ -94,21 +98,30 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
       <p id="caption02"></p>
       <form id="createContractForm">
       <table>
-      	<tr><td><b>Agreement ID:</b></td><td colspan="2"><p id="cAgreementId"></p></td></tr>
-      	<tr><td><b>Borrower:</b></td><td colspan="2"><p id="cBorrower"></p></td></tr>
-      	<tr><td><b>Lender:</b></td><td colspan="2"><p id="cLender"></p></td></tr>
+      	<tr><td><b>Agreement ID:</b></td><td colspan="2"><span id="cAgreementId"></span></td></tr>
+      	<tr><td><b>Borrower:</b></td><td colspan="2"><span id="cBorrower"></span></td></tr>
+      	<tr><td><b>Lender:</b></td><td colspan="2"><span id="cLender"></span></td></tr>
       	<tr><td><b>Instrument</b></td><td colspan="2">&nbsp;</td></tr>
-      	<tr><td>&nbsp;</td><td><b>FIGI:</b></td><td><p id="cFigi"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Ticker:</b></td><td><p id="cTicker"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>CUSIP:</b></td><td><p id="cCusip"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>SEDOL:</b></td><td><p id="cSedol"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>FIGI:</b></td><td><span id="cFigi"></span></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Ticker:</b></td><td><span id="cTicker"></span></td></tr>
+      	<tr><td>&nbsp;</td><td><b>CUSIP:</b></td><td><span id="cCusip"></span></td></tr>
+      	<tr><td>&nbsp;</td><td><b>SEDOL:</b></td><td><span id="cSedol"></span></td></tr>
       	<tr><td><b>Terms</b></td><td colspan="2">&nbsp;</td></tr>
-      	<tr><td>&nbsp;</td><td><b>Rate:</b></td><td><p id="cRate"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Quantity:</b></td><td><p id="cQuantity"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Currency:</b></td><td><p id="cCurrency"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Value:</b></td><td><p id="cValue"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Term:</b></td><td><p id="cTerm"></p></td></tr>
-      	<tr><td colspan="3"><input type="submit"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate:</b></td><td><span id="cRate"></span></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Quantity:</b></td><td><span id="cQuantity"></span></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Currency:</b></td><td><span id="cCurrency"></span></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Value:</b></td><td><span id="cValue"></span></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Term:</b></td><td><span id="cTerm"></span></td></tr>
+      	<tr><td><b>Settlement</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Settlement BIC:</b></td><td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120" style="width:120px;" value="XXXXXXXX"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Agent BIC:</b></td><td><input type="text" name="localAgentBic" id="tLocalAgentBic" maxlength="120" style="width:120px;" value="YYYYYYYY"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Agent Name:</b></td><td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140" style="width:140px;" value="ZZZ Clearing"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Agent Account:</b></td><td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100" style="width:100px;" value="2468999"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Market Field 1 Name:</b></td><td><input type="text" name="localFieldName1" id="tLocalFieldName1" maxlength="100" style="width:100px;" value="DTCYUS00"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Market Field 1 Value:</b></td><td><input type="text" name="localFieldValue1" id="tLocalFieldValue1" maxlength="100" style="width:100px;" value="00001"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Market Field 2 Name:</b></td><td><input type="text" name="localFieldName2" id="tLocalFieldName2" maxlength="100" style="width:100px;" value="DVPCCY"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Market Field 2 Value:</b></td><td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100" style="width:100px;" value="USD"></td></tr>
+      	<tr><td colspan="3"><input type="submit" value="Propose Contract"></td></tr>
       </table>
       <input type="hidden" id="fAgreementId" name="fAgreementId">
       </form>
@@ -124,12 +137,13 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 
 <script>
 $(function() {
-	  loadPartylist('sCounterparty');
+	  loadPartylist('sCounterparty', parties);
 	  $('#createContractForm').on("submit", function(e) {
 	    e.preventDefault(); // cancel the actual submit
 		$('#modal02').hide();
-		createContractFromAgreement(e.target[1].value);
+		createContractFromAgreement($('#fAgreementId').val());
 	  });
+	  setTimeout(ping, 1000*30);
 	});
 </script>
 </body>
