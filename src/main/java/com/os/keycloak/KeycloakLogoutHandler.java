@@ -25,7 +25,9 @@ public class KeycloakLogoutHandler implements LogoutHandler {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication auth) {
-        logoutFromKeycloak((OidcUser) auth.getPrincipal());
+    	if (auth != null && auth.getPrincipal() != null) {
+    		logoutFromKeycloak((OidcUser) auth.getPrincipal());
+    	}
     }
 
     private void logoutFromKeycloak(OidcUser user) {

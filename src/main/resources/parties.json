@@ -49,6 +49,13 @@
         "users": ["bnystageuser1"]
     },
     {
+        "partyId": "BNYMELLON CPX",
+        "partyName": "BNY Mellon CPX",
+        "partyRole": "LENDER",
+        "gleifLei": "WFLLPEPC7FZXENRZV188",
+        "users": ["bnycpxstageuser1"]
+    },
+    {
         "partyId": "NBF Inc.",
         "partyName": "National Bank of Canada",
         "partyRole": "LENDER",

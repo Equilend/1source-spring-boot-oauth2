@@ -12,6 +12,7 @@ function ping() {
 		url: apiserver + '/util/ping',
 		async: true,
 		success: function(j) {
+			setTimeout(ping, 1000*30);
 		}
 	});
 }
@@ -469,6 +470,16 @@ function showJson(rowIndx, clickIndx, clickUriPrefix) {
 			'Content-Type': 'application/json'
 		},
 		async: true,
+		statusCode: {
+			404: function(responseObject, textStatus, jqXHR) {
+				$('#cDialogText').text('Resource could not be found.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+ 					"title": 'Error'
+				});
+			}
+		},
 		success: function(j) {
 			document.getElementById("modal01").style.display = "block";
 			document.getElementById("caption").innerHTML = uri;
