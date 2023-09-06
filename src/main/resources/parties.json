@@ -56,10 +56,17 @@
         "users": ["bnycpxstageuser1"]
     },
     {
-        "partyId": "NBF Inc.",
+        "partyId": "NBC",
         "partyName": "National Bank of Canada",
+        "partyRole": "BORROWER",
+        "gleifLei": "549300DNXF0U6FHR5270",
+        "users": ["nbfstageuser1"]
+    },
+    {
+        "partyId": "NBF Inc.",
+        "partyName": "National Bank Financial Inc.",
         "partyRole": "LENDER",
         "gleifLei": "254900F2ES7T4LUTQL51",
-        "users": ["nbfstageuser1"]
+        "users": ["nbflenderstageuser1"]
     }
 ]
