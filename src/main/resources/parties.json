@@ -14,52 +14,66 @@
         "users": ["TestBorrower1User"]
     },
     {
+        "partyId": "TLEN-US-QA",
+        "partyName": "Test Lender US QA",
+        "partyRole": "LENDER",
+        "gleifLei": "KTB500SKZSDI75VSFU40",
+        "users": ["QALender1User"]
+    },
+    {
+        "partyId": "TBORR-US-QA",
+        "partyName": "Test Borrower US QA",
+        "partyRole": "BORROWER",
+        "gleifLei": "KTB500SKZSDI75VSFU40",
+        "users": ["QABorrower1User"]
+    },
+    {
         "partyId": "GSCO US",
         "partyName": "Goldman Sachs and Co-US",
         "partyRole": "BORROWER",
         "gleifLei": "FOR8UP27PHTHYVLBNG30",
-        "users": ["goldmanstageuser1"]
+        "users": ["goldmanqauser1", "goldmanstageuser1"]
     },
     {
         "partyId": "BlackRock US Dom",
         "partyName": "BlackRock Inst. Trust Co., N.A. Domestic",
         "partyRole": "LENDER",
         "gleifLei": "549300RK1FB0VMTPD087",
-        "users": ["blackrockstageuser1"]
+        "users": ["blackrockqauser1", "blackrockstageuser1"]
     },
     {
         "partyId": "MSCO LLC",
         "partyName": "Morgan Stanley and CO LLC",
         "partyRole": "BORROWER",
         "gleifLei": "9R7GPTSO7KV3UQJZQ078",
-        "users": ["msstageuser1"]
+        "users": ["msqauser1", "msstageuser1"]
     },
     {
         "partyId": "JPMC",
         "partyName": "JPMorgan Chase",
         "partyRole": "LENDER",
         "gleifLei": "8I5DZWZKVSZI1NUHU748",
-        "users": ["jpmstageuser1"]
+        "users": ["jpmqauser1", "jpmstageuser1"]
     },
     {
         "partyId": "BNYMELLON",
         "partyName": "BNY Mellon",
         "partyRole": "LENDER",
         "gleifLei": "WFLLPEPC7FZXENRZV188",
-        "users": ["bnystageuser1"]
+        "users": ["bnyqauser1", "bnystageuser1"]
     },
     {
         "partyId": "BNYMELLON CPX",
         "partyName": "BNY Mellon CPX",
         "partyRole": "LENDER",
         "gleifLei": "WFLLPEPC7FZXENRZV188",
-        "users": ["bnycpxstageuser1"]
+        "users": ["bnycpxqauser1", "bnycpxstageuser1"]
     },
     {
         "partyId": "NBF Inc.",
         "partyName": "National Bank of Canada",
         "partyRole": "LENDER",
         "gleifLei": "254900F2ES7T4LUTQL51",
-        "users": ["nbfstageuser1"]
+        "users": ["nbfqauser1", "nbfstageuser1"]
     }
 ]

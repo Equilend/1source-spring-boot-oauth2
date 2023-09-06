@@ -21,18 +21,18 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 /**
- * Gets or Sets SettlementType
+ * Gets or Sets RateTypeCd
  */
-@JsonAdapter(SettlementType.Adapter.class)
-public enum SettlementType {
-  @SerializedName("DVP")
-  DVP("DVP"),
-  @SerializedName("FOP")
-  FOP("FOP");
+@JsonAdapter(RateTypeCd.Adapter.class)
+public enum RateTypeCd {
+  @SerializedName("FIXED")
+  FIXED("FIXED"),
+  @SerializedName("FLOATING")
+  FLOATING("FLOATING");
 
   private String value;
 
-  SettlementType(String value) {
+  RateTypeCd(String value) {
     this.value = value;
   }
 
@@ -45,8 +45,8 @@ public enum SettlementType {
     return String.valueOf(value);
   }
 
-  public static SettlementType fromValue(String input) {
-    for (SettlementType b : SettlementType.values()) {
+  public static RateTypeCd fromValue(String input) {
+    for (RateTypeCd b : RateTypeCd.values()) {
       if (b.value.equals(input)) {
         return b;
       }
@@ -54,16 +54,16 @@ public enum SettlementType {
     return null;
   }
 
-  public static class Adapter extends TypeAdapter<SettlementType> {
+  public static class Adapter extends TypeAdapter<RateTypeCd> {
     @Override
-    public void write(final JsonWriter jsonWriter, final SettlementType enumeration) throws IOException {
+    public void write(final JsonWriter jsonWriter, final RateTypeCd enumeration) throws IOException {
       jsonWriter.value(String.valueOf(enumeration.getValue()));
     }
 
     @Override
-    public SettlementType read(final JsonReader jsonReader) throws IOException {
+    public RateTypeCd read(final JsonReader jsonReader) throws IOException {
       Object value = jsonReader.nextString();
-      return SettlementType.fromValue((String)(value));
+      return RateTypeCd.fromValue((String)(value));
     }
   }
 }

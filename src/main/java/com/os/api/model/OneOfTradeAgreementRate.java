@@ -12,9 +12,13 @@
 
 package com.os.api.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.os.api.RateDeserializer;
+
 /**
-* ContractsContractIdBody
+* OneOfTradeAgreementRate
 */
-public interface ContractsContractIdBody {
+@JsonDeserialize(using = RateDeserializer.class)
+public interface OneOfTradeAgreementRate {
 
 }

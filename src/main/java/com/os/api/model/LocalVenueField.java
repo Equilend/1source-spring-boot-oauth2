@@ -18,73 +18,52 @@ import com.google.gson.annotations.SerializedName;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 /**
- * Price
+ * LocalVenueField
  */
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-08-24T20:38:16.660246147Z[GMT]")
 
-public class Price {
-  @SerializedName("value")
-  private Float value = null;
+public class LocalVenueField {
+  @SerializedName("localFieldName")
+  private String localFieldName = null;
 
-  @SerializedName("currency")
-  private CurrencyCd currency = null;
+  @SerializedName("localFieldValue")
+  private String localFieldValue = null;
 
-  @SerializedName("unit")
-  private PriceUnit unit = null;
-
-  public Price value(Float value) {
-    this.value = value;
+  public LocalVenueField localFieldName(String localFieldName) {
+    this.localFieldName = localFieldName;
     return this;
   }
 
    /**
-   * Get value
-   * @return value
+   * Local market field Name
+   * @return localFieldName
   **/
-  @Schema(description = "")
-  public Float getValue() {
-    return value;
+  @Schema(description = "Local market field Name")
+  public String getLocalFieldName() {
+    return localFieldName;
   }
 
-  public void setValue(Float value) {
-    this.value = value;
+  public void setLocalFieldName(String localFieldName) {
+    this.localFieldName = localFieldName;
   }
 
-  public Price currency(CurrencyCd currency) {
-    this.currency = currency;
+  public LocalVenueField localFieldValue(String localFieldValue) {
+    this.localFieldValue = localFieldValue;
     return this;
   }
 
    /**
-   * Get currency
-   * @return currency
+   * Local market field value
+   * @return localFieldValue
   **/
-  @Schema(description = "")
-  public CurrencyCd getCurrency() {
-    return currency;
+  @Schema(description = "Local market field value")
+  public String getLocalFieldValue() {
+    return localFieldValue;
   }
 
-  public void setCurrency(CurrencyCd currency) {
-    this.currency = currency;
-  }
-
-  public Price unit(PriceUnit unit) {
-    this.unit = unit;
-    return this;
-  }
-
-   /**
-   * Get unit
-   * @return unit
-  **/
-  @Schema(description = "")
-  public PriceUnit getUnit() {
-    return unit;
-  }
-
-  public void setUnit(PriceUnit unit) {
-    this.unit = unit;
+  public void setLocalFieldValue(String localFieldValue) {
+    this.localFieldValue = localFieldValue;
   }
 
 
@@ -96,26 +75,24 @@ public class Price {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Price price = (Price) o;
-    return Objects.equals(this.value, price.value) &&
-        Objects.equals(this.currency, price.currency) &&
-        Objects.equals(this.unit, price.unit);
+    LocalVenueField localVenueField = (LocalVenueField) o;
+    return Objects.equals(this.localFieldName, localVenueField.localFieldName) &&
+        Objects.equals(this.localFieldValue, localVenueField.localFieldValue);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(value, currency, unit);
+    return Objects.hash(localFieldName, localFieldValue);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Price {\n");
+    sb.append("class LocalVenueField {\n");
     
-    sb.append("    value: ").append(toIndentedString(value)).append("\n");
-    sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
-    sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
+    sb.append("    localFieldName: ").append(toIndentedString(localFieldName)).append("\n");
+    sb.append("    localFieldValue: ").append(toIndentedString(localFieldValue)).append("\n");
     sb.append("}");
     return sb.toString();
   }

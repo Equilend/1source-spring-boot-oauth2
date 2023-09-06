@@ -77,5 +77,8 @@ public class LedgerPartyRepository implements PartyRepository {
 				}
 			}
 		}
+		
+		logger.info("Loaded " + partyMap.size() + " parties.");
+		
 	}
 }

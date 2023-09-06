@@ -13,8 +13,8 @@
 package com.os.api.model;
 
 /**
-* ContractsContractIdBody
+* OneOfRebateRateRebate
 */
-public interface ContractsContractIdBody {
+public interface OneOfRebateRateRebate {
 
 }

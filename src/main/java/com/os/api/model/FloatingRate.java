@@ -18,73 +18,31 @@ import com.google.gson.annotations.SerializedName;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 /**
- * Price
+ * FloatingRate
  */
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-08-24T20:38:16.660246147Z[GMT]")
 
-public class Price {
-  @SerializedName("value")
-  private Float value = null;
+public class FloatingRate implements OneOfRebateRateRebate {
+  @SerializedName("floating")
+  private FloatingRateDef floating = null;
 
-  @SerializedName("currency")
-  private CurrencyCd currency = null;
-
-  @SerializedName("unit")
-  private PriceUnit unit = null;
-
-  public Price value(Float value) {
-    this.value = value;
+  public FloatingRate floating(FloatingRateDef floating) {
+    this.floating = floating;
     return this;
   }
 
    /**
-   * Get value
-   * @return value
+   * Get floating
+   * @return floating
   **/
   @Schema(description = "")
-  public Float getValue() {
-    return value;
+  public FloatingRateDef getFloating() {
+    return floating;
   }
 
-  public void setValue(Float value) {
-    this.value = value;
-  }
-
-  public Price currency(CurrencyCd currency) {
-    this.currency = currency;
-    return this;
-  }
-
-   /**
-   * Get currency
-   * @return currency
-  **/
-  @Schema(description = "")
-  public CurrencyCd getCurrency() {
-    return currency;
-  }
-
-  public void setCurrency(CurrencyCd currency) {
-    this.currency = currency;
-  }
-
-  public Price unit(PriceUnit unit) {
-    this.unit = unit;
-    return this;
-  }
-
-   /**
-   * Get unit
-   * @return unit
-  **/
-  @Schema(description = "")
-  public PriceUnit getUnit() {
-    return unit;
-  }
-
-  public void setUnit(PriceUnit unit) {
-    this.unit = unit;
+  public void setFloating(FloatingRateDef floating) {
+    this.floating = floating;
   }
 
 
@@ -96,26 +54,22 @@ public class Price {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Price price = (Price) o;
-    return Objects.equals(this.value, price.value) &&
-        Objects.equals(this.currency, price.currency) &&
-        Objects.equals(this.unit, price.unit);
+    FloatingRate floatingRate = (FloatingRate) o;
+    return Objects.equals(this.floating, floatingRate.floating);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(value, currency, unit);
+    return Objects.hash(floating);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Price {\n");
+    sb.append("class FloatingRate {\n");
     
-    sb.append("    value: ").append(toIndentedString(value)).append("\n");
-    sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
-    sb.append("    unit: ").append(toIndentedString(unit)).append("\n");
+    sb.append("    floating: ").append(toIndentedString(floating)).append("\n");
     sb.append("}");
     return sb.toString();
   }
