@@ -22,10 +22,11 @@ import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@WebServlet(name = "APIProxyServlet", urlPatterns = "/proxy")
+@WebServlet(name = "APIProxyServlet")
 public class APIProxyServlet extends org.mitre.dsmiley.httpproxy.ProxyServlet {
 
 	private static final long serialVersionUID = 6735555087512000502L;
@@ -90,7 +91,7 @@ public class APIProxyServlet extends org.mitre.dsmiley.httpproxy.ProxyServlet {
 
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		logger.info("URI: " + servletRequest.getRequestURI() + " in " + elapsedTime);
-
+		
 		return response;
 	}
 

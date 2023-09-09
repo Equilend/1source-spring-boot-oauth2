@@ -24,14 +24,15 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="/js/util-min.js"></script>
+    <script type="text/javascript" src="/js/1source.min.js"></script>
+    <script type="text/javascript" src="/js/loadingoverlay.min.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['table']});
       google.charts.setOnLoadCallback(loadAgreements);
 
       var parties = '[(${parties})]';
       function loadAgreements() {
-    	loadData(parties, '/v1/ledger/agreements', agreementData, agreementParams);
+    	  loadData(parties, '/v1/ledger/agreements', agreementData, agreementParams);
       }
     </script>
 </head>
@@ -107,7 +108,9 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
       	<tr><td>&nbsp;</td><td><b>CUSIP:</b></td><td><span id="cCusip"></span></td></tr>
       	<tr><td>&nbsp;</td><td><b>SEDOL:</b></td><td><span id="cSedol"></span></td></tr>
       	<tr><td><b>Terms</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate Type:</b></td><td><span id="cRateType"></span></td></tr>
       	<tr><td>&nbsp;</td><td><b>Rate:</b></td><td><span id="cRate"></span></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Benchmark:</b></td><td><span id="cRateBenchmark"></span></td></tr>
       	<tr><td>&nbsp;</td><td><b>Quantity:</b></td><td><span id="cQuantity"></span></td></tr>
       	<tr><td>&nbsp;</td><td><b>Currency:</b></td><td><span id="cCurrency"></span></td></tr>
       	<tr><td>&nbsp;</td><td><b>Value:</b></td><td><span id="cValue"></span></td></tr>

@@ -11,8 +11,12 @@ public class ContractProposalForm {
 	private String counterparty = null;
 	@JsonProperty("instrument")
 	private String instrument = null;
+	@JsonProperty("rateType")
+	private String rateType = null;
 	@JsonProperty("rate")
 	private String rate = null;
+	@JsonProperty("benchmark")
+	private String benchmark = null;
 	@JsonProperty("quantity")
 	private String quantity = null;
 	@JsonProperty("price")
@@ -146,11 +150,27 @@ public class ContractProposalForm {
 		this.localFieldValue2 = localFieldValue2;
 	}
 
+	public String getRateType() {
+		return rateType;
+	}
+
+	public void setRateType(String rateType) {
+		this.rateType = rateType;
+	}
+
+	public String getBenchmark() {
+		return benchmark;
+	}
+
+	public void setBenchmark(String benchmark) {
+		this.benchmark = benchmark;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(counterparty, instrument, localAgentAcct, localAgentBic, localAgentName,
+		return Objects.hash(benchmark, counterparty, instrument, localAgentAcct, localAgentBic, localAgentName,
 				localFieldName1, localFieldName2, localFieldValue1, localFieldValue2, myParty, price, quantity, rate,
-				settlmentBic);
+				rateType, settlmentBic);
 	}
 
 	@Override
@@ -162,7 +182,7 @@ public class ContractProposalForm {
 		if (getClass() != obj.getClass())
 			return false;
 		ContractProposalForm other = (ContractProposalForm) obj;
-		return Objects.equals(counterparty, other.counterparty)
+		return Objects.equals(benchmark, other.benchmark) && Objects.equals(counterparty, other.counterparty)
 				&& Objects.equals(instrument, other.instrument) && Objects.equals(localAgentAcct, other.localAgentAcct)
 				&& Objects.equals(localAgentBic, other.localAgentBic)
 				&& Objects.equals(localAgentName, other.localAgentName)
@@ -171,7 +191,8 @@ public class ContractProposalForm {
 				&& Objects.equals(localFieldValue1, other.localFieldValue1)
 				&& Objects.equals(localFieldValue2, other.localFieldValue2) && Objects.equals(myParty, other.myParty)
 				&& Objects.equals(price, other.price) && Objects.equals(quantity, other.quantity)
-				&& Objects.equals(rate, other.rate) && Objects.equals(settlmentBic, other.settlmentBic);
+				&& Objects.equals(rate, other.rate) && Objects.equals(rateType, other.rateType)
+				&& Objects.equals(settlmentBic, other.settlmentBic);
 	}
 
 }

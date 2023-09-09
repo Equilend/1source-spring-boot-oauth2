@@ -131,18 +131,22 @@ public class UtilRestController {
 
 			trade.setInstrument(instrument);
 
-			Rate rate = new Rate();
-			rate.setRebateBps(Float.parseFloat(agreementForm.getRate()));
-			rate.setRebateSreadBps(null);
-			rate.setBenchmarkCd(null);
-			rate.setFeeBps(null);
+			LocalDate tradeDate = LocalDate.now();
+			
+			FeeRate feeRate = new FeeRate();
+			FixedRateDef fixedRateDef = new FixedRateDef();
+			feeRate.setFee(fixedRateDef);
+			fixedRateDef.setBaseRate(Float.parseFloat(agreementForm.getRate()));
+			fixedRateDef.setCutoffTime("18:00");
+			fixedRateDef.setEffectiveDate(tradeDate);
+			fixedRateDef.setEffectiveRate(null);
 
-			trade.setRate(rate);
+			trade.setRate(feeRate);
 
 			trade.setQuantity(new BigDecimal(agreementForm.getQuantity()));
 			trade.setBillingCurrency(CurrencyCd.USD);
 			trade.setDividendRatePct(100f);
-			trade.setTradeDate(LocalDate.now());
+			trade.setTradeDate(tradeDate);
 			trade.setTermType(TermType.OPEN);
 			trade.setTermDate(null);
 			trade.setSettlementDate(LocalDate.now().plusDays(2));
@@ -234,8 +238,8 @@ public class UtilRestController {
 
 			trade.setInstrument(instrument);
 
-			Rate rate = new Rate();
-
+			LocalDate tradeDate = LocalDate.now();
+			
 			Float r = 5f;
 			if (proposalForm.getRate() != null) {
 				try {
@@ -244,12 +248,54 @@ public class UtilRestController {
 					logger.warn("Bad rate: " + proposalForm.getRate());
 				}
 			}
-			rate.setRebateBps(r);
-			rate.setRebateSreadBps(null);
-			rate.setBenchmarkCd(null);
-			rate.setFeeBps(null);
 
-			trade.setRate(rate);
+			CollateralType collateralType = CollateralType.CASH;
+			
+			if ("RFL".equals(proposalForm.getRateType())) {
+
+				FloatingRateDef floatingRateDef = new FloatingRateDef();
+				floatingRateDef.setSpread(r);
+				floatingRateDef.setCutoffTime("18:00");
+				floatingRateDef.setEffectiveDate(tradeDate);
+				floatingRateDef.setEffectiveRate(null);
+				floatingRateDef.setBenchmark(BenchmarkCd.fromValue(proposalForm.getBenchmark()));
+				
+				FloatingRate floatingRate = new FloatingRate();
+				floatingRate.setFloating(floatingRateDef);
+				
+				RebateRate rebateRate = new RebateRate();
+				rebateRate.setRebate(floatingRate);
+
+				trade.setRate(rebateRate);
+
+			} else if ("RFI".equals(proposalForm.getRateType())) {
+				
+				FixedRateDef fixedRateDef = new FixedRateDef();
+				fixedRateDef.setBaseRate(r);
+				fixedRateDef.setCutoffTime("18:00");
+				fixedRateDef.setEffectiveDate(tradeDate);
+				fixedRateDef.setEffectiveRate(null);
+
+				FixedRate fixedRate = new FixedRate();
+				fixedRate.setFixed(fixedRateDef);
+				
+				RebateRate rebateRate = new RebateRate();
+				rebateRate.setRebate(fixedRate);
+
+				trade.setRate(rebateRate);
+				
+			} else if ("FEE".equals(proposalForm.getRateType())) {
+				FeeRate feeRate = new FeeRate();
+				FixedRateDef fixedRateDef = new FixedRateDef();
+				feeRate.setFee(fixedRateDef);
+				fixedRateDef.setBaseRate(r);
+				fixedRateDef.setCutoffTime("18:00");
+				fixedRateDef.setEffectiveDate(tradeDate);
+				fixedRateDef.setEffectiveRate(null);
+				trade.setRate(feeRate);
+				
+				collateralType = CollateralType.NONCASH;
+			}
 
 			BigDecimal q = new BigDecimal(1000);
 			if (proposalForm.getQuantity() != null) {
@@ -263,7 +309,7 @@ public class UtilRestController {
 			trade.setQuantity(q);
 			trade.setBillingCurrency(CurrencyCd.USD);
 			trade.setDividendRatePct(100f);
-			trade.setTradeDate(LocalDate.now());
+			trade.setTradeDate(tradeDate);
 			trade.setTermType(TermType.OPEN);
 			trade.setTermDate(null);
 			trade.setSettlementDate(LocalDate.now().plusDays(2));
@@ -281,20 +327,20 @@ public class UtilRestController {
 			collateralValue.setScale(2, java.math.RoundingMode.HALF_UP);
 			collateral.setCollateralValue(collateralValue.doubleValue());
 			collateral.setCurrency(CurrencyCd.USD);
-			collateral.setType(CollateralType.CASH);
+			collateral.setType(collateralType);
 			collateral.setMargin(102);
-			collateral.setRoundingRule(10);
+			collateral.setRoundingRule(10.0f);
 			collateral.setRoundingMode(RoundingMode.ALWAYSUP);
 
 			trade.setCollateral(collateral);
 
 			contractProposal.setTrade(trade);
 
-			Settlement settlementObj = new Settlement();
-			settlementObj.setPartyRole(myParty.getPartyRole());
+			PartySettlementInstruction partySettlementInstruction = new PartySettlementInstruction();
+			partySettlementInstruction.setPartyRole(myParty.getPartyRole());
 
 			SettlementInstruction instruction = new SettlementInstruction();
-			settlementObj.setInstruction(instruction);
+			partySettlementInstruction.setInstruction(instruction);
 
 			List<LocalMarketField> localMarketFields = new ArrayList<>();
 
@@ -321,7 +367,7 @@ public class UtilRestController {
 				instruction.setLocalMarketFields(localMarketFields);
 			}
 
-			contractProposal.setSettlement(Collections.singletonList(settlementObj));
+			contractProposal.setSettlement(Collections.singletonList(partySettlementInstruction));
 
 			return new ResponseEntity<ContractProposal>(contractProposal, HttpStatus.OK);
 		}
@@ -345,21 +391,25 @@ public class UtilRestController {
 				collateral.setMargin(102);
 			}
 			if (collateral.getRoundingRule() == null) {
-				collateral.setRoundingRule(10);
+				collateral.setRoundingRule(10.0f);
 			}
 			if (collateral.getRoundingMode() == null) {
 				collateral.setRoundingMode(RoundingMode.ALWAYSUP);
 			}
 		}
 		contractProposal.setTrade(tradeAgreement);
+		
+		if (tradeAgreement.getDividendRatePct() == null) {
+			tradeAgreement.setDividendRatePct(100f);
+		}
 
 		List<NameValuePair> settlmentNameValuePairs = proposalForm.getSettlement();
 
-		Settlement settlementObj = new Settlement();
-		settlementObj.setPartyRole(PartyRole.LENDER);
+		PartySettlementInstruction partySettlementInstruction = new PartySettlementInstruction();
+		partySettlementInstruction.setPartyRole(PartyRole.LENDER);
 
 		SettlementInstruction instruction = new SettlementInstruction();
-		settlementObj.setInstruction(instruction);
+		partySettlementInstruction.setInstruction(instruction);
 
 		List<LocalMarketField> localMarketFields = new ArrayList<>();
 
@@ -406,7 +456,7 @@ public class UtilRestController {
 			instruction.setLocalMarketFields(localMarketFields);
 		}
 
-		contractProposal.setSettlement(Collections.singletonList(settlementObj));
+		contractProposal.setSettlement(Collections.singletonList(partySettlementInstruction));
 
 		return new ResponseEntity<ContractProposal>(contractProposal, HttpStatus.OK);
 
@@ -423,11 +473,11 @@ public class UtilRestController {
 
 		if (myParty != null && counterparty != null) {
 
-			Settlement settlementObj = new Settlement();
-			settlementObj.setPartyRole(myParty.getPartyRole());
+			PartySettlementInstruction partySettlementInstruction = new PartySettlementInstruction();
+			partySettlementInstruction.setPartyRole(myParty.getPartyRole());
 
 			SettlementInstruction instruction = new SettlementInstruction();
-			settlementObj.setInstruction(instruction);
+			partySettlementInstruction.setInstruction(instruction);
 
 			List<LocalMarketField> localMarketFields = new ArrayList<>();
 
@@ -454,7 +504,7 @@ public class UtilRestController {
 				instruction.setLocalMarketFields(localMarketFields);
 			}
 
-			settlementInstructionUpdate.setSettlement(settlementObj);
+			settlementInstructionUpdate.setSettlement(partySettlementInstruction);
 
 			return new ResponseEntity<SettlementInstructionUpdate>(settlementInstructionUpdate, HttpStatus.OK);
 		}
