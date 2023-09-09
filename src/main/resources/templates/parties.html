@@ -24,7 +24,8 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="/js/util-min.js"></script>
+    <script type="text/javascript" src="/js/1source.min.js"></script>
+    <script type="text/javascript" src="/js/loadingoverlay.min.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['table']});
       google.charts.setOnLoadCallback(loadParties);
@@ -88,22 +89,28 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
       <p id="caption02"></p>
       <form id="createProposalForm">
       <table>
-      	<tr><td><b>My Party:</b></td><td><p id="cMyParty"></p></td></tr>
-      	<tr><td><b>Direction:</b></td><td>Lending To</td></tr>
-      	<tr><td><b>Counterparty:</b></td><td><p id="cCounterparty"></p></td></tr>
-      	<tr><td><b>Instrument:</b></td><td><select name="instrument" id="sInstrument" style="width:140px;"></select></td></tr>
-      	<tr><td><b>Rate (%):</b></td><td><input type="text" name="rate" id="tRate" value="0.15"></td></tr>
-      	<tr><td><b>Quantity:</b></td><td><input type="text" name="quantity" id="tQuantity" value="5000"></td></tr>
-      	<tr><td><b>Price:</b></td><td><input type="text" name="price" id="tPrice" value="50.5"></td></tr>
-      	<tr><td><b>Settlement BIC:</b></td><td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120" style="width:120px;" value="XXXXXXXX"></td></tr>
-      	<tr><td><b>Local Agent BIC:</b></td><td><input type="text" name="localAgentBic" id="tLocalAgentBic" maxlength="120" style="width:120px;" value="YYYYYYYY"></td></tr>
-      	<tr><td><b>Local Agent Name:</b></td><td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140" style="width:140px;" value="ZZZ Clearing"></td></tr>
-      	<tr><td><b>Local Agent Account:</b></td><td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100" style="width:100px;" value="2468999"></td></tr>
-      	<tr><td><b>Local Market Field 1 Name:</b></td><td><input type="text" name="localFieldName1" id="tLocalFieldName1" maxlength="100" style="width:100px;" value="DTCYUS00"></td></tr>
-      	<tr><td><b>Local Market Field 1 Value:</b></td><td><input type="text" name="localFieldValue1" id="tLocalFieldValue1" maxlength="100" style="width:100px;" value="00001"></td></tr>
-      	<tr><td><b>Local Market Field 2 Name:</b></td><td><input type="text" name="localFieldName2" id="tLocalFieldName2" maxlength="100" style="width:100px;" value="DVPCCY"></td></tr>
-      	<tr><td><b>Local Market Field 2 Value:</b></td><td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100" style="width:100px;" value="USD"></td></tr>
-      	<tr><td colspan="2"><input type="submit"></td></tr>
+      	<tr><td><b>Parties</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>My Party:</b></td><td><p id="cMyParty"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Direction:</b></td><td>Lending To</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Counterparty:</b></td><td><p id="cCounterparty"></p></td></tr>
+      	<tr><td><b>Instrument</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Name:</b></td><td><select name="instrument" id="sInstrument" style="width:240px;"></select></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Quantity:</b></td><td><input type="text" name="quantity" id="tQuantity" value="5000"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Price:</b></td><td><input type="text" name="price" id="tPrice" value="50.5"></td></tr>
+      	<tr><td><b>Rate</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate Type:</b></td><td><select name="rateType" id="sRateType" onchange="toggleBenchmark();"><option value="RFL">Rebate Floating<option value="RFI">Rebate Fixed<option value="FEE">Fee</select></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate (%):</b></td><td><input type="text" name="rate" id="tRate" value="0.15"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Benchmark:</b></td><td><select name="benchmark" id="sBenchmark"><option value="OBFR">OBFR<option value="SOFR">SOFR<option value="EFFR">EFFR<option value="TGCR">TGCR<option value="BGCR">BGCR</select></td></tr>
+      	<tr><td><b>Settlement</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Settlement BIC:</b></td><td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120" style="width:120px;" value="XXXXXXXX"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Agent BIC:</b></td><td><input type="text" name="localAgentBic" id="tLocalAgentBic" maxlength="120" style="width:120px;" value="YYYYYYYY"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Agent Name:</b></td><td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140" style="width:140px;" value="ZZZ Clearing"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Agent Account:</b></td><td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100" style="width:100px;" value="2468999"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Market Field 1 Name:</b></td><td><input type="text" name="localFieldName1" id="tLocalFieldName1" maxlength="100" style="width:100px;" value="DTCYUS00"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Market Field 1 Value:</b></td><td><input type="text" name="localFieldValue1" id="tLocalFieldValue1" maxlength="100" style="width:100px;" value="00001"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Market Field 2 Name:</b></td><td><input type="text" name="localFieldName2" id="tLocalFieldName2" maxlength="100" style="width:100px;" value="DVPCCY"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Local Market Field 2 Value:</b></td><td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100" style="width:100px;" value="USD"></td></tr>
+      	<tr><td>&nbsp;</td><td colspan="2"><input type="submit"></td></tr>
       </table>
 <input type="hidden" name="myParty" id="hMyParty"> 
 <input type="hidden" name="counterparty" id="hCounterparty"> 
@@ -121,6 +128,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 <script>
 $(function() {
 	  loadInstrumentlist();
+	  toggleBenchmark();
 	  $('#createProposalForm').on("submit", function(e) {
 	    e.preventDefault(); // cancel the actual submit
 		$('#modal02').hide();
@@ -128,6 +136,14 @@ $(function() {
 	  });	  
       setTimeout(ping, 1000*30);
 });
+function toggleBenchmark() {
+	var rateType = $('#sRateType').val();
+	if (rateType == 'RFI' || rateType == 'FEE') {
+		$('#sBenchmark').prop('disabled', 'disabled');
+	} else {
+		$('#sBenchmark').prop('disabled', false);
+	}
+}
 </script>
 
 </body>

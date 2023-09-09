@@ -12,11 +12,14 @@
 
 package com.os.api.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * ContractProposal
  */
@@ -24,88 +27,96 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-08-24T20:38:16.660246147Z[GMT]")
 
 public class ContractProposal {
-  @SerializedName("trade")
-  private TradeAgreement trade = null;
+	@SerializedName("trade")
+	private TradeAgreement trade = null;
 
-  @SerializedName("settlement")
-  private Settlement settlement = null;
+	@SerializedName("settlement")
+	private List<PartySettlementInstruction> settlement = null;
 
-  public ContractProposal trade(TradeAgreement trade) {
-    this.trade = trade;
-    return this;
-  }
+	public ContractProposal trade(TradeAgreement trade) {
+		this.trade = trade;
+		return this;
+	}
 
-   /**
-   * Get trade
-   * @return trade
-  **/
-  @Schema(description = "")
-  public TradeAgreement getTrade() {
-    return trade;
-  }
+	/**
+	 * Get trade
+	 * 
+	 * @return trade
+	 **/
+	@Schema(description = "")
+	public TradeAgreement getTrade() {
+		return trade;
+	}
 
-  public void setTrade(TradeAgreement trade) {
-    this.trade = trade;
-  }
+	public void setTrade(TradeAgreement trade) {
+		this.trade = trade;
+	}
 
-  public ContractProposal settlement(Settlement settlement) {
-    this.settlement = settlement;
-    return this;
-  }
+	public ContractProposal settlement(List<PartySettlementInstruction> settlement) {
+		this.settlement = settlement;
+		return this;
+	}
 
-   /**
-   * Get settlement
-   * @return settlement
-  **/
-  @Schema(description = "")
-  public Settlement getSettlement() {
-    return settlement;
-  }
+	public ContractProposal addSettlementItem(PartySettlementInstruction settlementItem) {
+		if (this.settlement == null) {
+			this.settlement = new ArrayList<PartySettlementInstruction>();
+		}
+		this.settlement.add(settlementItem);
+		return this;
+	}
 
-  public void setSettlement(Settlement settlement) {
-    this.settlement = settlement;
-  }
+	/**
+	 * Get settlement
+	 * 
+	 * @return settlement
+	 **/
+	@Schema(description = "")
+	public List<PartySettlementInstruction> getSettlement() {
+		return settlement;
+	}
 
+	public void setSettlement(List<PartySettlementInstruction> settlement) {
+		this.settlement = settlement;
+	}
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    ContractProposal contractProposal = (ContractProposal) o;
-    return Objects.equals(this.trade, contractProposal.trade) &&
-        Objects.equals(this.settlement, contractProposal.settlement);
-  }
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		ContractProposal contractProposal = (ContractProposal) o;
+		return Objects.equals(this.trade, contractProposal.trade)
+				&& Objects.equals(this.settlement, contractProposal.settlement);
+	}
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(trade, settlement);
-  }
+	@Override
+	public int hashCode() {
+		return Objects.hash(trade, settlement);
+	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("class ContractProposal {\n");
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class ContractProposal {\n");
-    
-    sb.append("    trade: ").append(toIndentedString(trade)).append("\n");
-    sb.append("    settlement: ").append(toIndentedString(settlement)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+		sb.append("    trade: ").append(toIndentedString(trade)).append("\n");
+		sb.append("    settlement: ").append(toIndentedString(settlement)).append("\n");
+		sb.append("}");
+		return sb.toString();
+	}
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
+	/**
+	 * Convert the given object to string with each line indented by 4 spaces
+	 * (except the first line).
+	 */
+	private String toIndentedString(java.lang.Object o) {
+		if (o == null) {
+			return "null";
+		}
+		return o.toString().replace("\n", "\n    ");
+	}
 
 }

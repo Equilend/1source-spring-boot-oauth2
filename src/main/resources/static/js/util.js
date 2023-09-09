@@ -22,7 +22,9 @@ function loadData(parties, uri, dFunction, pFunction) {
 	table = new google.visualization.Table(document.getElementById('table_div'));
 	google.visualization.events.addListener(table, 'page', pageTable);
 
-	table.clearChart();
+    $("#table_div").LoadingOverlay("show", {
+        background  : "rgba(255, 255, 255, 0.8)"
+    });
 
 	$.ajax({
 		type: 'GET',
@@ -32,21 +34,21 @@ function loadData(parties, uri, dFunction, pFunction) {
 		},
 		data: pFunction(),
 		async: true,
-		statusCode: {
-			404: function(responseObject, textStatus, jqXHR) {
-				$('#cDialogText').text('Something went wrong with the request.');
-				$('#cDialog').dialog({
-					"show": true,
-					"modal": true,
-					"title": 'Trouble Loading Data'
-				});
-			}
-		},
 		success: function(j) {
-			data = dFunction(j, JSON.parse(parties));
-			table.draw(data, { allowHtml: true, showRowNumber: true, width: '100%', height: '90%', page: 'enable', pageSize: 10 });
+           	$("#table_div").LoadingOverlay("hide", true);
+        	if (j == null || j.length == 0) {
+	            setTimeout(function() {
+    	            table.draw(noResultData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '90%', page: 'disable' });
+            	}, 200);
+    		} else {
+				data = dFunction(j, JSON.parse(parties));
+            	setTimeout(function() {
+	                successData(table, data);
+            	}, 200);
+           	}
 		},
 		error: function(xhr, ajaxOptions, thrownError) {
+            $("#table_div").LoadingOverlay("hide", true);
 			if (xhr.status == 404) {
 				table.draw(noResultData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '90%', page: 'disable' });
 			} else {
@@ -57,6 +59,10 @@ function loadData(parties, uri, dFunction, pFunction) {
 }
 
 var lastEventId;
+
+function successData(table, data) {
+    table.draw(data, { allowHtml: true, showRowNumber: true, width: '100%', height: '90%', page: 'enable', pageSize: 10 });	
+}
 
 function errorData() {
 	var d = new google.visualization.DataTable();
@@ -263,7 +269,8 @@ function agreementData(j, parties) {
 	d.addColumn('datetime', 'Last Update');
 	d.addColumn('string', 'Ticker');
 	d.addColumn('string', 'Cusip');
-	d.addColumn('number', 'Rate');
+	d.addColumn('string', 'Rate Type');
+	d.addColumn('string', 'Rate');
 	d.addColumn('number', 'Quantity');
 	d.addColumn('number', 'Value');
 
@@ -306,6 +313,23 @@ function agreementData(j, parties) {
 		if (canSub) {
 			btns += '<input type="button" value="Propose Contract" onclick="createContract(' + rowIdx + ', 1, \'/v1/ledger/agreements/\');return false;"/>';
 		}
+		
+		var rateType = 'Rebate';
+		if (j[i].trade.rate.fee) {
+			rateType = 'Fee';
+		}
+		
+		var rate = null;
+		if (j[i].trade.rate.fee) {
+			rate = j[i].trade.rate.fee.baseRate.toString();
+		} else if (j[i].trade.rate.rebate) {
+			if (j[i].trade.rate.rebate.fixed) {
+				rate = j[i].trade.rate.rebate.fixed.baseRate.toString();
+			} else if (j[i].trade.rate.rebate.floating) {
+				rate = j[i].trade.rate.rebate.floating.benchmark + '+' + j[i].trade.rate.rebate.floating.spread.toString();
+			}
+		}
+		
 		d.addRow([{ v: 'ButtonName', f: btns }
 			, j[i].agreementId
 			, borrower
@@ -313,7 +337,8 @@ function agreementData(j, parties) {
 			, new Date(Date.parse(j[i].lastUpdateDateTime))
 			, j[i].trade.instrument.ticker
 			, j[i].trade.instrument.cusip
-			, j[i].trade.rate.rebateBps
+			, rateType
+			, rate
 			, j[i].trade.quantity
 			, j[i].trade.collateral.collateralValue]);
 
@@ -354,7 +379,8 @@ function contractData(j, parties) {
 	d.addColumn('string', 'Status');
 	d.addColumn('string', 'Ticker');
 	d.addColumn('string', 'Cusip');
-	d.addColumn('number', 'Rate');
+	d.addColumn('string', 'Rate Type');
+	d.addColumn('string', 'Rate');
 	d.addColumn('number', 'Quantity');
 	d.addColumn('number', 'Value');
 
@@ -417,6 +443,22 @@ function contractData(j, parties) {
 			btns += '<input type="button" value="Cancel" onclick="cancelContract(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
 		}
 
+		var rateType = 'Rebate';
+		if (j[i].trade.rate.fee) {
+			rateType = 'Fee';
+		}
+
+		var rate = null;
+		if (j[i].trade.rate.fee) {
+			rate = j[i].trade.rate.fee.baseRate.toString();
+		} else if (j[i].trade.rate.rebate) {
+			if (j[i].trade.rate.rebate.fixed) {
+				rate = j[i].trade.rate.rebate.fixed.baseRate.toString();
+			} else if (j[i].trade.rate.rebate.floating) {
+				rate = j[i].trade.rate.rebate.floating.benchmark + '+' + j[i].trade.rate.rebate.floating.spread.toString();
+			}
+		}
+
 		d.addRow([{ v: 'ButtonName', f: btns }
 			, j[i].contractId
 			, borrower
@@ -425,7 +467,8 @@ function contractData(j, parties) {
 			, j[i].contractStatus
 			, j[i].trade.instrument.ticker
 			, j[i].trade.instrument.cusip
-			, j[i].trade.rate.rebateBps
+			, rateType
+			, rate
 			, j[i].trade.quantity
 			, j[i].trade.collateral.collateralValue]);
 
@@ -514,7 +557,18 @@ function createContract(rowIndx, clickIndx, clickUriPrefix) {
 			$('#cTicker').text(j.trade.instrument.ticker);
 			$('#cCusip').text(j.trade.instrument.cusip);
 			$('#cSedol').text(j.trade.instrument.sedol);
-			$('#cRate').text(j.trade.rate.rebateBps);
+			if (j.trade.rate.rebate) {
+				$('#cRateType').text("Rebate");
+				if (j.trade.rate.rebate.floating) {
+ 				    $('#cRate').text(j.trade.rate.rebate.floating.baseRate);
+ 				    $('#cRateBenchmark').text(j.trade.rate.rebate.floating.benchmark);
+				} else if (j.trade.rate.rebate.fixed) {
+ 				    $('#cRate').text(j.trade.rate.rebate.fixed.baseRate);
+				}
+			} else if (j.trade.rate.fee) {
+				$('#cRateType').text("Fee");
+				$('#cRate').text(j.trade.rate.fee.baseRate);
+			}
 			$('#cQuantity').text(j.trade.quantity);
 			$('#cCurrency').text(j.trade.billingCurrency);
 			$('#cValue').text(j.trade.collateral.collateralValue);
@@ -549,12 +603,12 @@ function approveContract(rowIndx, clickIndx, clickUriPrefix) {
 			var borrower;
 			var lender;
 			
-			for (var t = 0; t < j[0].trade.transactingParties.length; t++) {
+			for (var t = 0; t < j.trade.transactingParties.length; t++) {
 
-				if (j[0].trade.transactingParties[t].partyRole == 'BORROWER') {
-					borrower = j[0].trade.transactingParties[t].party.partyId;
-				} else if (j[0].trade.transactingParties[t].partyRole == 'LENDER') {
-					lender = j[0].trade.transactingParties[t].party.partyId;
+				if (j.trade.transactingParties[t].partyRole == 'BORROWER') {
+					borrower = j.trade.transactingParties[t].party.partyId;
+				} else if (j.trade.transactingParties[t].partyRole == 'LENDER') {
+					lender = j.trade.transactingParties[t].party.partyId;
 				}
 			}
 
@@ -601,7 +655,7 @@ function declineContract(rowIndx, clickIndx, clickUriPrefix) {
 				"show": true,
 				"modal": true,
 				"title": 'Success',
-				"close": loadContracts()
+				"close": function(event, ui){loadContracts();}
 			});
 		},
 		error: function(x, s, e) {
@@ -638,7 +692,7 @@ function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
 				"show": true,
 				"modal": true,
 				"title": 'Success',
-				"close": loadContracts()
+				"close": function(event, ui){loadContracts();}
 			});
 		},
 		error: function(x, s, e) {
@@ -801,7 +855,7 @@ function acceptContract(accept, id) {
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader(header, token);
 		},
-		data: JSON.stringify(accept).replace('"settlement"', '"borrowerSettlementInformation"'), //This is a workaround until the bug is fixed
+		data: JSON.stringify(accept),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		headers: {
@@ -824,7 +878,7 @@ function acceptContract(accept, id) {
 				"show": true,
 				"modal": true,
 				"title": 'Success',
-				"close": loadContracts()
+				"close": function(event, ui){loadContracts();}
 			});
 		},
 		error: function(x, s, e) {

@@ -14,11 +14,14 @@ package com.os.api.model;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import com.google.gson.annotations.SerializedName;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * ModelReturn
  */
@@ -26,180 +29,190 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-08-24T20:38:16.660246147Z[GMT]")
 
 public class ModelReturn {
-  @SerializedName("returnId")
-  private String returnId = null;
+	@SerializedName("returnId")
+	private String returnId = null;
 
-  @SerializedName("contractId")
-  private String contractId = null;
+	@SerializedName("contractId")
+	private String contractId = null;
 
-  @SerializedName("status")
-  private ContractStatus status = null;
+	@SerializedName("status")
+	private ContractStatus status = null;
 
-  @SerializedName("quantity")
-  private BigDecimal quantity = null;
+	@SerializedName("quantity")
+	private BigDecimal quantity = null;
 
-  @SerializedName("settlement")
-  private Settlement settlement = null;
+	@SerializedName("settlement")
+	private List<PartySettlementInstruction> settlement = null;
 
-  @SerializedName("lastUpdateDatetime")
-  private OffsetDateTime lastUpdateDatetime = null;
+	@SerializedName("lastUpdateDatetime")
+	private OffsetDateTime lastUpdateDatetime = null;
 
-  public ModelReturn returnId(String returnId) {
-    this.returnId = returnId;
-    return this;
-  }
+	public ModelReturn returnId(String returnId) {
+		this.returnId = returnId;
+		return this;
+	}
 
-   /**
-   * Get returnId
-   * @return returnId
-  **/
-  @Schema(description = "")
-  public String getReturnId() {
-    return returnId;
-  }
+	/**
+	 * Get returnId
+	 * 
+	 * @return returnId
+	 **/
+	@Schema(description = "")
+	public String getReturnId() {
+		return returnId;
+	}
 
-  public void setReturnId(String returnId) {
-    this.returnId = returnId;
-  }
+	public void setReturnId(String returnId) {
+		this.returnId = returnId;
+	}
 
-  public ModelReturn contractId(String contractId) {
-    this.contractId = contractId;
-    return this;
-  }
+	public ModelReturn contractId(String contractId) {
+		this.contractId = contractId;
+		return this;
+	}
 
-   /**
-   * Get contractId
-   * @return contractId
-  **/
-  @Schema(required = true, description = "")
-  public String getContractId() {
-    return contractId;
-  }
+	/**
+	 * Get contractId
+	 * 
+	 * @return contractId
+	 **/
+	@Schema(required = true, description = "")
+	public String getContractId() {
+		return contractId;
+	}
 
-  public void setContractId(String contractId) {
-    this.contractId = contractId;
-  }
+	public void setContractId(String contractId) {
+		this.contractId = contractId;
+	}
 
-  public ModelReturn status(ContractStatus status) {
-    this.status = status;
-    return this;
-  }
+	public ModelReturn status(ContractStatus status) {
+		this.status = status;
+		return this;
+	}
 
-   /**
-   * Get status
-   * @return status
-  **/
-  @Schema(required = true, description = "")
-  public ContractStatus getStatus() {
-    return status;
-  }
+	/**
+	 * Get status
+	 * 
+	 * @return status
+	 **/
+	@Schema(required = true, description = "")
+	public ContractStatus getStatus() {
+		return status;
+	}
 
-  public void setStatus(ContractStatus status) {
-    this.status = status;
-  }
+	public void setStatus(ContractStatus status) {
+		this.status = status;
+	}
 
-  public ModelReturn quantity(BigDecimal quantity) {
-    this.quantity = quantity;
-    return this;
-  }
+	public ModelReturn quantity(BigDecimal quantity) {
+		this.quantity = quantity;
+		return this;
+	}
 
-   /**
-   * Get quantity
-   * @return quantity
-  **/
-  @Schema(required = true, description = "")
-  public BigDecimal getQuantity() {
-    return quantity;
-  }
+	/**
+	 * Get quantity
+	 * 
+	 * @return quantity
+	 **/
+	@Schema(required = true, description = "")
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
 
-  public void setQuantity(BigDecimal quantity) {
-    this.quantity = quantity;
-  }
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
 
-  public ModelReturn settlement(Settlement settlement) {
-    this.settlement = settlement;
-    return this;
-  }
+	public ModelReturn settlement(List<PartySettlementInstruction> settlement) {
+		this.settlement = settlement;
+		return this;
+	}
 
-   /**
-   * Get settlement
-   * @return settlement
-  **/
-  @Schema(description = "")
-  public Settlement getSettlement() {
-    return settlement;
-  }
+	public ModelReturn addSettlementItem(PartySettlementInstruction settlementItem) {
+		if (this.settlement == null) {
+			this.settlement = new ArrayList<PartySettlementInstruction>();
+		}
+		this.settlement.add(settlementItem);
+		return this;
+	}
 
-  public void setSettlement(Settlement settlement) {
-    this.settlement = settlement;
-  }
+	/**
+	 * Get settlement
+	 * 
+	 * @return settlement
+	 **/
+	@Schema(description = "")
+	public List<PartySettlementInstruction> getSettlement() {
+		return settlement;
+	}
 
-  public ModelReturn lastUpdateDatetime(OffsetDateTime lastUpdateDatetime) {
-    this.lastUpdateDatetime = lastUpdateDatetime;
-    return this;
-  }
+	public void setSettlement(List<PartySettlementInstruction> settlement) {
+		this.settlement = settlement;
+	}
 
-   /**
-   * Get lastUpdateDatetime
-   * @return lastUpdateDatetime
-  **/
-  @Schema(required = true, description = "")
-  public OffsetDateTime getLastUpdateDatetime() {
-    return lastUpdateDatetime;
-  }
+	public ModelReturn lastUpdateDatetime(OffsetDateTime lastUpdateDatetime) {
+		this.lastUpdateDatetime = lastUpdateDatetime;
+		return this;
+	}
 
-  public void setLastUpdateDatetime(OffsetDateTime lastUpdateDatetime) {
-    this.lastUpdateDatetime = lastUpdateDatetime;
-  }
+	/**
+	 * Get lastUpdateDatetime
+	 * 
+	 * @return lastUpdateDatetime
+	 **/
+	@Schema(required = true, description = "")
+	public OffsetDateTime getLastUpdateDatetime() {
+		return lastUpdateDatetime;
+	}
 
+	public void setLastUpdateDatetime(OffsetDateTime lastUpdateDatetime) {
+		this.lastUpdateDatetime = lastUpdateDatetime;
+	}
 
-  @Override
-  public boolean equals(java.lang.Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    ModelReturn _return = (ModelReturn) o;
-    return Objects.equals(this.returnId, _return.returnId) &&
-        Objects.equals(this.contractId, _return.contractId) &&
-        Objects.equals(this.status, _return.status) &&
-        Objects.equals(this.quantity, _return.quantity) &&
-        Objects.equals(this.settlement, _return.settlement) &&
-        Objects.equals(this.lastUpdateDatetime, _return.lastUpdateDatetime);
-  }
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		ModelReturn _return = (ModelReturn) o;
+		return Objects.equals(this.returnId, _return.returnId) && Objects.equals(this.contractId, _return.contractId)
+				&& Objects.equals(this.status, _return.status) && Objects.equals(this.quantity, _return.quantity)
+				&& Objects.equals(this.settlement, _return.settlement)
+				&& Objects.equals(this.lastUpdateDatetime, _return.lastUpdateDatetime);
+	}
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(returnId, contractId, status, quantity, settlement, lastUpdateDatetime);
-  }
+	@Override
+	public int hashCode() {
+		return Objects.hash(returnId, contractId, status, quantity, settlement, lastUpdateDatetime);
+	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("class ModelReturn {\n");
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class ModelReturn {\n");
-    
-    sb.append("    returnId: ").append(toIndentedString(returnId)).append("\n");
-    sb.append("    contractId: ").append(toIndentedString(contractId)).append("\n");
-    sb.append("    status: ").append(toIndentedString(status)).append("\n");
-    sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
-    sb.append("    settlement: ").append(toIndentedString(settlement)).append("\n");
-    sb.append("    lastUpdateDatetime: ").append(toIndentedString(lastUpdateDatetime)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
+		sb.append("    returnId: ").append(toIndentedString(returnId)).append("\n");
+		sb.append("    contractId: ").append(toIndentedString(contractId)).append("\n");
+		sb.append("    status: ").append(toIndentedString(status)).append("\n");
+		sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
+		sb.append("    settlement: ").append(toIndentedString(settlement)).append("\n");
+		sb.append("    lastUpdateDatetime: ").append(toIndentedString(lastUpdateDatetime)).append("\n");
+		sb.append("}");
+		return sb.toString();
+	}
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
-  }
+	/**
+	 * Convert the given object to string with each line indented by 4 spaces
+	 * (except the first line).
+	 */
+	private String toIndentedString(java.lang.Object o) {
+		if (o == null) {
+			return "null";
+		}
+		return o.toString().replace("\n", "\n    ");
+	}
 
 }

@@ -240,10 +240,6 @@ public class UtilRestController {
 
 			LocalDate tradeDate = LocalDate.now();
 			
-			FeeRate feeRate = new FeeRate();
-			FixedRateDef fixedRateDef = new FixedRateDef();
-			feeRate.setFee(fixedRateDef);
-
 			Float r = 5f;
 			if (proposalForm.getRate() != null) {
 				try {
@@ -252,12 +248,54 @@ public class UtilRestController {
 					logger.warn("Bad rate: " + proposalForm.getRate());
 				}
 			}
-			fixedRateDef.setBaseRate(r);
-			fixedRateDef.setCutoffTime("18:00");
-			fixedRateDef.setEffectiveDate(tradeDate);
-			fixedRateDef.setEffectiveRate(null);
 
-			trade.setRate(feeRate);
+			CollateralType collateralType = CollateralType.CASH;
+			
+			if ("RFL".equals(proposalForm.getRateType())) {
+
+				FloatingRateDef floatingRateDef = new FloatingRateDef();
+				floatingRateDef.setSpread(r);
+				floatingRateDef.setCutoffTime("18:00");
+				floatingRateDef.setEffectiveDate(tradeDate);
+				floatingRateDef.setEffectiveRate(null);
+				floatingRateDef.setBenchmark(BenchmarkCd.fromValue(proposalForm.getBenchmark()));
+				
+				FloatingRate floatingRate = new FloatingRate();
+				floatingRate.setFloating(floatingRateDef);
+				
+				RebateRate rebateRate = new RebateRate();
+				rebateRate.setRebate(floatingRate);
+
+				trade.setRate(rebateRate);
+
+			} else if ("RFI".equals(proposalForm.getRateType())) {
+				
+				FixedRateDef fixedRateDef = new FixedRateDef();
+				fixedRateDef.setBaseRate(r);
+				fixedRateDef.setCutoffTime("18:00");
+				fixedRateDef.setEffectiveDate(tradeDate);
+				fixedRateDef.setEffectiveRate(null);
+
+				FixedRate fixedRate = new FixedRate();
+				fixedRate.setFixed(fixedRateDef);
+				
+				RebateRate rebateRate = new RebateRate();
+				rebateRate.setRebate(fixedRate);
+
+				trade.setRate(rebateRate);
+				
+			} else if ("FEE".equals(proposalForm.getRateType())) {
+				FeeRate feeRate = new FeeRate();
+				FixedRateDef fixedRateDef = new FixedRateDef();
+				feeRate.setFee(fixedRateDef);
+				fixedRateDef.setBaseRate(r);
+				fixedRateDef.setCutoffTime("18:00");
+				fixedRateDef.setEffectiveDate(tradeDate);
+				fixedRateDef.setEffectiveRate(null);
+				trade.setRate(feeRate);
+				
+				collateralType = CollateralType.NONCASH;
+			}
 
 			BigDecimal q = new BigDecimal(1000);
 			if (proposalForm.getQuantity() != null) {
@@ -289,7 +327,7 @@ public class UtilRestController {
 			collateralValue.setScale(2, java.math.RoundingMode.HALF_UP);
 			collateral.setCollateralValue(collateralValue.doubleValue());
 			collateral.setCurrency(CurrencyCd.USD);
-			collateral.setType(CollateralType.NONCASH);
+			collateral.setType(collateralType);
 			collateral.setMargin(102);
 			collateral.setRoundingRule(10.0f);
 			collateral.setRoundingMode(RoundingMode.ALWAYSUP);
@@ -329,10 +367,7 @@ public class UtilRestController {
 				instruction.setLocalMarketFields(localMarketFields);
 			}
 
-			Settlement settlement = new Settlement();
-			settlement.setInstructions(Collections.singletonList(partySettlementInstruction));
-			
-			contractProposal.setSettlement(settlement);
+			contractProposal.setSettlement(Collections.singletonList(partySettlementInstruction));
 
 			return new ResponseEntity<ContractProposal>(contractProposal, HttpStatus.OK);
 		}
@@ -363,6 +398,10 @@ public class UtilRestController {
 			}
 		}
 		contractProposal.setTrade(tradeAgreement);
+		
+		if (tradeAgreement.getDividendRatePct() == null) {
+			tradeAgreement.setDividendRatePct(100f);
+		}
 
 		List<NameValuePair> settlmentNameValuePairs = proposalForm.getSettlement();
 
@@ -417,10 +456,7 @@ public class UtilRestController {
 			instruction.setLocalMarketFields(localMarketFields);
 		}
 
-		Settlement settlement = new Settlement();
-		settlement.setInstructions(Collections.singletonList(partySettlementInstruction));
-		
-		contractProposal.setSettlement(settlement);
+		contractProposal.setSettlement(Collections.singletonList(partySettlementInstruction));
 
 		return new ResponseEntity<ContractProposal>(contractProposal, HttpStatus.OK);
 
