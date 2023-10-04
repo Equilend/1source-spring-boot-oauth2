@@ -2,85 +2,91 @@
     {
         "partyId": "TLEN-US",
         "partyName": "Test Lender US",
-        "partyRole": "LENDER",
         "gleifLei": "KTB500SKZSDI75VSFU40",
         "users": ["TestLender1User"]
     },
     {
         "partyId": "TBORR-US",
         "partyName": "Test Borrower US",
-        "partyRole": "BORROWER",
         "gleifLei": "KTB500SKZSDI75VSFU40",
         "users": ["TestBorrower1User"]
     },
     {
         "partyId": "TLEN-US-QA",
         "partyName": "Test Lender US QA",
-        "partyRole": "LENDER",
         "gleifLei": "KTB500SKZSDI75VSFU40",
         "users": ["QALender1User"]
     },
     {
         "partyId": "TBORR-US-QA",
         "partyName": "Test Borrower US QA",
-        "partyRole": "BORROWER",
         "gleifLei": "KTB500SKZSDI75VSFU40",
         "users": ["QABorrower1User"]
     },
     {
         "partyId": "GSCO US",
         "partyName": "Goldman Sachs and Co-US",
-        "partyRole": "BORROWER",
         "gleifLei": "FOR8UP27PHTHYVLBNG30",
         "users": ["goldmanqauser1", "goldmanstageuser1"]
     },
     {
         "partyId": "BlackRock US Dom",
         "partyName": "BlackRock Inst. Trust Co., N.A. Domestic",
-        "partyRole": "LENDER",
         "gleifLei": "549300RK1FB0VMTPD087",
         "users": ["blackrockqauser1", "blackrockstageuser1"]
     },
     {
         "partyId": "MSCO LLC",
         "partyName": "Morgan Stanley and CO LLC",
-        "partyRole": "BORROWER",
         "gleifLei": "9R7GPTSO7KV3UQJZQ078",
         "users": ["msqauser1", "msstageuser1"]
     },
     {
         "partyId": "JPMC",
         "partyName": "JPMorgan Chase",
-        "partyRole": "LENDER",
         "gleifLei": "8I5DZWZKVSZI1NUHU748",
         "users": ["jpmqauser1", "jpmstageuser1"]
     },
     {
         "partyId": "BNYMELLON",
         "partyName": "BNY Mellon",
-        "partyRole": "LENDER",
         "gleifLei": "WFLLPEPC7FZXENRZV188",
         "users": ["bnyqauser1", "bnystageuser1"]
     },
     {
         "partyId": "BNYMELLON CPX",
         "partyName": "BNY Mellon CPX",
-        "partyRole": "LENDER",
         "gleifLei": "WFLLPEPC7FZXENRZV188",
         "users": ["bnycpxqauser1", "bnycpxstageuser1"]
     },
     {
         "partyId": "NBC",
         "partyName": "National Bank of Canada",
-        "partyRole": "BORROWER",
         "gleifLei": "549300DNXF0U6FHR5270",
         "users": ["nbfstageuser1"]
     },
     {
         "partyId": "NBF Inc.",
         "partyName": "National Bank Financial Inc.",
-        "partyRole": "LENDER",
         "gleifLei": "254900F2ES7T4LUTQL51",
         "users": ["nbfqauser1", "nbflenderstageuser1"]
+    },
+    {
+        "partyId": "STNW_US_EQ",
+        "partyName": "Stonewain Test",
+        "gleifLei": "4YCP00N1DDKL1NC2MW38",
+        "users": ["stonewainmqstageuser1"]
+    },
+    {
+        "partyId": "STNWN2_US_EQ_NY",
+        "partyName": "Stonewain Trader2",
+        "gleifLei": "H48D00MK8GQR4Y1WWR65",
+        "users": ["stonewainm2stageuser1"]
+    },
+    {
+        "partyId": "STNWN_TRD3_US_EQ",
+        "partyName": "Stonewain Trader3",
+        "gleifLei": "3S2K00ZMKMQ57SPKJ719",
+        "users": ["stonewainm2stageuser1"]
     }
 ]

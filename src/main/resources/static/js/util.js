@@ -91,7 +91,7 @@ function partyData(j, parties) {
 		var canSub = false;
 
 		for (var p = 0; p < parties.length; p++) {
-			if (parties[p].partyId != j[i].partyId && parties[p].partyRole == 'LENDER') {
+			if (parties[p].partyId != j[i].partyId) {
 				canSub = true;
 				break;
 			}
@@ -125,16 +125,19 @@ function createContractShell(rowIndx, clickIndx, clickUriPrefix) {
 
 	var partyObj = JSON.parse(parties);
 
+
+	$('#sMyParty').empty();
+
 	for (var p = 0; p < partyObj.length; p++) {
-		if (partyObj[p].partyRole == 'LENDER') {
-			$('#cMyParty').text(partyObj[p].partyId);
-			$('#hMyParty').val(partyObj[p].partyId);
-			break;
-		}
+		$('#sMyParty').append(
+			$('<option></option>')
+				.val(partyObj[p].partyId)
+				.html(partyObj[p].partyId));
 	}
 
 	$('#cCounterparty').text(data.getFormattedValue(rowIndx, clickIndx));
 	$('#hCounterparty').val(data.getFormattedValue(rowIndx, clickIndx));
+	
 }
 
 function validateProposal(frm) {
@@ -297,7 +300,7 @@ function agreementData(j, parties) {
 			}
 
 			for (var p = 0; p < parties.length; p++) {
-				if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId && j[i].trade.transactingParties[t].partyRole == 'LENDER') {
+				if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId) {
 					canSub = true;
 					break;
 				}
@@ -372,11 +375,11 @@ function contractData(j, parties) {
 
 	var d = new google.visualization.DataTable();
 	d.addColumn('string', '');
+	d.addColumn('string', 'Status');
 	d.addColumn('string', 'Contract ID');
 	d.addColumn('string', 'Borrower');
 	d.addColumn('string', 'Lender');
 	d.addColumn('datetime', 'Last Update');
-	d.addColumn('string', 'Status');
 	d.addColumn('string', 'Ticker');
 	d.addColumn('string', 'Cusip');
 	d.addColumn('string', 'Rate Type');
@@ -411,20 +414,20 @@ function contractData(j, parties) {
 
 			if (j[i].contractStatus == 'PROPOSED') {
 
-				for (var p = 0; p < parties.length; p++) {
-					if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId && j[i].trade.transactingParties[t].partyRole == 'BORROWER') {
+//				for (var p = 0; p < parties.length; p++) {
+//					if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId && j[i].trade.transactingParties[t].partyRole == 'BORROWER') {
 						canAcc = true;
 						canDec = true;
-						break;
-					}
-				}
+//						break;
+//					}
+//				}
 
-				for (var p = 0; p < parties.length; p++) {
-					if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId && j[i].trade.transactingParties[t].partyRole == 'LENDER') {
+//				for (var p = 0; p < parties.length; p++) {
+//					if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId && j[i].trade.transactingParties[t].partyRole == 'LENDER') {
 						canCan = true;
-						break;
-					}
-				}
+//						break;
+//					}
+//				}
 			}
 		}
 
@@ -432,15 +435,15 @@ function contractData(j, parties) {
 			continue;
 		}
 
-		var btns = '<input type="button" value="Json" onclick="showJson(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		var btns = '<input type="button" value="Json" onclick="showJson(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
 		if (canAcc) {
-			btns += '<input type="button" value="Approve" onclick="approveContract(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+			btns += '<input type="button" value="Approve" onclick="approveContract(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
 		}
 		if (canDec) {
-			btns += '<input type="button" value="Decline" onclick="declineContract(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+			btns += '<input type="button" value="Decline" onclick="declineContract(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
 		}
 		if (canCan) {
-			btns += '<input type="button" value="Cancel" onclick="cancelContract(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+			btns += '<input type="button" value="Cancel" onclick="cancelContract(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
 		}
 
 		var rateType = 'Rebate';
@@ -460,11 +463,11 @@ function contractData(j, parties) {
 		}
 
 		d.addRow([{ v: 'ButtonName', f: btns }
+			, j[i].contractStatus
 			, j[i].contractId
 			, borrower
 			, lender
 			, new Date(Date.parse(j[i].lastUpdateDateTime))
-			, j[i].contractStatus
 			, j[i].trade.instrument.ticker
 			, j[i].trade.instrument.cusip
 			, rateType
@@ -616,12 +619,16 @@ function approveContract(rowIndx, clickIndx, clickUriPrefix) {
 				if (partyObj[p].partyId == borrower) {
 					$('#cMyParty').text(partyObj[p].partyId);
 					$('#hMyParty').val(partyObj[p].partyId);
+					$('#cPartyRole').text("Borrowing From");
+					$('#hPartyRole').val("BORROWER");
 					$('#cCounterparty').text(lender);
 					$('#hCounterparty').val(lender);
 					break;
 				} else if (partyObj[p].partyId == lender) {
 					$('#cMyParty').text(partyObj[p].partyId);
 					$('#hMyParty').val(partyObj[p].partyId);
+					$('#cPartyRole').text("Lending To");
+					$('#hPartyRole').val("LENDER");
 					$('#cCounterparty').text(borrower);
 					$('#hCounterparty').val(borrower);
 					break;
@@ -639,6 +646,11 @@ function declineContract(rowIndx, clickIndx, clickUriPrefix) {
 
 	var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
 
+    $("#table_div").LoadingOverlay("show", {
+        background  : "rgba(255, 255, 255, 0.8)"
+    });
+
+    setTimeout(function() {
 	$.ajax({
 		type: 'POST',
 		url: apiserver + uri + '/decline',
@@ -649,7 +661,19 @@ function declineContract(rowIndx, clickIndx, clickUriPrefix) {
 			'Content-Type': 'application/json'
 		},
 		async: false,
+		statusCode: {
+			403: function(responseObject, textStatus, jqXHR) {
+           	$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('You cannot Decline a contract you proposed. Try to Cancel instead. Otherwise please contact support.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+ 					"title": 'Error'
+				});
+			}
+		},
 		success: function(j) {
+           	$("#table_div").LoadingOverlay("hide", true);
 			$('#cDialogText').text('Contract declined!');
 			$('#cDialog').dialog({
 				"show": true,
@@ -659,6 +683,7 @@ function declineContract(rowIndx, clickIndx, clickUriPrefix) {
 			});
 		},
 		error: function(x, s, e) {
+           	$("#table_div").LoadingOverlay("hide", true);
 			$('#cDialogText').text('Something went wrong.');
 			$('#cDialog').dialog({
 				"show": true,
@@ -667,6 +692,9 @@ function declineContract(rowIndx, clickIndx, clickUriPrefix) {
 			});
 		}
 	});
+	            	}, 200);
+
+
 }
 
 function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
@@ -675,6 +703,12 @@ function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
 	var header = $('#_csrf_header').attr('content');
 
 	var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+
+    $("#table_div").LoadingOverlay("show", {
+        background  : "rgba(255, 255, 255, 0.8)"
+    });
+
+    setTimeout(function() {
 
 	$.ajax({
 		type: 'POST',
@@ -686,7 +720,19 @@ function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
 			'Content-Type': 'application/json'
 		},
 		async: false,
+		statusCode: {
+			403: function(responseObject, textStatus, jqXHR) {
+	           	$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('You cannot Cancel a contract you received. Try to Decline instead. Otherwise please contact support.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+ 					"title": 'Error'
+				});
+			}
+		},
 		success: function(j) {
+           	$("#table_div").LoadingOverlay("hide", true);
 			$('#cDialogText').text('Contract canceled!');
 			$('#cDialog').dialog({
 				"show": true,
@@ -696,6 +742,7 @@ function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
 			});
 		},
 		error: function(x, s, e) {
+           	$("#table_div").LoadingOverlay("hide", true);
 			$('#cDialogText').text('Something went wrong.');
 			$('#cDialog').dialog({
 				"show": true,
@@ -704,6 +751,7 @@ function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
 			});
 		}
 	});
+	            	}, 200);
 
 }
 

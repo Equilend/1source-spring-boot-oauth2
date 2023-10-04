@@ -9,6 +9,8 @@ public class ContractProposalForm {
 	private String myParty = null;
 	@JsonProperty("counterparty")
 	private String counterparty = null;
+	@JsonProperty("partyRole")
+	private String partyRole = null;
 	@JsonProperty("instrument")
 	private String instrument = null;
 	@JsonProperty("rateType")
@@ -52,6 +54,14 @@ public class ContractProposalForm {
 
 	public void setCounterparty(String counterparty) {
 		this.counterparty = counterparty;
+	}
+
+	public String getPartyRole() {
+		return partyRole;
+	}
+
+	public void setPartyRole(String partyRole) {
+		this.partyRole = partyRole;
 	}
 
 	public String getInstrument() {
@@ -169,8 +179,8 @@ public class ContractProposalForm {
 	@Override
 	public int hashCode() {
 		return Objects.hash(benchmark, counterparty, instrument, localAgentAcct, localAgentBic, localAgentName,
-				localFieldName1, localFieldName2, localFieldValue1, localFieldValue2, myParty, price, quantity, rate,
-				rateType, settlmentBic);
+				localFieldName1, localFieldName2, localFieldValue1, localFieldValue2, myParty, partyRole, price,
+				quantity, rate, rateType, settlmentBic);
 	}
 
 	@Override
@@ -190,9 +200,9 @@ public class ContractProposalForm {
 				&& Objects.equals(localFieldName2, other.localFieldName2)
 				&& Objects.equals(localFieldValue1, other.localFieldValue1)
 				&& Objects.equals(localFieldValue2, other.localFieldValue2) && Objects.equals(myParty, other.myParty)
-				&& Objects.equals(price, other.price) && Objects.equals(quantity, other.quantity)
-				&& Objects.equals(rate, other.rate) && Objects.equals(rateType, other.rateType)
-				&& Objects.equals(settlmentBic, other.settlmentBic);
+				&& Objects.equals(partyRole, other.partyRole) && Objects.equals(price, other.price)
+				&& Objects.equals(quantity, other.quantity) && Objects.equals(rate, other.rate)
+				&& Objects.equals(rateType, other.rateType) && Objects.equals(settlmentBic, other.settlmentBic);
 	}
 
 }

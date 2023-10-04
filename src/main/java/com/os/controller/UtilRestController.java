@@ -93,12 +93,12 @@ public class UtilRestController {
 			TransactingParties transactingParties = new TransactingParties();
 			TransactingParty borrowerTransactingParty = new TransactingParty();
 			borrowerTransactingParty.setPartyRole(PartyRole.BORROWER);
-			borrowerTransactingParty.setParty(myParty.getPartyRole().equals(PartyRole.BORROWER) ? myParty.toParty() : counterparty.toParty());
+			borrowerTransactingParty.setParty(PartyRole.BORROWER.toString().equals(agreementForm.getPartyRole()) ? myParty.toParty() : counterparty.toParty());
 			transactingParties.add(borrowerTransactingParty);
 
 			TransactingParty lenderTransactingParty = new TransactingParty();
 			lenderTransactingParty.setPartyRole(PartyRole.LENDER);
-			lenderTransactingParty.setParty(myParty.getPartyRole().equals(PartyRole.LENDER) ? myParty.toParty() : counterparty.toParty());
+			lenderTransactingParty.setParty(PartyRole.LENDER.toString().equals(agreementForm.getPartyRole())  ? myParty.toParty() : counterparty.toParty());
 			transactingParties.add(lenderTransactingParty);
 
 			trade.setTransactingParties(transactingParties);
@@ -192,12 +192,12 @@ public class UtilRestController {
 			TransactingParties transactingParties = new TransactingParties();
 			TransactingParty borrowerTransactingParty = new TransactingParty();
 			borrowerTransactingParty.setPartyRole(PartyRole.BORROWER);
-			borrowerTransactingParty.setParty(myParty.getPartyRole().equals(PartyRole.BORROWER) ? myParty.toParty() : counterparty.toParty());
+			borrowerTransactingParty.setParty(PartyRole.BORROWER.toString().equals(proposalForm.getPartyRole()) ? myParty.toParty() : counterparty.toParty());
 			transactingParties.add(borrowerTransactingParty);
 
 			TransactingParty lenderTransactingParty = new TransactingParty();
 			lenderTransactingParty.setPartyRole(PartyRole.LENDER);
-			lenderTransactingParty.setParty(myParty.getPartyRole().equals(PartyRole.LENDER) ? myParty.toParty() : counterparty.toParty());
+			lenderTransactingParty.setParty(PartyRole.LENDER.toString().equals(proposalForm.getPartyRole())  ? myParty.toParty() : counterparty.toParty());
 			transactingParties.add(lenderTransactingParty);
 
 			trade.setTransactingParties(transactingParties);
@@ -329,15 +329,19 @@ public class UtilRestController {
 			collateral.setCurrency(CurrencyCd.USD);
 			collateral.setType(collateralType);
 			collateral.setMargin(102);
-			collateral.setRoundingRule(10.0f);
-			collateral.setRoundingMode(RoundingMode.ALWAYSUP);
+			
+			//only add rounding rules if proposer is the lender
+			if (PartyRole.LENDER.toString().equals(proposalForm.getPartyRole())) {
+				collateral.setRoundingRule(10.0f);
+				collateral.setRoundingMode(RoundingMode.ALWAYSUP);
+			}
 
 			trade.setCollateral(collateral);
 
 			contractProposal.setTrade(trade);
 
 			PartySettlementInstruction partySettlementInstruction = new PartySettlementInstruction();
-			partySettlementInstruction.setPartyRole(myParty.getPartyRole());
+			partySettlementInstruction.setPartyRole(PartyRole.fromValue(proposalForm.getPartyRole()));
 
 			SettlementInstruction instruction = new SettlementInstruction();
 			partySettlementInstruction.setInstruction(instruction);
@@ -474,7 +478,13 @@ public class UtilRestController {
 		if (myParty != null && counterparty != null) {
 
 			PartySettlementInstruction partySettlementInstruction = new PartySettlementInstruction();
-			partySettlementInstruction.setPartyRole(myParty.getPartyRole());
+			partySettlementInstruction.setPartyRole(PartyRole.fromValue(acceptForm.getPartyRole()));
+
+			//only add rounding rules if proposer is the lender
+			if (PartyRole.LENDER.toString().equals(acceptForm.getPartyRole())) {
+				settlementInstructionUpdate.setRoundingRule(10);
+				settlementInstructionUpdate.setRoundingMode(RoundingMode.ALWAYSUP);
+			}
 
 			SettlementInstruction instruction = new SettlementInstruction();
 			partySettlementInstruction.setInstruction(instruction);
