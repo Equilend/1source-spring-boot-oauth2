@@ -82,5 +82,26 @@
         "partyRole": "LENDER",
         "gleifLei": "254900F2ES7T4LUTQL51",
         "users": ["nbfqauser1", "nbflenderstageuser1"]
+    },
+    {
+        "partyId": "STNW_US_EQ",
+        "partyName": "Stonewain Test",
+        "partyRole": "LENDER",
+        "gleifLei": "4YCP00N1DDKL1NC2MW38",
+        "users": ["stonewainmqstageuser1"]
+    },
+    {
+        "partyId": "STNWN2_US_EQ_NY",
+        "partyName": "Stonewain Trader 2",
+        "partyRole": "LENDER",
+        "gleifLei": "H48D00MK8GQR4Y1WWR65",
+        "users": ["stonewainm2stageuser1"]
+    },
+    {
+        "partyId": "STNWN_TRD3_US_EQ",
+        "partyName": "Stonewain Trader3",
+        "partyRole": "LENDER",
+        "gleifLei": "3S2K00ZMKMQ57SPKJ719",
+        "users": ["stonewainm2stageuser1"]
     }
 ]
