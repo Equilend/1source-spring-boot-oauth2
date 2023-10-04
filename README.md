@@ -6,3 +6,20 @@
 - Import as Maven project
 - Build with Java 8
 - Set Keycloak properties in application.properties
+## Deploying Docker container to AWS ECR
+### Prerequisites
+- Docker Desktop
+- AWS CLI
+- Permission to push images to AWS ECR
+### Build the Docker Jar
+- Base directory: ${project_loc:1source-spring-boot-oauth2}
+- Goals: clean package
+### Login with CLI
+- aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 856307828688.dkr.ecr.us-east-1.amazonaws.com
+### Build Docker image
+- docker build -t 1source-spring-boot-oauth2:1.0.18 .
+- note the version number _1.0.18_. Check AWS ECR for the last used image tag and increment accordingly 
+### Tag the Docker image in AWS ECR
+- docker tag 1source-spring-boot-oauth2:1.0.18 856307828688.dkr.ecr.us-east-1.amazonaws.com/1source-spring-boot-oauth2:1.0.18
+### Push the Docker image to AWS ECR
+- docker push 856307828688.dkr.ecr.us-east-1.amazonaws.com/1source-spring-boot-oauth2:1.0.18
