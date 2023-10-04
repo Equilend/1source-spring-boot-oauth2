@@ -396,6 +396,7 @@ function contractData(j, parties) {
 		var canAcc = false;
 		var canDec = false;
 		var canCan = false;
+		var canSettle = false;
 
 		var borrower;
 		var lender;
@@ -428,6 +429,8 @@ function contractData(j, parties) {
 //						break;
 //					}
 //				}
+			} else if (j[i].contractStatus == 'APPROVED') {
+				canSettle = true;
 			}
 		}
 
@@ -444,6 +447,9 @@ function contractData(j, parties) {
 		}
 		if (canCan) {
 			btns += '<input type="button" value="Cancel" onclick="cancelContract(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+		if (canSettle) {
+			btns += '<input type="button" value="Confirm Settlement" onclick="confirmSettlement(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
 		}
 
 		var rateType = 'Rebate';
@@ -605,7 +611,7 @@ function approveContract(rowIndx, clickIndx, clickUriPrefix) {
 
 			var borrower;
 			var lender;
-			
+
 			for (var t = 0; t < j.trade.transactingParties.length; t++) {
 
 				if (j.trade.transactingParties[t].partyRole == 'BORROWER') {
@@ -650,49 +656,49 @@ function declineContract(rowIndx, clickIndx, clickUriPrefix) {
         background  : "rgba(255, 255, 255, 0.8)"
     });
 
-    setTimeout(function() {
-	$.ajax({
-		type: 'POST',
-		url: apiserver + uri + '/decline',
-		beforeSend: function(xhr) {
-			xhr.setRequestHeader(header, token);
-		},
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		async: false,
-		statusCode: {
-			403: function(responseObject, textStatus, jqXHR) {
-           	$("#table_div").LoadingOverlay("hide", true);
-				$('#cDialogText').text('You cannot Decline a contract you proposed. Try to Cancel instead. Otherwise please contact support.');
+	setTimeout(function() {
+		$.ajax({
+			type: 'POST',
+			url: apiserver + uri + '/decline',
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			async: false,
+			statusCode: {
+				403: function(responseObject, textStatus, jqXHR) {
+					$("#table_div").LoadingOverlay("hide", true);
+					$('#cDialogText').text('You cannot Decline a contract you Proposed. Try to Cancel instead. Otherwise please contact support.');
+					$('#cDialog').dialog({
+						"show": true,
+						"modal": true,
+						"title": 'Error'
+					});
+				}
+			},
+			success: function(j) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Contract declined!');
 				$('#cDialog').dialog({
 					"show": true,
 					"modal": true,
- 					"title": 'Error'
+					"title": 'Success',
+					"close": function(event, ui) { loadContracts(); }
+				});
+			},
+			error: function(x, s, e) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Something went wrong.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
 				});
 			}
-		},
-		success: function(j) {
-           	$("#table_div").LoadingOverlay("hide", true);
-			$('#cDialogText').text('Contract declined!');
-			$('#cDialog').dialog({
-				"show": true,
-				"modal": true,
-				"title": 'Success',
-				"close": function(event, ui){loadContracts();}
-			});
-		},
-		error: function(x, s, e) {
-           	$("#table_div").LoadingOverlay("hide", true);
-			$('#cDialogText').text('Something went wrong.');
-			$('#cDialog').dialog({
-				"show": true,
-				"modal": true,
-				"title": 'Error'
-			});
-		}
-	});
-	            	}, 200);
+		});
+	}, 200);
 
 
 }
@@ -708,50 +714,50 @@ function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
         background  : "rgba(255, 255, 255, 0.8)"
     });
 
-    setTimeout(function() {
+	setTimeout(function() {
 
-	$.ajax({
-		type: 'POST',
-		url: apiserver + uri + '/cancel',
-		beforeSend: function(xhr) {
-			xhr.setRequestHeader(header, token);
-		},
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		async: false,
-		statusCode: {
-			403: function(responseObject, textStatus, jqXHR) {
-	           	$("#table_div").LoadingOverlay("hide", true);
-				$('#cDialogText').text('You cannot Cancel a contract you received. Try to Decline instead. Otherwise please contact support.');
+		$.ajax({
+			type: 'POST',
+			url: apiserver + uri + '/cancel',
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			async: false,
+			statusCode: {
+				403: function(responseObject, textStatus, jqXHR) {
+					$("#table_div").LoadingOverlay("hide", true);
+					$('#cDialogText').text('You cannot Cancel a contract you received. Try to Decline instead. Otherwise please contact support.');
+					$('#cDialog').dialog({
+						"show": true,
+						"modal": true,
+						"title": 'Error'
+					});
+				}
+			},
+			success: function(j) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Contract canceled!');
 				$('#cDialog').dialog({
 					"show": true,
 					"modal": true,
- 					"title": 'Error'
+					"title": 'Success',
+					"close": function(event, ui) { loadContracts(); }
+				});
+			},
+			error: function(x, s, e) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Something went wrong.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
 				});
 			}
-		},
-		success: function(j) {
-           	$("#table_div").LoadingOverlay("hide", true);
-			$('#cDialogText').text('Contract canceled!');
-			$('#cDialog').dialog({
-				"show": true,
-				"modal": true,
-				"title": 'Success',
-				"close": function(event, ui){loadContracts();}
-			});
-		},
-		error: function(x, s, e) {
-           	$("#table_div").LoadingOverlay("hide", true);
-			$('#cDialogText').text('Something went wrong.');
-			$('#cDialog').dialog({
-				"show": true,
-				"modal": true,
-				"title": 'Error'
-			});
-		}
-	});
-	            	}, 200);
+		});
+	}, 200);
 
 }
 
@@ -911,8 +917,16 @@ function acceptContract(accept, id) {
 		},
 		async: false,
 		statusCode: {
+			403: function(responseObject, textStatus, jqXHR) {
+				$('#cDialogText').text('You cannot Approve a contract you Proposed');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			},
 			404: function(responseObject, textStatus, jqXHR) {
-				$('#cDialogText').text('Could not approve contract');
+				$('#cDialogText').text('Could not pprove contract');
 				$('#cDialog').dialog({
 					"show": true,
 					"modal": true,
@@ -926,7 +940,7 @@ function acceptContract(accept, id) {
 				"show": true,
 				"modal": true,
 				"title": 'Success',
-				"close": function(event, ui){loadContracts();}
+				"close": function(event, ui) { loadContracts(); }
 			});
 		},
 		error: function(x, s, e) {
@@ -937,6 +951,16 @@ function acceptContract(accept, id) {
 				"title": 'Error'
 			});
 		}
+	});
+
+}
+
+function confirmSettlement() {
+	$('#cDialogText').text('Under construction :)');
+	$('#cDialog').dialog({
+		"show": true,
+		"modal": true,
+		"title": 'Work In Progress'
 	});
 }
 
