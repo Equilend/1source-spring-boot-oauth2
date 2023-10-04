@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.os.api.model.Party;
-import com.os.api.model.PartyRole;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.*;
@@ -23,9 +21,6 @@ public class SearchParty {
 
 	@JsonProperty("partyName")
 	private String partyName = null;
-
-	@JsonProperty("partyRole")
-	private PartyRole partyRole = null;
 
 	@JsonProperty("gleifLei")
 	private String gleifLei = null;
@@ -79,14 +74,6 @@ public class SearchParty {
 	public SearchParty gleifLei(String gleifLei) {
 		this.gleifLei = gleifLei;
 		return this;
-	}
-
-	public PartyRole getPartyRole() {
-		return partyRole;
-	}
-
-	public void setPartyRole(PartyRole partyRole) {
-		this.partyRole = partyRole;
 	}
 
 	/**

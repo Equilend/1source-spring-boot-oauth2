@@ -9,6 +9,8 @@ public class AcceptContractForm {
 	private String myParty = null;
 	@JsonProperty("counterparty")
 	private String counterparty = null;
+	@JsonProperty("partyRole")
+	private String partyRole = null;
 	@JsonProperty("settlmentBic")
 	private String settlmentBic = null;
 	@JsonProperty("localAgentBic")
@@ -40,6 +42,14 @@ public class AcceptContractForm {
 
 	public void setCounterparty(String counterparty) {
 		this.counterparty = counterparty;
+	}
+
+	public String getPartyRole() {
+		return partyRole;
+	}
+
+	public void setPartyRole(String partyRole) {
+		this.partyRole = partyRole;
 	}
 
 	public String getSettlmentBic() {
@@ -109,7 +119,7 @@ public class AcceptContractForm {
 	@Override
 	public int hashCode() {
 		return Objects.hash(counterparty, localAgentAcct, localAgentBic, localAgentName, localFieldName1,
-				localFieldName2, localFieldValue1, localFieldValue2, myParty, settlmentBic);
+				localFieldName2, localFieldValue1, localFieldValue2, myParty, partyRole, settlmentBic);
 	}
 
 	@Override
@@ -128,7 +138,7 @@ public class AcceptContractForm {
 				&& Objects.equals(localFieldName2, other.localFieldName2)
 				&& Objects.equals(localFieldValue1, other.localFieldValue1)
 				&& Objects.equals(localFieldValue2, other.localFieldValue2) && Objects.equals(myParty, other.myParty)
-				&& Objects.equals(settlmentBic, other.settlmentBic);
+				&& Objects.equals(partyRole, other.partyRole) && Objects.equals(settlmentBic, other.settlmentBic);
 	}
 
 }

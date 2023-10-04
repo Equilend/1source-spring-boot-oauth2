@@ -90,8 +90,8 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
       <form id="createProposalForm">
       <table>
       	<tr><td><b>Parties</b></td><td colspan="2">&nbsp;</td></tr>
-      	<tr><td>&nbsp;</td><td><b>My Party:</b></td><td><p id="cMyParty"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Direction:</b></td><td>Lending To</td></tr>
+      	<tr><td>&nbsp;</td><td><b>My Party:</b></td><td><select name="myParty" id="sMyParty" style="width:200px;"></select></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Party Role:</b></td><td><select name="partyRole" id="sPartyRole" style="width:200px;"><option value="BORROWER">Borrowing From<option value="LENDER">Lending To</select></td></tr>
       	<tr><td>&nbsp;</td><td><b>Counterparty:</b></td><td><p id="cCounterparty"></p></td></tr>
       	<tr><td><b>Instrument</b></td><td colspan="2">&nbsp;</td></tr>
       	<tr><td>&nbsp;</td><td><b>Name:</b></td><td><select name="instrument" id="sInstrument" style="width:240px;"></select></td></tr>
@@ -112,7 +112,6 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
       	<tr><td>&nbsp;</td><td><b>Local Market Field 2 Value:</b></td><td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100" style="width:100px;" value="USD"></td></tr>
       	<tr><td>&nbsp;</td><td colspan="2"><input type="submit"></td></tr>
       </table>
-<input type="hidden" name="myParty" id="hMyParty"> 
 <input type="hidden" name="counterparty" id="hCounterparty"> 
       </form>
     </div>
