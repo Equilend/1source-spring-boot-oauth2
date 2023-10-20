@@ -22,7 +22,6 @@ import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +31,6 @@ public class APIProxyServlet extends org.mitre.dsmiley.httpproxy.ProxyServlet {
 	private static final long serialVersionUID = 6735555087512000502L;
 
 	private static final Logger logger = LoggerFactory.getLogger(APIProxyServlet.class);
-
-	protected void copyRequestHeaders(HttpServletRequest servletRequest, HttpRequest proxyRequest) {
-
-		super.copyRequestHeaders(servletRequest, proxyRequest);
-
-	}
 
 	protected HttpClient createHttpClient(final RequestConfig requestConfig) {
 
@@ -55,6 +48,7 @@ public class APIProxyServlet extends org.mitre.dsmiley.httpproxy.ProxyServlet {
 
 	}
 
+	@Override
 	protected HttpResponse doExecute(HttpServletRequest servletRequest, HttpServletResponse servletResponse,
 			HttpRequest proxyRequest) throws IOException {
 
@@ -86,11 +80,17 @@ public class APIProxyServlet extends org.mitre.dsmiley.httpproxy.ProxyServlet {
 
 		proxyRequest.addHeader("Authorization", "Bearer " + servletRequest.getSession().getAttribute("auth_token"));
 		
-		HttpResponse response = getProxyClient().execute(getTargetHost(servletRequest), proxyRequest);
-		response.setHeader("Access-Control-Allow-Origin", "*");
+		HttpResponse response = null;
+		
+		try {
+			response = getProxyClient().execute(getTargetHost(servletRequest), proxyRequest);
+			response.setHeader("Access-Control-Allow-Origin", "*");
+		} catch (Exception e) {
+			logger.error("Problem making request to target host", e);
+		}
 
 		long elapsedTime = System.currentTimeMillis() - startTime;
-		logger.info("URI: " + servletRequest.getRequestURI() + " in " + elapsedTime);
+		logger.info("URI: {} in {}", servletRequest.getRequestURI(), elapsedTime);
 		
 		return response;
 	}

@@ -44,7 +44,7 @@ public class ContractFromAgreementProposalForm   {
 
   public ContractFromAgreementProposalForm addSettlementItem(NameValuePair settlementItem) {
     if (this.settlement == null) {
-      this.settlement = new ArrayList<NameValuePair>();
+      this.settlement = new ArrayList<>();
     }
     this.settlement.add(settlementItem);
     return this;

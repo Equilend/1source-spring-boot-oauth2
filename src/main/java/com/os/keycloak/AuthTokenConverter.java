@@ -9,14 +9,14 @@ import org.springframework.security.oauth2.core.http.converter.OAuth2AccessToken
 
 public class AuthTokenConverter extends OAuth2AccessTokenResponseHttpMessageConverter {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthTokenConverter.class);
+    private static final Logger aTClogger = LoggerFactory.getLogger(AuthTokenConverter.class);
 
 	@Override
 	protected OAuth2AccessTokenResponse readInternal(Class<? extends OAuth2AccessTokenResponse> clazz,
 			HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
 		OAuth2AccessTokenResponse tokenResponse = super.readInternal(clazz, inputMessage);
 		
-		logger.info("TOKEN REFRESH-------------> " + tokenResponse.getAccessToken().getExpiresAt());
+		aTClogger.info("TOKEN REFRESH-------------> {}", tokenResponse.getAccessToken().getExpiresAt());
 
 		return tokenResponse;
 	}

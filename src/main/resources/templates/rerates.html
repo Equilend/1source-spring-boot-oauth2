@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>1Source Ledger - Contracts</title>
+<title>1Source Ledger - Rerates</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
@@ -28,18 +28,18 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     <script type="text/javascript" src="/js/loadingoverlay.min.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['table']});
-      google.charts.setOnLoadCallback(loadContracts);
+      google.charts.setOnLoadCallback(loadRerates);
 
       var parties = '[(${parties})]';
-      function loadContracts() {
-    	loadData(parties, '/v1/ledger/contracts', contractData, contractParams);
+      function loadRerates() {
+    	loadData(parties, '/v1/ledger/rerates', rerateData, rerateParams);
       }
     </script>
 </head>
 <body>
 
 <!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-purple w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+<nav class="w3-sidebar w3-brown w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
   <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
   <div class="w3-container">
     <h3 class="w3-padding-64"><b>1Source Ledger</b><span sec:authorize="isAuthenticated()"><div>Hello, <span sec:authentication="name"></span></h3></span>
@@ -49,15 +49,15 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     <a href="/parties" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Parties</a> 
     <a href="/events" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Events</a> 
     <a href="/agreements" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Agreements</a> 
-    <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
-    <a href="/rerates" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Rerates</a>
+    <a href="/contracts" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
+    <a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Rerates</a>
     <span sec:authorize="isAuthenticated()"><a href="/user-logout" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Logout</a></span>
   </div>
 </nav>
 
 <!-- Top menu on small screens -->
-<header class="w3-container w3-top w3-hide-large w3-purple w3-xlarge w3-padding">
-  <a href="javascript:void(0)" class="w3-button w3-purple w3-margin-right" onclick="w3_open()">☰</a>
+<header class="w3-container w3-top w3-hide-large w3-brown w3-xlarge w3-padding">
+  <a href="javascript:void(0)" class="w3-button w3-brown w3-margin-right" onclick="w3_open()">☰</a>
   <span>1Source Ledger</span>
 </header>
 
@@ -67,10 +67,10 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 <!-- !PAGE CONTENT! -->
 <div class="w3-main" style="margin-left:340px;margin-right:40px">
 
-  <!-- Contracts -->
+  <!-- Rerates -->
   <div class="w3-container" id="contact" style="margin-top:45px">
-    <h1 class="w3-xxxlarge w3-text-purple" style="margin-top:45px"><b>Contracts.</b></h1>
-    <hr style="width:50px;border:5px solid purple" class="w3-round">
+    <h1 class="w3-xxxlarge w3-text-brown" style="margin-top:45px"><b>Rerates.</b></h1>
+    <hr style="width:50px;border:5px solid brown" class="w3-round">
   	<div id="filter_div" style="height:35px;"><form>Counterparty <select id="sCounterparty">
   	<option value="_">All Parties</option>
   	</select>&nbsp;&nbsp;
@@ -88,7 +88,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
   	<option value="APPROVED">Approved</option>
   	<option value="DECLINED">Declined</option>
   	<option value="CANCELED">Canceled</option>
-  	</select>&nbsp;<input type="button" value="Submit" onclick="loadContracts();"></form></div>
+  	</select>&nbsp;<input type="button" value="Submit" onclick="loadRerates();"></form></div>
     <div id="table_div" style="height:70vh;"></div>
   </div>
 
@@ -106,30 +106,32 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     <span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal02').hide();">×</span>
     <div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
       <p id="caption02"></p>
-      <form id="createAcceptForm">
+      <form id="createRerateAcceptForm">
       <table>
-      	<tr><td><b>My Party:</b></td><td><p id="cMyParty"></p></td></tr>
-      	<tr><td><b>Party Role:</b></td><td><p id="cPartyRole"></p></td></tr>
-      	<tr><td><b>Counterparty:</b></td><td><p id="cCounterparty"></p></td></tr>
-      	<tr><td><b>Settlement BIC:</b></td><td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120" style="width:120px;" value="XXXXXXXX"></td></tr>
-      	<tr><td><b>Local Agent BIC:</b></td><td><input type="text" name="localAgentBic" id="tLocalAgentBic" maxlength="120" style="width:120px;" value="YYYYYYYY"></td></tr>
-      	<tr><td><b>Local Agent Name:</b></td><td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140" style="width:140px;" value="ZZZ Clearing"></td></tr>
-      	<tr><td><b>Local Agent Account:</b></td><td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100" style="width:100px;" value="2468999"></td></tr>
-      	<tr><td><b>Local Market Field 1 Name:</b></td><td><input type="text" name="localFieldName1" id="tLocalFieldName1" maxlength="100" style="width:100px;" value="DTCYUS00"></td></tr>
-      	<tr><td><b>Local Market Field 1 Value:</b></td><td><input type="text" name="localFieldValue1" id="tLocalFieldValue1" maxlength="100" style="width:100px;" value="00001"></td></tr>
-      	<tr><td><b>Local Market Field 2 Name:</b></td><td><input type="text" name="localFieldName2" id="tLocalFieldName2" maxlength="100" style="width:100px;" value="DVPCCY"></td></tr>
-      	<tr><td><b>Local Market Field 2 Value:</b></td><td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100" style="width:100px;" value="USD"></td></tr>
-      	<tr><td colspan="2"><input type="submit" value="Approve Contract"></td></tr>
+      	<tr><td><b>Parties</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>My Party:</b></td><td><p id="cMyParty"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Party Role:</b></td><td><p id="cPartyRole"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Counterparty:</b></td><td><p id="cCounterparty"></p></td></tr>
+      	<tr><td><b>Current Rate</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate Type:</b></td><td><p id="cCurrentRateType"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate (%):</b></td><td><p id="cCurrentRate"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Benchmark:</b></td><td><p id="cCurrentRateBenchmark"></p></td></tr>
+      	<tr><td><b>Proposed Rate</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate Type:</b></td><td><p id="cProposedRateType"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate (%):</b></td><td><p id="cProposedRate"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Benchmark:</b></td><td><p id="cProposedRateBenchmark"></p></td></tr>
+      	<tr><td colspan="2"><input type="submit" value="Approve Rerate"></td></tr>
       </table>
 <input type="hidden" name="myParty" id="hMyParty"> 
 <input type="hidden" name="counterparty" id="hCounterparty"> 
 <input type="hidden" name="partyRole" id="hPartyRole"> 
       <input type="hidden" name="contractId" id="hContractId">
+      <input type="hidden" name="rerateId" id="hRerateId">
       </form>
     </div>
   </div>
 
-<div id="cDialog" title="Updating Contract" style='display:none;'><div id="cDialogText">Waiting for ledger response...</div></div>
+<div id="cDialog" title="Updating Rerate Contract" style='display:none;'><div id="cDialogText">Waiting for ledger response...</div></div>
 <!-- End page content -->
 </div>
 
@@ -138,10 +140,10 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 <script>
 $(function() {
 	  loadPartylist('sCounterparty', parties);
-	  $('#createAcceptForm').on("submit", function(e) {
+	  $('#createRerateAcceptForm').on("submit", function(e) {
 		    e.preventDefault(); // cancel the actual submit
 			$('#modal02').hide();
-			validateAccept($(this));
+			acceptRerate($(this));
 		  });	  
 	  setTimeout(ping, 1000*30);
 	});

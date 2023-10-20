@@ -39,6 +39,8 @@ public class UtilRestController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UtilRestController.class);
 
+	private String defaultCutoffTime = "18:00";
+			
 	@Autowired
 	private LedgerInstrumentRepository ledgerInstrumentRepository;
 
@@ -55,7 +57,7 @@ public class UtilRestController {
 			ping += " token expires " + authorizedClient.getAccessToken().getExpiresAt();
 		}
 
-		return new ResponseEntity<String>(ping, HttpStatus.OK);
+		return new ResponseEntity<>(ping, HttpStatus.OK);
 	}
 
 	@GetMapping("/util/instruments")
@@ -63,7 +65,7 @@ public class UtilRestController {
 
 		List<SearchInstrument> instruments = ledgerInstrumentRepository.getInstruments();
 
-		return new ResponseEntity<List<SearchInstrument>>(instruments, HttpStatus.OK);
+		return new ResponseEntity<>(instruments, HttpStatus.OK);
 	}
 
 	@GetMapping("/util/instrumentsq")
@@ -76,7 +78,7 @@ public class UtilRestController {
 			instruments.addAll(ledgerInstrumentRepository.getInstrumentsMatching(query));
 		}
 
-		return new ResponseEntity<List<SearchInstrument>>(instruments, HttpStatus.OK);
+		return new ResponseEntity<>(instruments, HttpStatus.OK);
 	}
 
 	@PostMapping(path = "/util/agreementgen", consumes = {
@@ -137,7 +139,7 @@ public class UtilRestController {
 			FixedRateDef fixedRateDef = new FixedRateDef();
 			feeRate.setFee(fixedRateDef);
 			fixedRateDef.setBaseRate(Float.parseFloat(agreementForm.getRate()));
-			fixedRateDef.setCutoffTime("18:00");
+			fixedRateDef.setCutoffTime(defaultCutoffTime);
 			fixedRateDef.setEffectiveDate(tradeDate);
 			fixedRateDef.setEffectiveRate(null);
 
@@ -153,15 +155,15 @@ public class UtilRestController {
 			trade.setSettlementType(SettlementType.DVP);
 
 			Collateral collateral = new Collateral();
-			BigDecimal contractPrice = new BigDecimal(trade.getInstrument().getPrice().getValue().doubleValue() * 1.02);
-			contractPrice.setScale(2, java.math.RoundingMode.HALF_UP);
-			BigDecimal contractValue = new BigDecimal(
+			BigDecimal contractPrice = BigDecimal.valueOf(trade.getInstrument().getPrice().getValue().doubleValue() * 1.02);
+			contractPrice = contractPrice.setScale(2, java.math.RoundingMode.HALF_UP);
+			BigDecimal contractValue = BigDecimal.valueOf(
 					trade.getQuantity().doubleValue() * (trade.getInstrument().getPrice().getValue().doubleValue()));
-			contractValue.setScale(2, java.math.RoundingMode.HALF_UP);
+			contractValue = contractValue.setScale(2, java.math.RoundingMode.HALF_UP);
 			collateral.setContractValue(contractValue.doubleValue());
-			BigDecimal collateralValue = new BigDecimal(
+			BigDecimal collateralValue = BigDecimal.valueOf(
 					trade.getQuantity().doubleValue() * contractPrice.doubleValue());
-			collateralValue.setScale(2, java.math.RoundingMode.HALF_UP);
+			collateralValue = collateralValue.setScale(2, java.math.RoundingMode.HALF_UP);
 			collateral.setCollateralValue(collateralValue.doubleValue());
 			collateral.setCurrency(CurrencyCd.USD);
 			collateral.setType(CollateralType.CASH);
@@ -169,10 +171,10 @@ public class UtilRestController {
 
 			trade.setCollateral(collateral);
 
-			return new ResponseEntity<TradeAgreement>(trade, HttpStatus.OK);
+			return new ResponseEntity<>(trade, HttpStatus.OK);
 		}
 
-		return new ResponseEntity<TradeAgreement>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
 	}
 
@@ -229,7 +231,7 @@ public class UtilRestController {
 				try {
 					f = Float.parseFloat(proposalForm.getPrice());
 				} catch (Exception p) {
-					logger.warn("Bad price: " + proposalForm.getPrice());
+					logger.warn("Bad price: {}", proposalForm.getPrice());
 				}
 			}
 			price.setValue(f);
@@ -245,7 +247,7 @@ public class UtilRestController {
 				try {
 					r = Float.parseFloat(proposalForm.getRate());
 				} catch (Exception p) {
-					logger.warn("Bad rate: " + proposalForm.getRate());
+					logger.warn("Bad rate: {}", proposalForm.getRate());
 				}
 			}
 
@@ -255,7 +257,7 @@ public class UtilRestController {
 
 				FloatingRateDef floatingRateDef = new FloatingRateDef();
 				floatingRateDef.setSpread(r);
-				floatingRateDef.setCutoffTime("18:00");
+				floatingRateDef.setCutoffTime(defaultCutoffTime);
 				floatingRateDef.setEffectiveDate(tradeDate);
 				floatingRateDef.setEffectiveRate(null);
 				floatingRateDef.setBenchmark(BenchmarkCd.fromValue(proposalForm.getBenchmark()));
@@ -272,7 +274,7 @@ public class UtilRestController {
 				
 				FixedRateDef fixedRateDef = new FixedRateDef();
 				fixedRateDef.setBaseRate(r);
-				fixedRateDef.setCutoffTime("18:00");
+				fixedRateDef.setCutoffTime(defaultCutoffTime);
 				fixedRateDef.setEffectiveDate(tradeDate);
 				fixedRateDef.setEffectiveRate(null);
 
@@ -289,7 +291,7 @@ public class UtilRestController {
 				FixedRateDef fixedRateDef = new FixedRateDef();
 				feeRate.setFee(fixedRateDef);
 				fixedRateDef.setBaseRate(r);
-				fixedRateDef.setCutoffTime("18:00");
+				fixedRateDef.setCutoffTime(defaultCutoffTime);
 				fixedRateDef.setEffectiveDate(tradeDate);
 				fixedRateDef.setEffectiveRate(null);
 				trade.setRate(feeRate);
@@ -302,7 +304,7 @@ public class UtilRestController {
 				try {
 					q = new BigDecimal(proposalForm.getQuantity());
 				} catch (Exception p) {
-					logger.warn("Bad quantity: " + proposalForm.getQuantity());
+					logger.warn("Bad quantity: {}", proposalForm.getQuantity());
 				}
 			}
 			
@@ -316,15 +318,15 @@ public class UtilRestController {
 			trade.setSettlementType(SettlementType.DVP);
 
 			Collateral collateral = new Collateral();
-			BigDecimal contractPrice = new BigDecimal(trade.getInstrument().getPrice().getValue().doubleValue() * 1.02);
-			contractPrice.setScale(2, java.math.RoundingMode.HALF_UP);
-			BigDecimal contractValue = new BigDecimal(
+			BigDecimal contractPrice = BigDecimal.valueOf(trade.getInstrument().getPrice().getValue().doubleValue() * 1.02);
+			contractPrice = contractPrice.setScale(2, java.math.RoundingMode.HALF_UP);
+			BigDecimal contractValue = BigDecimal.valueOf(
 					trade.getQuantity().doubleValue() * (trade.getInstrument().getPrice().getValue().doubleValue()));
-			contractValue.setScale(2, java.math.RoundingMode.HALF_UP);
+			contractValue = contractValue.setScale(2, java.math.RoundingMode.HALF_UP);
 			collateral.setContractValue(contractValue.doubleValue());
-			BigDecimal collateralValue = new BigDecimal(
+			BigDecimal collateralValue = BigDecimal.valueOf(
 					trade.getQuantity().doubleValue() * contractPrice.doubleValue());
-			collateralValue.setScale(2, java.math.RoundingMode.HALF_UP);
+			collateralValue = collateralValue.setScale(2, java.math.RoundingMode.HALF_UP);
 			collateral.setCollateralValue(collateralValue.doubleValue());
 			collateral.setCurrency(CurrencyCd.USD);
 			collateral.setType(collateralType);
@@ -367,16 +369,16 @@ public class UtilRestController {
 				localMarketFields.add(localMarketField2);
 			}
 
-			if (localMarketFields.size() > 0) {
+			if (!localMarketFields.isEmpty()) {
 				instruction.setLocalMarketFields(localMarketFields);
 			}
 
 			contractProposal.setSettlement(Collections.singletonList(partySettlementInstruction));
 
-			return new ResponseEntity<ContractProposal>(contractProposal, HttpStatus.OK);
+			return new ResponseEntity<>(contractProposal, HttpStatus.OK);
 		}
 
-		return new ResponseEntity<ContractProposal>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
 	}
 
@@ -456,13 +458,13 @@ public class UtilRestController {
 			}
 		}
 
-		if (localMarketFields.size() > 0) {
+		if (!localMarketFields.isEmpty()) {
 			instruction.setLocalMarketFields(localMarketFields);
 		}
 
 		contractProposal.setSettlement(Collections.singletonList(partySettlementInstruction));
 
-		return new ResponseEntity<ContractProposal>(contractProposal, HttpStatus.OK);
+		return new ResponseEntity<>(contractProposal, HttpStatus.OK);
 
 	}
 
@@ -510,16 +512,16 @@ public class UtilRestController {
 				localMarketFields.add(localMarketField2);
 			}
 
-			if (localMarketFields.size() > 0) {
+			if (!localMarketFields.isEmpty()) {
 				instruction.setLocalMarketFields(localMarketFields);
 			}
 
 			settlementInstructionUpdate.setSettlement(partySettlementInstruction);
 
-			return new ResponseEntity<SettlementInstructionUpdate>(settlementInstructionUpdate, HttpStatus.OK);
+			return new ResponseEntity<>(settlementInstructionUpdate, HttpStatus.OK);
 		}
 
-		return new ResponseEntity<SettlementInstructionUpdate>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
 	}
 

@@ -16,10 +16,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.os.api.SearchParty;
 import com.os.util.LedgerPartyRepository;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -29,9 +29,6 @@ public class WebController {
 
 	@Autowired
 	RestTemplate restTemplate;
-
-//	@Autowired
-//	private OAuth2AuthorizedClientService authorizedClientService;
 
 	@Autowired
 	private LedgerPartyRepository ledgerPartyRepository;
@@ -46,20 +43,20 @@ public class WebController {
 	}
 
 	@GetMapping("/logout")
-	public String logout(HttpServletRequest request) throws Exception {
+	public String logout(HttpServletRequest request) throws ServletException {
 		request.logout();
 		return "redirect:/";
 	}
 
 	@GetMapping("/user-logout")
-	public String userLogout(HttpServletRequest request) throws Exception {
+	public String userLogout(HttpServletRequest request) {
 		return "user-logout";
 	}
 
 	@GetMapping(path = "/parties")
 	public String parties(OAuth2AuthenticationToken authentication, Principal principal, Model model, @RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient) {
 
-		decorateAuth(authentication, principal, model);
+		decorateAuth(principal, model);
 
 		return "parties";
 	}
@@ -67,7 +64,7 @@ public class WebController {
 	@GetMapping(path = "/events")
 	public String events(OAuth2AuthenticationToken authentication, Principal principal, Model model) {
 
-		decorateAuth(authentication, principal, model);
+		decorateAuth(principal, model);
 
 		return "events";
 	}
@@ -75,7 +72,7 @@ public class WebController {
 	@GetMapping(path = "/agreements")
 	public String agreements(OAuth2AuthenticationToken authentication, Principal principal, Model model) {
 
-		decorateAuth(authentication, principal, model);
+		decorateAuth(principal, model);
 
 		return "agreements";
 	}
@@ -83,12 +80,20 @@ public class WebController {
 	@GetMapping(path = "/contracts")
 	public String contracts(OAuth2AuthenticationToken authentication, Principal principal, Model model) {
 
-		decorateAuth(authentication, principal, model);
+		decorateAuth(principal, model);
 
 		return "contracts";
 	}
 
-	private void decorateAuth(OAuth2AuthenticationToken authentication, Principal principal, Model model) {
+	@GetMapping(path = "/rerates")
+	public String rerates(OAuth2AuthenticationToken authentication, Principal principal, Model model) {
+
+		decorateAuth(principal, model);
+
+		return "rerates";
+	}
+
+	private void decorateAuth(Principal principal, Model model) {
 		
 		List<SearchParty> myPartyList = ledgerPartyRepository.getPartiesByUser(principal.getName());
 

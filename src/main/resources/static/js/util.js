@@ -12,7 +12,7 @@ function ping() {
 		url: apiserver + '/util/ping',
 		async: true,
 		success: function(j) {
-			setTimeout(ping, 1000*30);
+			setTimeout(ping, 1000 * 30);
 		}
 	});
 }
@@ -22,9 +22,9 @@ function loadData(parties, uri, dFunction, pFunction) {
 	table = new google.visualization.Table(document.getElementById('table_div'));
 	google.visualization.events.addListener(table, 'page', pageTable);
 
-    $("#table_div").LoadingOverlay("show", {
-        background  : "rgba(255, 255, 255, 0.8)"
-    });
+	$("#table_div").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
 
 	$.ajax({
 		type: 'GET',
@@ -35,20 +35,20 @@ function loadData(parties, uri, dFunction, pFunction) {
 		data: pFunction(),
 		async: true,
 		success: function(j) {
-           	$("#table_div").LoadingOverlay("hide", true);
-        	if (j == null || j.length == 0) {
-	            setTimeout(function() {
-    	            table.draw(noResultData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '90%', page: 'disable' });
-            	}, 200);
-    		} else {
+			$("#table_div").LoadingOverlay("hide", true);
+			if (j == null || j.length == 0) {
+				setTimeout(function() {
+					table.draw(noResultData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '90%', page: 'disable' });
+				}, 200);
+			} else {
 				data = dFunction(j, JSON.parse(parties));
-            	setTimeout(function() {
-	                successData(table, data);
-            	}, 200);
-           	}
+				setTimeout(function() {
+					successData(table, data);
+				}, 200);
+			}
 		},
 		error: function(xhr, ajaxOptions, thrownError) {
-            $("#table_div").LoadingOverlay("hide", true);
+			$("#table_div").LoadingOverlay("hide", true);
 			if (xhr.status == 404) {
 				table.draw(noResultData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '90%', page: 'disable' });
 			} else {
@@ -61,7 +61,7 @@ function loadData(parties, uri, dFunction, pFunction) {
 var lastEventId;
 
 function successData(table, data) {
-    table.draw(data, { allowHtml: true, showRowNumber: true, width: '100%', height: '90%', page: 'enable', pageSize: 10 });	
+	table.draw(data, { allowHtml: true, showRowNumber: true, width: '100%', height: '90%', page: 'enable', pageSize: 10 });
 }
 
 function errorData() {
@@ -137,7 +137,7 @@ function createContractShell(rowIndx, clickIndx, clickUriPrefix) {
 
 	$('#cCounterparty').text(data.getFormattedValue(rowIndx, clickIndx));
 	$('#hCounterparty').val(data.getFormattedValue(rowIndx, clickIndx));
-	
+
 }
 
 function validateProposal(frm) {
@@ -316,12 +316,12 @@ function agreementData(j, parties) {
 		if (canSub) {
 			btns += '<input type="button" value="Propose Contract" onclick="createContract(' + rowIdx + ', 1, \'/v1/ledger/agreements/\');return false;"/>';
 		}
-		
+
 		var rateType = 'Rebate';
 		if (j[i].trade.rate.fee) {
 			rateType = 'Fee';
 		}
-		
+
 		var rate = null;
 		if (j[i].trade.rate.fee) {
 			rate = j[i].trade.rate.fee.baseRate.toString();
@@ -332,7 +332,7 @@ function agreementData(j, parties) {
 				rate = j[i].trade.rate.rebate.floating.benchmark + '+' + j[i].trade.rate.rebate.floating.spread.toString();
 			}
 		}
-		
+
 		d.addRow([{ v: 'ButtonName', f: btns }
 			, j[i].agreementId
 			, borrower
@@ -415,20 +415,20 @@ function contractData(j, parties) {
 
 			if (j[i].contractStatus == 'PROPOSED') {
 
-//				for (var p = 0; p < parties.length; p++) {
-//					if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId && j[i].trade.transactingParties[t].partyRole == 'BORROWER') {
-						canAcc = true;
-						canDec = true;
-//						break;
-//					}
-//				}
+				//				for (var p = 0; p < parties.length; p++) {
+				//					if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId && j[i].trade.transactingParties[t].partyRole == 'BORROWER') {
+				canAcc = true;
+				canDec = true;
+				//						break;
+				//					}
+				//				}
 
-//				for (var p = 0; p < parties.length; p++) {
-//					if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId && j[i].trade.transactingParties[t].partyRole == 'LENDER') {
-						canCan = true;
-//						break;
-//					}
-//				}
+				//				for (var p = 0; p < parties.length; p++) {
+				//					if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId && j[i].trade.transactingParties[t].partyRole == 'LENDER') {
+				canCan = true;
+				//						break;
+				//					}
+				//				}
 			} else if (j[i].contractStatus == 'APPROVED') {
 				canSettle = true;
 			}
@@ -504,11 +504,11 @@ function contractParams() {
 		params['since'] = toIsoString(sinceDatetime);
 	}
 
-    var withStatus = $("#sStatus").val();
-    if (withStatus != '_') {
+	var withStatus = $("#sStatus").val();
+	if (withStatus != '_') {
 		params['contractStatus'] = withStatus;
 	}
-	
+
 	return params;
 }
 
@@ -528,7 +528,7 @@ function showJson(rowIndx, clickIndx, clickUriPrefix) {
 				$('#cDialog').dialog({
 					"show": true,
 					"modal": true,
- 					"title": 'Error'
+					"title": 'Error'
 				});
 			}
 		},
@@ -569,10 +569,10 @@ function createContract(rowIndx, clickIndx, clickUriPrefix) {
 			if (j.trade.rate.rebate) {
 				$('#cRateType').text("Rebate");
 				if (j.trade.rate.rebate.floating) {
- 				    $('#cRate').text(j.trade.rate.rebate.floating.baseRate);
- 				    $('#cRateBenchmark').text(j.trade.rate.rebate.floating.benchmark);
+					$('#cRate').text(j.trade.rate.rebate.floating.baseRate);
+					$('#cRateBenchmark').text(j.trade.rate.rebate.floating.benchmark);
 				} else if (j.trade.rate.rebate.fixed) {
- 				    $('#cRate').text(j.trade.rate.rebate.fixed.baseRate);
+					$('#cRate').text(j.trade.rate.rebate.fixed.baseRate);
 				}
 			} else if (j.trade.rate.fee) {
 				$('#cRateType').text("Fee");
@@ -591,7 +591,7 @@ function createContract(rowIndx, clickIndx, clickUriPrefix) {
 function approveContract(rowIndx, clickIndx, clickUriPrefix) {
 
 	var partyObj = JSON.parse(parties);
-	
+
 	var contractId = data.getFormattedValue(rowIndx, clickIndx);
 
 	var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + contractId;
@@ -652,9 +652,9 @@ function declineContract(rowIndx, clickIndx, clickUriPrefix) {
 
 	var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
 
-    $("#table_div").LoadingOverlay("show", {
-        background  : "rgba(255, 255, 255, 0.8)"
-    });
+	$("#table_div").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
 
 	setTimeout(function() {
 		$.ajax({
@@ -671,6 +671,17 @@ function declineContract(rowIndx, clickIndx, clickUriPrefix) {
 				403: function(responseObject, textStatus, jqXHR) {
 					$("#table_div").LoadingOverlay("hide", true);
 					$('#cDialogText').text('You cannot Decline a contract you Proposed. Try to Cancel instead. Otherwise please contact support.');
+					$('#cDialog').dialog({
+						"show": true,
+						"modal": true,
+						"title": 'Error'
+					});
+				},
+				400: function(responseObject, textStatus, jqXHR) {
+					$('#cDialogText').text('Could not Decline contract');
+					if (responseObject.responseJSON && responseObject.responseJSON.message) {
+						$('#cDialogText').text(responseObject.responseJSON.message);
+					}
 					$('#cDialog').dialog({
 						"show": true,
 						"modal": true,
@@ -710,9 +721,9 @@ function cancelContract(rowIndx, clickIndx, clickUriPrefix) {
 
 	var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
 
-    $("#table_div").LoadingOverlay("show", {
-        background  : "rgba(255, 255, 255, 0.8)"
-    });
+	$("#table_div").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
 
 	setTimeout(function() {
 
@@ -844,7 +855,7 @@ function proposeContract(proposal) {
 				$('#cDialog').dialog({
 					"show": true,
 					"modal": true,
- 					"title": 'Error'
+					"title": 'Error'
 				});
 			}
 		},
@@ -926,7 +937,18 @@ function acceptContract(accept, id) {
 				});
 			},
 			404: function(responseObject, textStatus, jqXHR) {
-				$('#cDialogText').text('Could not pprove contract');
+				$('#cDialogText').text('Could not approve contract');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			},
+			400: function(responseObject, textStatus, jqXHR) {
+				$('#cDialogText').text('Could not approve contract');
+				if (responseObject.responseJSON && responseObject.responseJSON.message) {
+					$('#cDialogText').text(responseObject.responseJSON.message);
+				}
 				$('#cDialog').dialog({
 					"show": true,
 					"modal": true,
@@ -1037,7 +1059,7 @@ function loadPartylist(selobj, parties) {
 			.html('All'));
 
 	var partyObj = JSON.parse(parties);
-	
+
 	$.ajax({
 		type: 'GET',
 		url: apiserver + '/v1/ledger/parties',
@@ -1047,7 +1069,7 @@ function loadPartylist(selobj, parties) {
 		async: true,
 		success: function(j) {
 			$.each(j, function(i, obj) {
-				
+
 				for (var p = 0; p < partyObj.length; p++) {
 					if (partyObj[p].partyId != obj.partyId) {
 						$('#sCounterparty').append(
@@ -1056,7 +1078,7 @@ function loadPartylist(selobj, parties) {
 								.html(obj.partyId + ' - ' + obj.gleifLei));
 						break;
 					}
-				}				
+				}
 			});
 			$('#sCounterparty').html($("#sCounterparty option").sort(function(a, b) {
 				return a.text == b.text ? 0 : a.text < b.text ? -1 : 1
@@ -1089,4 +1111,436 @@ function loadInstrumentlist() {
 			}));
 		}
 	});
+}
+
+function rerateData(j, parties) {
+
+	var d = new google.visualization.DataTable();
+	d.addColumn('string', '');
+	d.addColumn('string', 'Status');
+	d.addColumn('string', 'Rerate ID');
+	d.addColumn('string', 'Contract ID');
+	d.addColumn('string', 'Borrower');
+	d.addColumn('string', 'Lender');
+	d.addColumn('datetime', 'Last Update');
+	d.addColumn('string', 'Current Rate Type');
+	d.addColumn('string', 'Current Rate');
+	d.addColumn('string', 'Proposed Rate Type');
+	d.addColumn('string', 'Proposed Rate');
+
+	var counterpartyFilter = $("#sCounterparty").val();
+	var rowIdx = 0;
+
+	for (var i = 0; i < j.length; i++) {
+
+		var matchesFilter = false;
+		var canAcc = false;
+		var canDec = false;
+		var canCan = false;
+
+		var borrower;
+		var lender;
+
+		for (var t = 0; t < j[i].transactingParties.length; t++) {
+
+			if (counterpartyFilter == '_' || counterpartyFilter == j[i].transactingParties[t].party.partyId) {
+				matchesFilter = true;
+			}
+
+			if (j[i].transactingParties[t].partyRole == 'BORROWER') {
+				borrower = j[i].transactingParties[t].party.partyId;
+			} else if (j[i].transactingParties[t].partyRole == 'LENDER') {
+				lender = j[i].transactingParties[t].party.partyId;
+			}
+
+			if (j[i].status == 'PROPOSED') {
+
+				//				for (var p = 0; p < parties.length; p++) {
+				//					if (parties[p].partyId == j[i].transactingParties[t].party.partyId && j[i].transactingParties[t].partyRole == 'BORROWER') {
+				canAcc = true;
+				canDec = true;
+				//						break;
+				//					}
+				//				}
+
+				//				for (var p = 0; p < parties.length; p++) {
+				//					if (parties[p].partyId == j[i].transactingParties[t].party.partyId && j[i].transactingParties[t].partyRole == 'LENDER') {
+				canCan = true;
+				//						break;
+				//					}
+				//				}
+			}
+		}
+
+		if (!matchesFilter) {
+			continue;
+		}
+
+		var actUrl = '\'/v1/ledger/contracts/' + j[i].loanId + '/rerates/' + j[i].rerateId + '\'';
+
+		var btns = '<input type="button" value="Json" onclick="showJson(' + rowIdx + ', 2, \'/v1/ledger/rerates/\');return false;"/>';
+		if (canAcc) {
+			btns += '<input type="button" value="Approve" onclick="approveRerate(\'' + j[i].loanId + '\', \'' + j[i].rerateId + '\', ' + actUrl + ');return false;"/>';
+		}
+		if (canDec) {
+			btns += '<input type="button" value="Decline" onclick="declineRerate(' + actUrl + ');return false;"/>';
+		}
+		if (canCan) {
+			btns += '<input type="button" value="Cancel" onclick="cancelRerate(' + actUrl + ');return false;"/>';
+		}
+
+		var currentRateType = 'Rebate';
+		if (j[i].rate.fee) {
+			currentRateType = 'Fee';
+		}
+
+		var currentRate = null;
+		if (j[i].rate.fee) {
+			currentRate = j[i].rate.fee.baseRate.toString();
+		} else if (j[i].rate.rebate) {
+			if (j[i].rate.rebate.fixed) {
+				currentRate = j[i].rate.rebate.fixed.baseRate.toString();
+			} else if (j[i].rate.rebate.floating) {
+				currentRate = j[i].rate.rebate.floating.benchmark + '+' + j[i].rate.rebate.floating.spread.toString();
+			}
+		}
+
+		var proposedRateType = 'Rebate';
+		if (j[i].rerate.fee) {
+			proposedRateType = 'Fee';
+		}
+
+		var proposedRate = null;
+		if (j[i].rerate.fee) {
+			proposedRate = j[i].rerate.fee.baseRate.toString();
+		} else if (j[i].rerate.rebate) {
+			if (j[i].rerate.rebate.fixed) {
+				proposedRate = j[i].rerate.rebate.fixed.baseRate.toString();
+			} else if (j[i].rerate.rebate.floating) {
+				proposedRate = j[i].rerate.rebate.floating.benchmark + '+' + j[i].rerate.rebate.floating.spread.toString();
+			}
+		}
+
+		d.addRow([{ v: 'ButtonName', f: btns }
+			, j[i].status
+			, j[i].rerateId
+			, j[i].loanId //<-- TODO fix this to be contractId
+			, borrower
+			, lender
+			, new Date(Date.parse(j[i].lastUpdateDatetime)) //<-- TODO should this be lastUpdateDateTime with capital T?
+			, currentRateType
+			, currentRate
+			, proposedRateType
+			, proposedRate
+		]);
+
+		rowIdx++;
+	}
+
+	return d;
+}
+
+function rerateParams() {
+
+	var params = { 'noCache': new Date().getTime() };
+
+	params['size'] = 1000;
+
+	var minutesSince = $("#sTimeSince").val();
+
+	if (minutesSince == '_') {
+		var sinceDatetime = new Date();
+		sinceDatetime.setUTCHours(0, 0, 0, 0);
+		params['since'] = toIsoString(sinceDatetime);
+	} else if (minutesSince && minutesSince > 0) {
+		var sinceDatetime = new Date(Date.now() - (minutesSince * 60 * 1000));
+		params['since'] = toIsoString(sinceDatetime);
+	}
+
+	var withStatus = $("#sStatus").val();
+	if (withStatus != '_') {
+		params['status'] = withStatus;
+	}
+
+	return params;
+}
+
+function declineRerate(clickUriPrefix) {
+
+	var token = $('#_csrf').attr('content');
+	var header = $('#_csrf_header').attr('content');
+
+	$("#table_div").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
+
+	setTimeout(function() {
+		$.ajax({
+			type: 'POST',
+			url: apiserver + clickUriPrefix + '/decline',
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			async: false,
+			statusCode: {
+				403: function(responseObject, textStatus, jqXHR) {
+					$("#table_div").LoadingOverlay("hide", true);
+					$('#cDialogText').text('You cannot Decline a rerate you Proposed. Try to Cancel instead. Otherwise please contact support.');
+					$('#cDialog').dialog({
+						"show": true,
+						"modal": true,
+						"title": 'Error'
+					});
+				}
+			},
+			success: function(j) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Rerate declined!');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Success',
+					"close": function(event, ui) { loadRerates(); }
+				});
+			},
+			error: function(x, s, e) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Something went wrong.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			}
+		});
+	}, 200);
+
+
+}
+
+function cancelRerate(clickUriPrefix) {
+
+	var token = $('#_csrf').attr('content');
+	var header = $('#_csrf_header').attr('content');
+
+	$("#table_div").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
+
+	setTimeout(function() {
+
+		$.ajax({
+			type: 'POST',
+			url: apiserver + clickUriPrefix + '/cancel',
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			async: false,
+			statusCode: {
+				403: function(responseObject, textStatus, jqXHR) {
+					$("#table_div").LoadingOverlay("hide", true);
+					$('#cDialogText').text('You cannot Cancel a rerate you received. Try to Decline instead. Otherwise please contact support.');
+					$('#cDialog').dialog({
+						"show": true,
+						"modal": true,
+						"title": 'Error'
+					});
+				}
+			},
+			success: function(j) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Rerate canceled!');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Success',
+					"close": function(event, ui) { loadRerates(); }
+				});
+			},
+			error: function(x, s, e) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Something went wrong.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			}
+		});
+	}, 200);
+
+}
+
+function approveRerate(contractId, rerateId, clickUriPrefix) {
+
+	var partyObj = JSON.parse(parties);
+
+	$.ajax({
+		type: 'GET',
+		url: apiserver + clickUriPrefix,
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		async: true,
+		success: function(j) {
+			document.getElementById("modal02").style.display = "block";
+			document.getElementById("caption02").innerHTML = 'Approve rerate ' + rerateId;
+
+			$('#hContractId').val(contractId);
+			$('#hRerateId').val(rerateId);
+
+			var borrower;
+			var lender;
+
+			for (var t = 0; t < j.transactingParties.length; t++) {
+
+				if (j.transactingParties[t].partyRole == 'BORROWER') {
+					borrower = j.transactingParties[t].party.partyId;
+				} else if (j.transactingParties[t].partyRole == 'LENDER') {
+					lender = j.transactingParties[t].party.partyId;
+				}
+			}
+
+			for (var p = 0; p < partyObj.length; p++) {
+				if (partyObj[p].partyId == borrower) {
+					$('#cMyParty').text(partyObj[p].partyId);
+					$('#hMyParty').val(partyObj[p].partyId);
+					$('#cPartyRole').text("Borrowing From");
+					$('#hPartyRole').val("BORROWER");
+					$('#cCounterparty').text(lender);
+					$('#hCounterparty').val(lender);
+					break;
+				} else if (partyObj[p].partyId == lender) {
+					$('#cMyParty').text(partyObj[p].partyId);
+					$('#hMyParty').val(partyObj[p].partyId);
+					$('#cPartyRole').text("Lending To");
+					$('#hPartyRole').val("LENDER");
+					$('#cCounterparty').text(borrower);
+					$('#hCounterparty').val(borrower);
+					break;
+				}
+			}
+
+			var currentRateType = 'Rebate';
+			if (j.rate.fee) {
+				currentRateType = 'Fee';
+			}
+
+			var currentRate = null;
+			var currentBenchmark = null;
+			if (j.rate.fee) {
+				currentRate = j.rate.fee.baseRate.toString();
+			} else if (j.rate.rebate) {
+				if (j.rate.rebate.fixed) {
+					currentRate = j.rate.rebate.fixed.baseRate.toString();
+				} else if (j.rate.rebate.floating) {
+					currentRate = j.rate.rebate.floating.spread.toString();
+					currentBenchmark = j.rate.rebate.floating.benchmark;
+				}
+			}
+
+			$('#cCurrentRateType').text(currentRateType);
+			$('#cCurrentRate').text(currentRate);
+			$('#cCurrentRateBenchmark').text(currentBenchmark);
+
+			var proposedRateType = 'Rebate';
+			if (j.rerate.fee) {
+				proposedRateType = 'Fee';
+			}
+
+			var proposedRate = null;
+			var proposedBenchmark = null;
+			if (j.rerate.fee) {
+				proposedRate = j.rerate.fee.baseRate.toString();
+			} else if (j.rerate.rebate) {
+				if (j.rerate.rebate.fixed) {
+					proposedRate = j.rerate.rebate.fixed.baseRate.toString();
+				} else if (j.rerate.rebate.floating) {
+					proposedRate = j.rerate.rebate.floating.spread.toString();
+					proposedBenchmark = j.rerate.rebate.floating.benchmark;
+				}
+			}
+
+			$('#cProposedRateType').text(proposedRateType);
+			$('#cProposedRate').text(proposedRate);
+			$('#cProposedRateBenchmark').text(proposedBenchmark);
+
+
+		}
+	});
+}
+
+function acceptRerate(frm) {
+
+	var token = $('#_csrf').attr('content');
+	var header = $('#_csrf_header').attr('content');
+
+	var postUri = '/v1/ledger/contracts/' + frm[0].hContractId.value + '/rerates/' + frm[0].hRerateId.value + '/approve';
+
+	$.ajax({
+		type: 'POST',
+		url: apiserver + postUri,
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader(header, token);
+		},
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		async: false,
+		statusCode: {
+			403: function(responseObject, textStatus, jqXHR) {
+				$('#cDialogText').text('You cannot Approve a rerate you Proposed');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			},
+			404: function(responseObject, textStatus, jqXHR) {
+				$('#cDialogText').text('Could not approve rerate');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			},
+			400: function(responseObject, textStatus, jqXHR) {
+				$('#cDialogText').text('Could not approve rerate');
+				if (responseObject.responseJSON && responseObject.responseJSON.message) {
+					$('#cDialogText').text(responseObject.responseJSON.message);
+				}
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			}
+		},
+		success: function(j, t, x) {
+			$('#cDialogText').text('Rerate approved. ' + j.resourceUri);
+			$('#cDialog').dialog({
+				"show": true,
+				"modal": true,
+				"title": 'Success',
+				"close": function(event, ui) { loadRerates(); }
+			});
+		},
+		error: function(x, s, e) {
+			$('#cDialogText').text('Something went wrong.');
+			$('#cDialog').dialog({
+				"show": true,
+				"modal": true,
+				"title": 'Error'
+			});
+		}
+	});
+
 }

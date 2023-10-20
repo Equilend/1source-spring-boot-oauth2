@@ -17,12 +17,10 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Component;
 
-import com.os.controller.WebController;
-
 @Component
 public class BearerTokenFilter implements Filter {
 
-	private static final Logger logger = LoggerFactory.getLogger(WebController.class);
+	private static final Logger logger = LoggerFactory.getLogger(BearerTokenFilter.class);
 
 	@Autowired
 	private OAuth2AuthorizedClientService authorizedClientService;
@@ -40,7 +38,7 @@ public class BearerTokenFilter implements Filter {
 				OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
 				if (accessToken != null) {
 					req.getSession().setAttribute("auth_token", authorizedClient.getAccessToken().getTokenValue());
-					logger.info("BEARER TOKEN EXPIRATION -------------> " + accessToken.getExpiresAt());
+					logger.info("BEARER TOKEN EXPIRATION -------------> {}", accessToken.getExpiresAt());
 				}
 			}
 		}

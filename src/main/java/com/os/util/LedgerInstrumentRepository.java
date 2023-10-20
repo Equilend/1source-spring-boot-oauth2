@@ -1,6 +1,6 @@
 package com.os.util;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,9 +34,9 @@ public class LedgerInstrumentRepository implements InstrumentRepository {
 		
 		if (instruments == null) {
 			try {
-				loadInstruments();
+				loadInstruments(instrumentsFile);
 			} catch (Exception e) {
-				logger.error("Error loading instruments", e);
+				logger.error("Error getting matching instruments", e);
 			}
 		}
 		
@@ -59,16 +59,16 @@ public class LedgerInstrumentRepository implements InstrumentRepository {
 		
 		if (instruments == null) {
 			try {
-				loadInstruments();
+				loadInstruments(instrumentsFile);
 			} catch (Exception e) {
-				logger.error("Error loading instruments", e);
+				logger.error("Error getting instruments", e);
 			}
 		}
 		
 		return instruments;
 	}
 
-	private void loadInstruments() throws Exception {
+	private static void loadInstruments(Resource instrumentsFile) throws IOException {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		instruments = Arrays.asList(objectMapper.readValue(instrumentsFile.getInputStream(), SearchInstrument[].class));
@@ -76,16 +76,16 @@ public class LedgerInstrumentRepository implements InstrumentRepository {
 		for (SearchInstrument s : instruments) {
 			instrumentMap.put(s.getId(), s);
 		}
-		logger.info("Loaded " + instruments.size() + " instruments.");
+		logger.info("Loaded {} instruments.", instruments.size());
 	}
 
 	@Override
 	public SearchInstrument getInstrument(String id) {
 		if (instrumentMap == null) {
 			try {
-				loadInstruments();
+				loadInstruments(instrumentsFile);
 			} catch (Exception e) {
-				logger.error("Error loading instruments", e);
+				logger.error("Error getting instrument", e);
 			}
 		}
 		return instrumentMap.get(id);
