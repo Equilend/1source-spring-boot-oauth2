@@ -129,6 +129,38 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     </div>
   </div>
 
+  <!-- Modal for agreement form display on click-->
+  <div id="modal03" class="w3-modal w3-white" style="padding-top:0">
+    <span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal03').hide();">×</span>
+    <div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
+      <p id="caption03"></p>
+      <form id="createRerateForm">
+      <table>
+      	<tr><td><b>Parties</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>My Party:</b></td><td><p id="rcMyParty"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Party Role:</b></td><td><p id="rcPartyRole"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Counterparty:</b></td><td><p id="rcCounterparty"></p></td></tr>
+      	<tr><td><b>Instrument</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Name:</b></td><td><span id="rcName"></span></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Quantity:</b></td><td><span id="rcQuantity"></span></td></tr>
+      	<tr><td><b>Current Rate</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate Type:</b></td><td><p id="rcCurrentRateType"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate (%):</b></td><td><p id="rcCurrentRate"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Benchmark:</b></td><td><p id="rcCurrentRateBenchmark"></p></td></tr>
+      	<tr><td><b>Proposed Rate</b></td><td colspan="2">&nbsp;</td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate Type:</b></td><td><select name="rateType" id="rsProposedRateType" onchange="toggleRSBenchmark();"><option value="RFL">Rebate Floating<option value="RFI">Rebate Fixed<option value="FEE">Fee</select></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate (%):</b></td><td><input type="text" name="rate" id="rtRate" value="0.15"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Benchmark:</b></td><td><select name="benchmark" id="rsProposedBenchmark"><option value="OBFR">OBFR<option value="SOFR">SOFR<option value="EFFR">EFFR<option value="TGCR">TGCR<option value="BGCR">BGCR</select></td></tr>
+      	<tr><td>&nbsp;</td><td colspan="2"><input type="submit"></td></tr>
+      </table>
+<input type="hidden" name="myParty" id="rhMyParty"> 
+<input type="hidden" name="counterparty" id="rhCounterparty"> 
+<input type="hidden" name="partyRole" id="rhPartyRole"> 
+      <input type="hidden" name="contractId" id="rhContractId">
+      </form>
+    </div>
+  </div>
+
 <div id="cDialog" title="Updating Contract" style='display:none;'><div id="cDialogText">Waiting for ledger response...</div></div>
 <!-- End page content -->
 </div>
@@ -138,13 +170,29 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 <script>
 $(function() {
 	  loadPartylist('sCounterparty', parties);
+	  toggleRSBenchmark();
 	  $('#createAcceptForm').on("submit", function(e) {
 		    e.preventDefault(); // cancel the actual submit
 			$('#modal02').hide();
 			validateAccept($(this));
 		  });	  
+	  $('#createRerateForm').on("submit", function(e) {
+		    e.preventDefault(); // cancel the actual submit
+			$('#modal03').hide();
+			validateRerateProposal($(this));
+		  });	  
 	  setTimeout(ping, 1000*30);
 	});
+	
+function toggleRSBenchmark() {
+	var rateType = $('#rsProposedRateType').val();
+	if (rateType == 'RFI' || rateType == 'FEE') {
+		$('#rsProposedBenchmark').prop('disabled', 'disabled');
+	} else {
+		$('#rsProposedBenchmark').prop('disabled', false);
+	}
+}
+
 </script>
 
 </body>

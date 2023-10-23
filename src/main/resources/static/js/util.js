@@ -397,6 +397,7 @@ function contractData(j, parties) {
 		var canDec = false;
 		var canCan = false;
 		var canSettle = false;
+		var canRerate = false;
 
 		var borrower;
 		var lender;
@@ -431,6 +432,9 @@ function contractData(j, parties) {
 				//				}
 			} else if (j[i].contractStatus == 'APPROVED') {
 				canSettle = true;
+				canRerate = true; //<-- TODO remove this when ledger checks status
+			} else if (j[i].contractStatus == 'OPEN') {
+				canRerate = true;
 			}
 		}
 
@@ -450,6 +454,9 @@ function contractData(j, parties) {
 		}
 		if (canSettle) {
 			btns += '<input type="button" value="Confirm Settlement" onclick="confirmSettlement(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+		if (canRerate) {
+			btns += '<input type="button" value="Rerate" onclick="createRerate(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
 		}
 
 		var rateType = 'Rebate';
@@ -1542,5 +1549,173 @@ function acceptRerate(frm) {
 			});
 		}
 	});
+}
 
+function createRerate(rowIndx, clickIndx, clickUriPrefix) {
+
+	var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+
+	var partyObj = JSON.parse(parties);
+
+	$.ajax({
+		type: 'GET',
+		url: apiserver + uri,
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		async: true,
+		success: function(j) {
+			document.getElementById("modal03").style.display = "block";
+			document.getElementById("caption03").innerHTML = 'Create Rerate for Contract ' + data.getFormattedValue(rowIndx, clickIndx);
+
+			$('#rhContractId').val(data.getFormattedValue(rowIndx, clickIndx));
+			$('#rcName').text(j.trade.instrument.ticker);
+			$('#rcQuantity').text(j.trade.quantity);
+
+			var borrower;
+			var lender;
+
+			for (var t = 0; t < j.trade.transactingParties.length; t++) {
+
+				if (j.trade.transactingParties[t].partyRole == 'BORROWER') {
+					borrower = j.trade.transactingParties[t].party.partyId;
+				} else if (j.trade.transactingParties[t].partyRole == 'LENDER') {
+					lender = j.trade.transactingParties[t].party.partyId;
+				}
+			}
+
+			for (var p = 0; p < partyObj.length; p++) {
+				if (partyObj[p].partyId == borrower) {
+					$('#rcMyParty').text(partyObj[p].partyId);
+					$('#rhMyParty').val(partyObj[p].partyId);
+					$('#rcPartyRole').text("Borrowing From");
+					$('#rhPartyRole').val("BORROWER");
+					$('#rcCounterparty').text(lender);
+					$('#rhCounterparty').val(lender);
+					break;
+				} else if (partyObj[p].partyId == lender) {
+					$('#rcMyParty').text(partyObj[p].partyId);
+					$('#rhMyParty').val(partyObj[p].partyId);
+					$('#rcPartyRole').text("Lending To");
+					$('#rhPartyRole').val("LENDER");
+					$('#rcCounterparty').text(borrower);
+					$('#rhCounterparty').val(borrower);
+					break;
+				}
+			}
+
+			var currentRateType = 'Rebate';
+			if (j.trade.rate.fee) {
+				currentRateType = 'Fee';
+			}
+
+			var currentRate = null;
+			var currentBenchmark = null;
+			if (j.trade.rate.fee) {
+				currentRate = j.trade.rate.fee.baseRate.toString();
+			} else if (j.trade.rate.rebate) {
+				if (j.trade.rate.rebate.fixed) {
+					currentRate = j.trade.rate.rebate.fixed.baseRate.toString();
+				} else if (j.trade.rate.rebate.floating) {
+					currentRate = j.trade.rate.rebate.floating.spread.toString();
+					currentBenchmark = j.trade.rate.rebate.floating.benchmark;
+				}
+			}
+
+			$('#rcCurrentRateType').text(currentRateType);
+			$('#rcCurrentRate').text(currentRate);
+			$('#rcCurrentRateBenchmark').text(currentBenchmark);
+
+		}
+	});
+}
+
+function validateRerateProposal(frm) {
+
+	var token = $('#_csrf').attr('content');
+	var header = $('#_csrf_header').attr('content');
+    var contractId = frm.find("[name=contractId]").val();
+    
+	$.ajax({
+		type: 'POST',
+		url: "/util/reratecontractform",
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader(header, token);
+		},
+		data: frm.serialize(),
+		dataType: "json",
+		async: false,
+		success: function(j) {
+			proposeRerate(contractId, j);
+		},
+		error: function(x, s, e) {
+			$('#cDialogText').text('Something went wrong.');
+			$('#cDialog').dialog({
+				"show": true,
+				"modal": true,
+				"title": 'Error'
+			});
+		}
+	});
+
+}
+
+function proposeRerate(contractId, proposal) {
+
+	var token = $('#_csrf').attr('content');
+	var header = $('#_csrf_header').attr('content');
+
+	var postUri = '/v1/ledger/contracts/' + contractId + '/rerates';
+
+	$.ajax({
+		type: 'POST',
+		url: apiserver + postUri,
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader(header, token);
+		},
+		data: JSON.stringify(proposal),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		async: false,
+		statusCode: {
+			404: function(responseObject, textStatus, jqXHR) {
+				$('#cDialogText').text('Something went wrong with the request.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			},
+			400: function(responseObject, textStatus, jqXHR) {
+				$('#cDialogText').text('Could not create rerate');
+				if (responseObject.responseJSON && responseObject.responseJSON.message) {
+					$('#cDialogText').text(responseObject.responseJSON.message);
+				}
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			}
+		},
+		success: function(j, t, x) {
+			$('#cDialogText').text('Rerate proposed. ' + j.resourceUri);
+			$('#cDialog').dialog({
+				"show": true,
+				"modal": true,
+				"title": 'Success'
+			});
+		},
+		error: function(x, s, e) {
+			$('#cDialogText').text('Something went wrong.');
+			$('#cDialog').dialog({
+				"show": true,
+				"modal": true,
+				"title": 'Error'
+			});
+		}
+	});
 }

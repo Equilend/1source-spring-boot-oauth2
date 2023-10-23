@@ -27,6 +27,7 @@ import com.os.api.AgreementForm;
 import com.os.api.ContractFromAgreementProposalForm;
 import com.os.api.ContractProposalForm;
 import com.os.api.NameValuePair;
+import com.os.api.RerateContractProposalForm;
 import com.os.api.SearchInstrument;
 import com.os.api.SearchParty;
 import com.os.util.LedgerInstrumentRepository;
@@ -519,6 +520,79 @@ public class UtilRestController {
 			settlementInstructionUpdate.setSettlement(partySettlementInstruction);
 
 			return new ResponseEntity<>(settlementInstructionUpdate, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+	}
+
+	@PostMapping(path = "/util/reratecontractform", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<RerateProposal> postRerateContractForm(RerateContractProposalForm rerateProposalForm) {
+
+		RerateProposal rerateProposal = new RerateProposal();
+
+		String contractId = rerateProposalForm.getContractId();
+		SearchParty myParty = ledgerPartyRepository.getParty(rerateProposalForm.getMyParty());
+		SearchParty counterparty = ledgerPartyRepository.getParty(rerateProposalForm.getCounterparty());
+
+		if (contractId != null && myParty != null && counterparty != null) {
+
+			Float r = 5f;
+			if (rerateProposalForm.getRate() != null) {
+				try {
+					r = Float.parseFloat(rerateProposalForm.getRate());
+				} catch (Exception p) {
+					logger.warn("Bad rate: {}", rerateProposalForm.getRate());
+				}
+			}
+
+			LocalDate rerateDate = LocalDate.now();
+			if ("RFL".equals(rerateProposalForm.getRateType())) {
+
+				FloatingRateDef floatingRateDef = new FloatingRateDef();
+				floatingRateDef.setSpread(r);
+				floatingRateDef.setCutoffTime(defaultCutoffTime);
+				floatingRateDef.setEffectiveDate(rerateDate);
+				floatingRateDef.setEffectiveRate(null);
+				floatingRateDef.setBenchmark(BenchmarkCd.fromValue(rerateProposalForm.getBenchmark()));
+				
+				FloatingRate floatingRate = new FloatingRate();
+				floatingRate.setFloating(floatingRateDef);
+				
+				RebateRate rebateRate = new RebateRate();
+				rebateRate.setRebate(floatingRate);
+
+				rerateProposal.setRate(rebateRate);
+
+			} else if ("RFI".equals(rerateProposalForm.getRateType())) {
+				
+				FixedRateDef fixedRateDef = new FixedRateDef();
+				fixedRateDef.setBaseRate(r);
+				fixedRateDef.setCutoffTime(defaultCutoffTime);
+				fixedRateDef.setEffectiveDate(rerateDate);
+				fixedRateDef.setEffectiveRate(null);
+
+				FixedRate fixedRate = new FixedRate();
+				fixedRate.setFixed(fixedRateDef);
+				
+				RebateRate rebateRate = new RebateRate();
+				rebateRate.setRebate(fixedRate);
+
+				rerateProposal.setRate(rebateRate);
+				
+			} else if ("FEE".equals(rerateProposalForm.getRateType())) {
+				FeeRate feeRate = new FeeRate();
+				FixedRateDef fixedRateDef = new FixedRateDef();
+				feeRate.setFee(fixedRateDef);
+				fixedRateDef.setBaseRate(r);
+				fixedRateDef.setCutoffTime(defaultCutoffTime);
+				fixedRateDef.setEffectiveDate(rerateDate);
+				fixedRateDef.setEffectiveRate(null);
+				rerateProposal.setRate(feeRate);
+			}
+
+			return new ResponseEntity<>(rerateProposal, HttpStatus.OK);
 		}
 
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
