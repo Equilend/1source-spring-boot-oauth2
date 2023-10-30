@@ -46,6 +46,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
   </div>
   <div class="w3-bar-block">
     <a href="/" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a> 
+    <a href="/summary" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Summary</a> 
     <a href="/parties" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Parties</a> 
     <a href="/events" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Events</a> 
     <a href="/agreements" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Agreements</a> 
@@ -108,9 +109,9 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
       <p id="caption02"></p>
       <form id="createAcceptForm">
       <table>
-      	<tr><td><b>My Party:</b></td><td><p id="cMyParty"></p></td></tr>
-      	<tr><td><b>Party Role:</b></td><td><p id="cPartyRole"></p></td></tr>
-      	<tr><td><b>Counterparty:</b></td><td><p id="cCounterparty"></p></td></tr>
+      	<tr><td><b>My Party:</b></td><td><p style="margin: 1px;" id="cMyParty"></p></td></tr>
+      	<tr><td><b>Party Role:</b></td><td><p style="margin: 1px;" id="cPartyRole"></p></td></tr>
+      	<tr><td><b>Counterparty:</b></td><td><p style="margin: 1px;" id="cCounterparty"></p></td></tr>
       	<tr><td><b>Settlement BIC:</b></td><td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120" style="width:120px;" value="XXXXXXXX"></td></tr>
       	<tr><td><b>Local Agent BIC:</b></td><td><input type="text" name="localAgentBic" id="tLocalAgentBic" maxlength="120" style="width:120px;" value="YYYYYYYY"></td></tr>
       	<tr><td><b>Local Agent Name:</b></td><td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140" style="width:140px;" value="ZZZ Clearing"></td></tr>
@@ -137,20 +138,22 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
       <form id="createRerateForm">
       <table>
       	<tr><td><b>Parties</b></td><td colspan="2">&nbsp;</td></tr>
-      	<tr><td>&nbsp;</td><td><b>My Party:</b></td><td><p id="rcMyParty"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Party Role:</b></td><td><p id="rcPartyRole"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Counterparty:</b></td><td><p id="rcCounterparty"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>My Party:</b></td><td><p style="margin: 1px;" id="rcMyParty"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Party Role:</b></td><td><p style="margin: 1px;" id="rcPartyRole"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Counterparty:</b></td><td><p style="margin: 1px;" id="rcCounterparty"></p></td></tr>
       	<tr><td><b>Instrument</b></td><td colspan="2">&nbsp;</td></tr>
       	<tr><td>&nbsp;</td><td><b>Name:</b></td><td><span id="rcName"></span></td></tr>
       	<tr><td>&nbsp;</td><td><b>Quantity:</b></td><td><span id="rcQuantity"></span></td></tr>
       	<tr><td><b>Current Rate</b></td><td colspan="2">&nbsp;</td></tr>
-      	<tr><td>&nbsp;</td><td><b>Rate Type:</b></td><td><p id="rcCurrentRateType"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Rate (%):</b></td><td><p id="rcCurrentRate"></p></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Benchmark:</b></td><td><p id="rcCurrentRateBenchmark"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate Type:</b></td><td><p style="margin: 1px;" id="rcCurrentRateType"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate (%):</b></td><td><p style="margin: 1px;" id="rcCurrentRate"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Benchmark:</b></td><td><p style="margin: 1px;" id="rcCurrentRateBenchmark"></p></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Benchmark Rate (%):</b></td><td><p style="margin: 1px;" id="rcCurrentRateBenchmarkVal"></p></td></tr>
       	<tr><td><b>Proposed Rate</b></td><td colspan="2">&nbsp;</td></tr>
       	<tr><td>&nbsp;</td><td><b>Rate Type:</b></td><td><select name="rateType" id="rsProposedRateType" onchange="toggleRSBenchmark();"><option value="RFL">Rebate Floating<option value="RFI">Rebate Fixed<option value="FEE">Fee</select></td></tr>
-      	<tr><td>&nbsp;</td><td><b>Rate (%):</b></td><td><input type="text" name="rate" id="rtRate" value="0.15"></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Rate (%):</b></td><td><input type="text" name="rate" id="rtProposedRate"></td></tr>
       	<tr><td>&nbsp;</td><td><b>Benchmark:</b></td><td><select name="benchmark" id="rsProposedBenchmark"><option value="OBFR">OBFR<option value="SOFR">SOFR<option value="EFFR">EFFR<option value="TGCR">TGCR<option value="BGCR">BGCR</select></td></tr>
+      	<tr><td>&nbsp;</td><td><b>Benchmark Rate (%):</b></td><td><input type="text" name="benchmarkRate" id="rtProposedBenchmarkRate"></td></tr>
       	<tr><td>&nbsp;</td><td colspan="2"><input type="submit"></td></tr>
       </table>
 <input type="hidden" name="myParty" id="rhMyParty"> 

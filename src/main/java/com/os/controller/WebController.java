@@ -61,6 +61,14 @@ public class WebController {
 		return "parties";
 	}
 
+	@GetMapping(path = "/summary")
+	public String summary(OAuth2AuthenticationToken authentication, Principal principal, Model model) {
+
+		decorateAuth(principal, model);
+
+		return "summary";
+	}
+
 	@GetMapping(path = "/events")
 	public String events(OAuth2AuthenticationToken authentication, Principal principal, Model model) {
 

@@ -19,6 +19,8 @@ public class RerateContractProposalForm {
 	private String rate = null;
 	@JsonProperty("benchmark")
 	private String benchmark = null;
+	@JsonProperty("benchmarkRate")
+	private String benchmarkRate = null;
 
 	public String getContractId() {
 		return contractId;
@@ -76,9 +78,17 @@ public class RerateContractProposalForm {
 		this.benchmark = benchmark;
 	}
 
+	public String getBenchmarkRate() {
+		return benchmarkRate;
+	}
+
+	public void setBenchmarkRate(String benchmarkRate) {
+		this.benchmarkRate = benchmarkRate;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(benchmark, contractId, counterparty, myParty, partyRole, rate, rateType);
+		return Objects.hash(benchmark, benchmarkRate, contractId, counterparty, myParty, partyRole, rate, rateType);
 	}
 
 	@Override
@@ -90,10 +100,10 @@ public class RerateContractProposalForm {
 		if (getClass() != obj.getClass())
 			return false;
 		RerateContractProposalForm other = (RerateContractProposalForm) obj;
-		return Objects.equals(benchmark, other.benchmark) && Objects.equals(contractId, other.contractId)
-				&& Objects.equals(counterparty, other.counterparty) && Objects.equals(myParty, other.myParty)
-				&& Objects.equals(partyRole, other.partyRole) && Objects.equals(rate, other.rate)
-				&& Objects.equals(rateType, other.rateType);
+		return Objects.equals(benchmark, other.benchmark) && Objects.equals(benchmarkRate, other.benchmarkRate)
+				&& Objects.equals(contractId, other.contractId) && Objects.equals(counterparty, other.counterparty)
+				&& Objects.equals(myParty, other.myParty) && Objects.equals(partyRole, other.partyRole)
+				&& Objects.equals(rate, other.rate) && Objects.equals(rateType, other.rateType);
 	}
 
 }

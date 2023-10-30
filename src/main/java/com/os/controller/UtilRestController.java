@@ -547,11 +547,21 @@ public class UtilRestController {
 				}
 			}
 
+			Float br = 5f;
+			if (rerateProposalForm.getBenchmarkRate() != null) {
+				try {
+					br = Float.parseFloat(rerateProposalForm.getBenchmarkRate());
+				} catch (Exception p) {
+					logger.warn("Bad rate: {}", rerateProposalForm.getBenchmarkRate());
+				}
+			}
+
 			LocalDate rerateDate = LocalDate.now();
 			if ("RFL".equals(rerateProposalForm.getRateType())) {
 
 				FloatingRateDef floatingRateDef = new FloatingRateDef();
 				floatingRateDef.setSpread(r);
+				floatingRateDef.setBaseRate(br);
 				floatingRateDef.setCutoffTime(defaultCutoffTime);
 				floatingRateDef.setEffectiveDate(rerateDate);
 				floatingRateDef.setEffectiveRate(null);

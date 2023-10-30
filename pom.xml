@@ -9,7 +9,7 @@
 	<description>Test integration between Keycloak and Spring Boot.</description>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>18</java.version>
 		<start-class>com.os.keycloak.SpringBoot</start-class>
 		<springfox-version>3.0.0</springfox-version>
 	</properties>
@@ -107,6 +107,7 @@
 					<excludes>
 						<exclude>**/auth.js</exclude>
 						<exclude>**/util.js</exclude>
+						<exclude>**/contractStore.js</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
@@ -136,6 +137,7 @@
 							<includes>
 								<include>auth.js</include>
 								<include>util.js</include>
+								<include>contractStore.js</include>
 							</includes>
 						</configuration>
 						<goals>

@@ -17,6 +17,47 @@ function ping() {
 	});
 }
 
+function loadSummary() {
+
+	localStorage.clear();
+
+	$("#summaryOC").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
+	$("#summaryPC").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
+	$("#summaryAC").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
+	$("#summaryTA").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
+	$("#summaryPR").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
+
+	loadContractStore().then((data) => {
+		$('#summaryOC').text(localStorage.getItem('storeOpenSize'));
+		$("#summaryOC").LoadingOverlay("hide", true);
+		$('#summaryPC').text(localStorage.getItem('storeProposedSize'));
+		$("#summaryPC").LoadingOverlay("hide", true);
+		$('#summaryAC').text(localStorage.getItem('storeApprovedSize'));
+		$("#summaryAC").LoadingOverlay("hide", true);
+	});
+
+	loadAgreementStore().then((data) => {
+		$('#summaryTA').text(localStorage.getItem('storeAgreementSize'));
+		$("#summaryTA").LoadingOverlay("hide", true);
+	});
+
+	loadRerateStore().then((data) => {
+		$('#summaryPR').text(localStorage.getItem('storeRerateSize'));
+		$("#summaryPR").LoadingOverlay("hide", true);
+	});
+
+}
+
 function loadData(parties, uri, dFunction, pFunction) {
 
 	table = new google.visualization.Table(document.getElementById('table_div'));
@@ -545,6 +586,31 @@ function showJson(rowIndx, clickIndx, clickUriPrefix) {
 			document.getElementById("jsonobj").innerHTML = syntaxHighlight(j);
 		}
 	});
+}
+
+function fetchContract(contractId) {
+
+	var cObj;
+	var localStorageContract = localStorage.getItem(contractId);
+	if (localStorageContract) {
+		cObj = JSON.parse(localStorageContract);
+	}
+
+	if (!cObj) {
+		$.ajax({
+			type: 'GET',
+			url: apiserver + '/v1/ledger/contracts/' + contractId,
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			async: false,
+			success: function(j) {
+				cObj = j;
+				localStorage.setItem(contractId, JSON.stringify(cObj));
+			}
+		});
+	}
+	return cObj;
 }
 
 function createContract(rowIndx, clickIndx, clickUriPrefix) {
@@ -1129,11 +1195,13 @@ function rerateData(j, parties) {
 	d.addColumn('string', 'Contract ID');
 	d.addColumn('string', 'Borrower');
 	d.addColumn('string', 'Lender');
-	d.addColumn('datetime', 'Last Update');
+	d.addColumn('string', 'Ticker');
+	d.addColumn('number', 'Quantity');
 	d.addColumn('string', 'Current Rate Type');
 	d.addColumn('string', 'Current Rate');
 	d.addColumn('string', 'Proposed Rate Type');
 	d.addColumn('string', 'Proposed Rate');
+	d.addColumn('datetime', 'Last Update');
 
 	var counterpartyFilter = $("#sCounterparty").val();
 	var rowIdx = 0;
@@ -1147,35 +1215,45 @@ function rerateData(j, parties) {
 
 		var borrower;
 		var lender;
+        var ticker;
+        var quantity;
+        
+		var contractObj = fetchContract(j[i].loanId);
 
-		for (var t = 0; t < j[i].transactingParties.length; t++) {
+		if (contractObj) {
+			
+			ticker = contractObj.trade.instrument.ticker;
+			quantity = contractObj.trade.quantity;
+			
+			for (var t = 0; t < contractObj.trade.transactingParties.length; t++) {
 
-			if (counterpartyFilter == '_' || counterpartyFilter == j[i].transactingParties[t].party.partyId) {
-				matchesFilter = true;
-			}
+				if (counterpartyFilter == '_' || counterpartyFilter == contractObj.trade.transactingParties[t].party.partyId) {
+					matchesFilter = true;
+				}
 
-			if (j[i].transactingParties[t].partyRole == 'BORROWER') {
-				borrower = j[i].transactingParties[t].party.partyId;
-			} else if (j[i].transactingParties[t].partyRole == 'LENDER') {
-				lender = j[i].transactingParties[t].party.partyId;
-			}
+				if (contractObj.trade.transactingParties[t].partyRole == 'BORROWER') {
+					borrower = contractObj.trade.transactingParties[t].party.partyId;
+				} else if (contractObj.trade.transactingParties[t].partyRole == 'LENDER') {
+					lender = contractObj.trade.transactingParties[t].party.partyId;
+				}
 
-			if (j[i].status == 'PROPOSED') {
+				if (j[i].status == 'PROPOSED') {
 
-				//				for (var p = 0; p < parties.length; p++) {
-				//					if (parties[p].partyId == j[i].transactingParties[t].party.partyId && j[i].transactingParties[t].partyRole == 'BORROWER') {
-				canAcc = true;
-				canDec = true;
-				//						break;
-				//					}
-				//				}
+					//				for (var p = 0; p < parties.length; p++) {
+					//					if (parties[p].partyId == contractObj.trade.transactingParties[t].party.partyId && contractObj.trade.transactingParties[t].partyRole == 'BORROWER') {
+					canAcc = true;
+					canDec = true;
+					//						break;
+					//					}
+					//				}
 
-				//				for (var p = 0; p < parties.length; p++) {
-				//					if (parties[p].partyId == j[i].transactingParties[t].party.partyId && j[i].transactingParties[t].partyRole == 'LENDER') {
-				canCan = true;
-				//						break;
-				//					}
-				//				}
+					//				for (var p = 0; p < parties.length; p++) {
+					//					if (parties[p].partyId == contractObj.trade.transactingParties[t].party.partyId && contractObj.trade.transactingParties[t].partyRole == 'LENDER') {
+					canCan = true;
+					//						break;
+					//					}
+					//				}
+				}
 			}
 		}
 
@@ -1234,11 +1312,13 @@ function rerateData(j, parties) {
 			, j[i].loanId //<-- TODO fix this to be contractId
 			, borrower
 			, lender
-			, new Date(Date.parse(j[i].lastUpdateDatetime)) //<-- TODO should this be lastUpdateDateTime with capital T?
+			, ticker
+			, quantity
 			, currentRateType
 			, currentRate
 			, proposedRateType
 			, proposedRate
+			, new Date(Date.parse(j[i].lastUpdateDatetime)) //<-- TODO should this be lastUpdateDateTime with capital T?
 		]);
 
 		rowIdx++;
@@ -1607,24 +1687,44 @@ function createRerate(rowIndx, clickIndx, clickUriPrefix) {
 			var currentRateType = 'Rebate';
 			if (j.trade.rate.fee) {
 				currentRateType = 'Fee';
+				$("#rsProposedRateType option[value=FEE]").attr('selected', 'selected');
+			} else if (j.trade.rate.rebate.floating) {
+				currentRateType += ' Floating';
+				$("#rsProposedRateType option[value=RFL]").attr('selected', 'selected');
+			} else {
+				currentRateType += ' Fixed';
+				$("#rsProposedRateType option[value=RFI]").attr('selected', 'selected');
 			}
+			toggleRSBenchmark();
 
 			var currentRate = null;
 			var currentBenchmark = null;
+			var currentBenchmarkRate = null;
+
+			$('#rtProposedRate').val('');
+			$('#rtProposedBenchmarkRate').val('');
+
 			if (j.trade.rate.fee) {
-				currentRate = j.trade.rate.fee.baseRate.toString();
+				currentRate = j.trade.rate.fee.baseRate;
+				$('#rtProposedRate').val(currentRate);
 			} else if (j.trade.rate.rebate) {
 				if (j.trade.rate.rebate.fixed) {
-					currentRate = j.trade.rate.rebate.fixed.baseRate.toString();
+					currentRate = j.trade.rate.rebate.fixed.baseRate;
+					$('#rtProposedRate').val(currentRate);
 				} else if (j.trade.rate.rebate.floating) {
-					currentRate = j.trade.rate.rebate.floating.spread.toString();
+					currentRate = j.trade.rate.rebate.floating.spread;
+					$('#rtProposedRate').val(currentRate);
 					currentBenchmark = j.trade.rate.rebate.floating.benchmark;
+					$('#rsProposedBenchmark option[value=' + currentBenchmark + ']').attr('selected', 'selected');
+					currentBenchmarkRate = j.trade.rate.rebate.floating.baseRate;
+					$('#rtProposedBenchmarkRate').val(currentBenchmarkRate);
 				}
 			}
 
 			$('#rcCurrentRateType').text(currentRateType);
 			$('#rcCurrentRate').text(currentRate);
 			$('#rcCurrentRateBenchmark').text(currentBenchmark);
+			$('#rcCurrentRateBenchmarkVal').text(currentBenchmarkRate);
 
 		}
 	});
@@ -1634,8 +1734,8 @@ function validateRerateProposal(frm) {
 
 	var token = $('#_csrf').attr('content');
 	var header = $('#_csrf_header').attr('content');
-    var contractId = frm.find("[name=contractId]").val();
-    
+	var contractId = frm.find("[name=contractId]").val();
+
 	$.ajax({
 		type: 'POST',
 		url: "/util/reratecontractform",
