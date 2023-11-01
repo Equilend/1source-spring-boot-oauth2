@@ -930,6 +930,26 @@ function proposeContract(proposal) {
 					"modal": true,
 					"title": 'Error'
 				});
+			},
+			403: function(responseObject, textStatus, jqXHR) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('You are not authorized to create a contract.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			},
+			400: function(responseObject, textStatus, jqXHR) {
+				$('#cDialogText').text('Could not Propose contract');
+				if (responseObject.responseJSON && responseObject.responseJSON.message) {
+					$('#cDialogText').text(responseObject.responseJSON.message);
+				}
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
 			}
 		},
 		success: function(j, t, x) {
@@ -1215,16 +1235,16 @@ function rerateData(j, parties) {
 
 		var borrower;
 		var lender;
-        var ticker;
-        var quantity;
-        
+		var ticker;
+		var quantity;
+
 		var contractObj = fetchContract(j[i].loanId);
 
 		if (contractObj) {
-			
+
 			ticker = contractObj.trade.instrument.ticker;
 			quantity = contractObj.trade.quantity;
-			
+
 			for (var t = 0; t < contractObj.trade.transactingParties.length; t++) {
 
 				if (counterpartyFilter == '_' || counterpartyFilter == contractObj.trade.transactingParties[t].party.partyId) {
@@ -1476,89 +1496,111 @@ function approveRerate(contractId, rerateId, clickUriPrefix) {
 		},
 		async: true,
 		success: function(j) {
-			document.getElementById("modal02").style.display = "block";
-			document.getElementById("caption02").innerHTML = 'Approve rerate ' + rerateId;
 
-			$('#hContractId').val(contractId);
-			$('#hRerateId').val(rerateId);
+			var contractObj = fetchContract(contractId);
 
-			var borrower;
-			var lender;
+			if (contractObj) {
 
-			for (var t = 0; t < j.transactingParties.length; t++) {
+				document.getElementById("modal02").style.display = "block";
+				document.getElementById("caption02").innerHTML = 'Approve rerate ' + rerateId;
 
-				if (j.transactingParties[t].partyRole == 'BORROWER') {
-					borrower = j.transactingParties[t].party.partyId;
-				} else if (j.transactingParties[t].partyRole == 'LENDER') {
-					lender = j.transactingParties[t].party.partyId;
+				$('#hContractId').val(contractId);
+				$('#hRerateId').val(rerateId);
+
+				$('#cName').text(contractObj.trade.instrument.ticker);
+				$('#cQuantity').text(contractObj.trade.quantity);
+
+				var borrower;
+				var lender;
+
+				for (var t = 0; t < contractObj.trade.transactingParties.length; t++) {
+
+					if (contractObj.trade.transactingParties[t].partyRole == 'BORROWER') {
+						borrower = contractObj.trade.transactingParties[t].party.partyId;
+					} else if (contractObj.trade.transactingParties[t].partyRole == 'LENDER') {
+						lender = contractObj.trade.transactingParties[t].party.partyId;
+					}
 				}
-			}
 
-			for (var p = 0; p < partyObj.length; p++) {
-				if (partyObj[p].partyId == borrower) {
-					$('#cMyParty').text(partyObj[p].partyId);
-					$('#hMyParty').val(partyObj[p].partyId);
-					$('#cPartyRole').text("Borrowing From");
-					$('#hPartyRole').val("BORROWER");
-					$('#cCounterparty').text(lender);
-					$('#hCounterparty').val(lender);
-					break;
-				} else if (partyObj[p].partyId == lender) {
-					$('#cMyParty').text(partyObj[p].partyId);
-					$('#hMyParty').val(partyObj[p].partyId);
-					$('#cPartyRole').text("Lending To");
-					$('#hPartyRole').val("LENDER");
-					$('#cCounterparty').text(borrower);
-					$('#hCounterparty').val(borrower);
-					break;
+				for (var p = 0; p < partyObj.length; p++) {
+					if (partyObj[p].partyId == borrower) {
+						$('#cMyParty').text(partyObj[p].partyId);
+						$('#hMyParty').val(partyObj[p].partyId);
+						$('#cPartyRole').text("Borrowing From");
+						$('#hPartyRole').val("BORROWER");
+						$('#cCounterparty').text(lender);
+						$('#hCounterparty').val(lender);
+						break;
+					} else if (partyObj[p].partyId == lender) {
+						$('#cMyParty').text(partyObj[p].partyId);
+						$('#hMyParty').val(partyObj[p].partyId);
+						$('#cPartyRole').text("Lending To");
+						$('#hPartyRole').val("LENDER");
+						$('#cCounterparty').text(borrower);
+						$('#hCounterparty').val(borrower);
+						break;
+					}
 				}
-			}
 
-			var currentRateType = 'Rebate';
-			if (j.rate.fee) {
-				currentRateType = 'Fee';
-			}
-
-			var currentRate = null;
-			var currentBenchmark = null;
-			if (j.rate.fee) {
-				currentRate = j.rate.fee.baseRate.toString();
-			} else if (j.rate.rebate) {
-				if (j.rate.rebate.fixed) {
-					currentRate = j.rate.rebate.fixed.baseRate.toString();
-				} else if (j.rate.rebate.floating) {
-					currentRate = j.rate.rebate.floating.spread.toString();
-					currentBenchmark = j.rate.rebate.floating.benchmark;
+				var currentRateType = 'Rebate';
+				if (contractObj.trade.rate.fee) {
+					currentRateType = 'Fee';
 				}
-			}
 
-			$('#cCurrentRateType').text(currentRateType);
-			$('#cCurrentRate').text(currentRate);
-			$('#cCurrentRateBenchmark').text(currentBenchmark);
-
-			var proposedRateType = 'Rebate';
-			if (j.rerate.fee) {
-				proposedRateType = 'Fee';
-			}
-
-			var proposedRate = null;
-			var proposedBenchmark = null;
-			if (j.rerate.fee) {
-				proposedRate = j.rerate.fee.baseRate.toString();
-			} else if (j.rerate.rebate) {
-				if (j.rerate.rebate.fixed) {
-					proposedRate = j.rerate.rebate.fixed.baseRate.toString();
-				} else if (j.rerate.rebate.floating) {
-					proposedRate = j.rerate.rebate.floating.spread.toString();
-					proposedBenchmark = j.rerate.rebate.floating.benchmark;
+				var currentRate = '--';
+				var currentBenchmark = '--';
+				var currentBenchmarkRate = '--';
+				if (contractObj.trade.rate.fee) {
+					currentRate = contractObj.trade.rate.fee.baseRate.toString();
+				} else if (contractObj.trade.rate.rebate) {
+					if (contractObj.trade.rate.rebate.fixed) {
+						currentRate = contractObj.trade.rate.rebate.fixed.baseRate.toString();
+					} else if (contractObj.trade.rate.rebate.floating) {
+						currentRate = contractObj.trade.rate.rebate.floating.spread.toString();
+						currentBenchmark = contractObj.trade.rate.rebate.floating.benchmark;
+						currentBenchmarkRate = contractObj.trade.rate.rebate.floating.baseRate;
+					}
 				}
+
+				$('#cCurrentRateType').text(currentRateType);
+				$('#cCurrentRate').text(currentRate);
+				$('#cCurrentRateBenchmark').text(currentBenchmark);
+				$('#cCurrentRateBenchmarkVal').text(currentBenchmarkRate);
+
+				var proposedRateType = 'Rebate';
+				if (j.rerate.fee) {
+					proposedRateType = 'Fee';
+				}
+
+				var proposedRate = '--';
+				var proposedBenchmark = '--';
+				var proposedBenchmarkRate = '--';
+				if (j.rerate.fee) {
+					proposedRate = j.rerate.fee.baseRate;
+				} else if (j.rerate.rebate) {
+					if (j.rerate.rebate.fixed) {
+						proposedRate = j.rerate.rebate.fixed.baseRate;
+					} else if (j.rerate.rebate.floating) {
+						proposedRate = j.rerate.rebate.floating.spread;
+						proposedBenchmark = j.rerate.rebate.floating.benchmark;
+						proposedBenchmarkRate = j.rerate.rebate.floating.baseRate;
+					}
+				}
+
+				$('#cProposedRateType').text(proposedRateType);
+				$('#cProposedRate').text(proposedRate);
+				$('#cProposedRateBenchmark').text(proposedBenchmark);
+				$('#cProposedRateBenchmarkVal').text(proposedBenchmarkRate);
+
+			} else {
+				$('#cDialogText').text('Could not link rerate to an active contract');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+
 			}
-
-			$('#cProposedRateType').text(proposedRateType);
-			$('#cProposedRate').text(proposedRate);
-			$('#cProposedRateBenchmark').text(proposedBenchmark);
-
-
 		}
 	});
 }

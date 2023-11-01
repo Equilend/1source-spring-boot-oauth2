@@ -389,19 +389,52 @@ public class UtilRestController {
 			@Valid @RequestBody ContractFromAgreementProposalForm proposalForm,
 			@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient) {
 
+		List<SearchParty> myParties = ledgerPartyRepository.getPartiesByUser(authorizedClient.getPrincipalName());
+		
 		ContractProposal contractProposal = new ContractProposal();
-
 		TradeAgreement tradeAgreement = proposalForm.getTrade();
+
+		//Reset all dates to now() to handle proposals from old agreements
+		tradeAgreement.setTradeDate(LocalDate.now());
+		tradeAgreement.setSettlementDate(LocalDate.now());
+		
+		OneOfTradeAgreementRate rate = tradeAgreement.getRate();
+		if (rate instanceof FeeRate) {
+			FeeRate fee = (FeeRate)rate;
+			fee.getFee().setEffectiveDate(LocalDate.now());
+		} else if (rate instanceof RebateRate) {
+			RebateRate rebate = (RebateRate)rate;
+			OneOfRebateRateRebate rebateRate = rebate.getRebate();
+			if (rebateRate instanceof FloatingRate) {
+				FloatingRate floatingRate = (FloatingRate)rebateRate;
+				floatingRate.getFloating().setEffectiveDate(LocalDate.now());
+			} else if (rebateRate instanceof FixedRate) {
+				FixedRate fixedRate = (FixedRate)rebateRate;
+				fixedRate.getFixed().setEffectiveDate(LocalDate.now());
+			}
+		}
+		
+		boolean actingAsLender = true;
+		for (TransactingParty t : tradeAgreement.getTransactingParties()) {
+			if (PartyRole.BORROWER.equals(t.getPartyRole()) && myParties.contains(ledgerPartyRepository.getParty(t.getParty().getPartyId()))) {
+				actingAsLender = false;
+				break;
+			}
+		}
+		
 		Collateral collateral = tradeAgreement.getCollateral();
 		if (collateral != null) {
 			if (collateral.getMargin() == null) {
 				collateral.setMargin(102);
 			}
-			if (collateral.getRoundingRule() == null) {
-				collateral.setRoundingRule(10.0f);
-			}
-			if (collateral.getRoundingMode() == null) {
-				collateral.setRoundingMode(RoundingMode.ALWAYSUP);
+			
+			if (actingAsLender) {
+				if (collateral.getRoundingRule() == null) {
+					collateral.setRoundingRule(10.0f);
+				}
+				if (collateral.getRoundingMode() == null) {
+					collateral.setRoundingMode(RoundingMode.ALWAYSUP);
+				}
 			}
 		}
 		contractProposal.setTrade(tradeAgreement);
@@ -413,7 +446,7 @@ public class UtilRestController {
 		List<NameValuePair> settlmentNameValuePairs = proposalForm.getSettlement();
 
 		PartySettlementInstruction partySettlementInstruction = new PartySettlementInstruction();
-		partySettlementInstruction.setPartyRole(PartyRole.LENDER);
+		partySettlementInstruction.setPartyRole(actingAsLender ? PartyRole.LENDER : PartyRole.BORROWER);
 
 		SettlementInstruction instruction = new SettlementInstruction();
 		partySettlementInstruction.setInstruction(instruction);
