@@ -27,7 +27,7 @@ body {font-size:16px;}
   </div>
   <div class="w3-bar-block">
     <a href="#" onclick="w3_close();" class="w3-bar-item w3-button w3-hover-white">Home</a> 
-    <a href="/summary" onclick="return checkAuth();" class="w3-bar-item w3-button w3-hover-white">Explore</a>
+    <a href="/summary" onclick="return checkAuth();" class="w3-bar-item w3-button w3-hover-white"><span sec:authorize="isAnonymous()">Explore</span><span sec:authorize="isAuthenticated()">Summary</span></a>
     <span sec:authorize="isAuthenticated()"> 
     <a href="/parties" onclick="return checkAuth();" class="w3-bar-item w3-button w3-hover-white">Parties</a> 
     <a href="/events" onclick="return checkAuth();" class="w3-bar-item w3-button w3-hover-white">Events</a> 

@@ -17,6 +17,12 @@ function ping() {
 	});
 }
 
+function expandToWindow(element, margin) {
+	if (element.height() < window.innerHeight) {
+		element.height(window.innerHeight - (margin));
+	}
+}
+
 function loadSummary() {
 
 	localStorage.clear();
@@ -79,7 +85,7 @@ function loadData(parties, uri, dFunction, pFunction) {
 			$("#table_div").LoadingOverlay("hide", true);
 			if (j == null || j.length == 0) {
 				setTimeout(function() {
-					table.draw(noResultData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '90%', page: 'disable' });
+					table.draw(noResultData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '95%', page: 'disable' });
 				}, 200);
 			} else {
 				data = dFunction(j, JSON.parse(parties));
@@ -91,9 +97,9 @@ function loadData(parties, uri, dFunction, pFunction) {
 		error: function(xhr, ajaxOptions, thrownError) {
 			$("#table_div").LoadingOverlay("hide", true);
 			if (xhr.status == 404) {
-				table.draw(noResultData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '90%', page: 'disable' });
+				table.draw(noResultData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '95%', page: 'disable' });
 			} else {
-				table.draw(errorData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '90%', page: 'disable' });
+				table.draw(errorData(), { allowHtml: true, showRowNumber: false, width: '100%', height: '95%', page: 'disable' });
 			}
 		}
 	});
@@ -102,7 +108,7 @@ function loadData(parties, uri, dFunction, pFunction) {
 var lastEventId;
 
 function successData(table, data) {
-	table.draw(data, { allowHtml: true, showRowNumber: true, width: '100%', height: '90%', page: 'enable', pageSize: 10 });
+	table.draw(data, { allowHtml: true, showRowNumber: true, width: '100%', height: '95%', page: 'enable', pageSize: 10 });
 }
 
 function errorData() {
