@@ -168,6 +168,11 @@
 								</td>
 							</tr>
 							<tr>
+								<td>&nbsp;</td>
+								<td><b>Internal Reference ID:</b></td>
+								<td><input type="text" name="internalRefId" id="tInternalRefId" value="REF123456"></td>
+							</tr>
+							<tr>
 								<td><b>Instrument</b></td>
 								<td colspan="2">&nbsp;</td>
 							</tr>
@@ -255,8 +260,8 @@
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>Local Agent Name:</b></td>
-								<td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140"
-										style="width:140px;" value="Clearing Bank of America"></td>
+								<td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="240"
+										style="width:240px;" value="Clearing Bank of America"></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
@@ -264,7 +269,7 @@
 								<td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100"
 										style="width:100px;" value="XX36053"></td>
 							</tr>
-							<tr>
+<!--							<tr>
 								<td>&nbsp;</td>
 								<td><b>DTC Participant Number:</b></td>
 								<td><input type="text" name="dtcParticipantNumber" id="tDtcParticipantNumber"
@@ -274,7 +279,7 @@
 								<td>&nbsp;</td>
 								<td><b>CDS Customer Unit ID:</b></td>
 								<td><input type="text" name="cdsCustomerUnitId" id="tCdsCustomerUnitId" maxlength="100"
-										style="width:100px;" value="TLET"></td>
+										style="width:100px;" value=""></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
@@ -294,12 +299,38 @@
 								<td><input type="text" name="custodianAcct" id="tCustodianAcct" maxlength="100"
 										style="width:100px;" value=""></td>
 							</tr>
+							-->
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Local Market Field 1 Name:</b></td>
+								<td><input type="text" name="localFieldName1" id="tLocalFieldName1" maxlength="100"
+										style="width:100px;" value="DTCYUS00"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Local Market Field 1 Value:</b></td>
+								<td><input type="text" name="localFieldValue1" id="tLocalFieldValue1" maxlength="100"
+										style="width:100px;" value="00001"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Local Market Field 2 Name:</b></td>
+								<td><input type="text" name="localFieldName2" id="tLocalFieldName2" maxlength="100"
+										style="width:100px;" value="DVPCCY"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Local Market Field 2 Value:</b></td>
+								<td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100"
+										style="width:100px;" value="USD"></td>
+							</tr>
 						</table>
 						<input type="hidden" name="counterparty" id="hCounterparty">
 					</form>
 				</div>
 				<footer class="w3-container w3-orange">
-					<p class="w3-right"><input type="submit" value="submit" onclick="$('#createProposalForm').submit();">&nbsp;<input type="submit" value="cancel"
+					<p class="w3-right"><input type="submit" value="submit"
+							onclick="$('#createProposalForm').submit();">&nbsp;<input type="submit" value="cancel"
 							onclick="document.getElementById('modal02').style.display='none'"></p>
 				</footer>
 			</div>

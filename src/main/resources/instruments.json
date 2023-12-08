@@ -1,126 +1,121 @@
 [
 	{
-		"id" : "BBG001S5XH92",
+		"id" : "BBG000BWXBC2",
 		"value" : "WMT",
 		"label" : "WALMART INC COM"
 	},
 	{
-		"id" : "BBG001S5PQL7",
+		"id" : "BBG000BVPV84",
 		"value" : "AMZN",
 		"label" : "AMAZON COM INC COM"
 	},
 	{
-		"id" : "BBG001S5N8V8",
+		"id" : "BBG000B9XRY4",
 		"value" : "AAPL",
 		"label" : "APPLE INC COM"
 	},
 	{
-		"id" : "BBG001S5QBD8",
+		"id" : "BBG000BGRY34",
 		"value" : "CVS",
 		"label" : "CVS HEALTH CORPORATION COM"
 	},
 	{
-		"id" : "BBG001S6WCJ1",
+		"id" : "BBG000CH5208",
 		"value" : "UNH",
 		"label" : "UNITEDHEALTH GROUP INC COM"
 	},
 	{
-		"id" : "BBG001S69V32",
+		"id" : "BBG000GZQ728",
 		"value" : "XOM",
 		"label" : "EXXON MOBIL CORPORATION COM NPV"
 	},
 	{
-		"id" : "BBG001S90346",
+		"id" : "BBG000DWG505",
 		"value" : "BRK.B",
 		"label" : "BERKSHIRE HATHAWAY INC COM CLASS'B'"
 	},
 	{
-		"id" : "BBG009S3NB21",
+		"id" : "BBG009S3NB30",
 		"value" : "GOOG",
 		"label" : "ALPHABET INC CAP CL C"
 	},
 	{
-		"id" : "BBG001S8F8P8",
+		"id" : "BBG000DYGNW7",
 		"value" : "MCK",
 		"label" : "MCKESSON CORPORATION COM"
 	},
 	{
-		"id" : "BBG001S8X7P0",
+		"id" : "BBG000MDCQC2",
 		"value" : "ABC",
 		"label" : "AMERISOURCEBERGEN CORPORATION COM"
 	},
 	{
-		"id" : "BBG001S5TD05",
+		"id" : "BBG000BPH459",
 		"value" : "MSFT",
 		"label" : "MICROSOFT CORP COM"
 	},
 	{
-		"id" : "BBG001S9KRQ7",
+		"id" : "BBG000F6H8W8",
 		"value" : "COST",
 		"label" : "COSTCO WHOLESALE CORP COM"
 	},
 	{
-		"id" : "BBG001S5VWH2",
+		"id" : "BBG000BSJK37",
 		"value" : "T",
 		"label" : "AT&T INC COM"
 	},
 	{
-		"id" : "BBG001S7PC34",
+		"id" : "BBG000D898T9",
 		"value" : "CAH",
 		"label" : "CARDINAL HEALTH INC COM NPV"
 	},
 	{
-		"id" : "BBG001S67ZC5",
+		"id" : "BBG000K4ND22",
 		"value" : "CVX",
 		"label" : "CHEVRON CORPORATION COM"
 	},
 	{
-		"id" : "BBG001S5RTW7",
+		"id" : "BBG000BKZB36",
 		"value" : "HD",
 		"label" : "HOME DEPOT INC COM"
 	},
 	{
-		"id" : "BBG001S5XBY7",
+		"id" : "BBG000BWLMJ4",
 		"value" : "WBA",
 		"label" : "WALGREENS BOOTS ALLIANCE INC COM"
 	},
 	{
-		"id" : "BBG001S169P1",
+		"id" : "BBG001DCCGR8",
 		"value" : "MPC",
 		"label" : "MARATHON PETROLEUM CORP COM"
 	},
 	{
-		"id" : "BBG001S6KBQ8",
-		"value" : "ELV",
-		"label" : "ELEVANCE HEALTH INC COM"
-	},
-	{
-		"id" : "BBG001S5SN40",
+		"id" : "BBG000BMY992",
 		"value" : "KR",
 		"label" : "KROGER CO COM"
 	},
 	{
-		"id" : "BBG001S5TZ33",
+		"id" : "BBG000BQPC32",
 		"value" : "F",
 		"label" : "FORD MOTOR CO COM"
 	},
 	{
-		"id" : "BBG001S67QY1",
+		"id" : "BBG000DMBXR2",
 		"value" : "VZ",
 		"label" : "VERIZON COMMUNICATIONS COM"
 	},
 	{
-		"id" : "BBG001S8CRC3",
+		"id" : "BBG000DMBXR2",
 		"value" : "JPM",
 		"label" : "JPMORGAN CHASE & CO. COM"
 	},
 	{
-		"id" : "BBG001S5S399",
+		"id" : "BBG000BLNNH6",
 		"value" : "IBM",
 		"label" : "INTERNATIONAL BUS MACH CORP COM"
 	},
 	{
-		"id" : "BBG001SQKGD7",
+		"id" : "BBG000N9MNX3",
 		"value" : "TSLA",
 		"label" : "TESLA INC COM"
 	}

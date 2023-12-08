@@ -5,6 +5,7 @@ import java.util.Objects;
 public class AgreementForm {
 
 	private String partyRole;
+	private String internalRefId;
 	private String instrument;
 	private String rate;
 	private String quantity;
@@ -17,6 +18,14 @@ public class AgreementForm {
 
 	public void setPartyRole(String partyRole) {
 		this.partyRole = partyRole;
+	}
+
+	public String getInternalRefId() {
+		return internalRefId;
+	}
+
+	public void setInternalRefId(String internalRefId) {
+		this.internalRefId = internalRefId;
 	}
 
 	public String getInstrument() {
@@ -61,7 +70,7 @@ public class AgreementForm {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(counterparty, instrument, myParty, partyRole, quantity, rate);
+		return Objects.hash(counterparty, instrument, internalRefId, myParty, partyRole, quantity, rate);
 	}
 
 	@Override
@@ -74,8 +83,9 @@ public class AgreementForm {
 			return false;
 		AgreementForm other = (AgreementForm) obj;
 		return Objects.equals(counterparty, other.counterparty) && Objects.equals(instrument, other.instrument)
-				&& Objects.equals(myParty, other.myParty) && Objects.equals(partyRole, other.partyRole)
-				&& Objects.equals(quantity, other.quantity) && Objects.equals(rate, other.rate);
+				&& Objects.equals(internalRefId, other.internalRefId) && Objects.equals(myParty, other.myParty)
+				&& Objects.equals(partyRole, other.partyRole) && Objects.equals(quantity, other.quantity)
+				&& Objects.equals(rate, other.rate);
 	}
 
 }
