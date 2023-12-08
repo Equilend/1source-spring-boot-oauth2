@@ -98,11 +98,25 @@ public class UtilRestController {
 			borrowerTransactingParty.setPartyRole(PartyRole.BORROWER);
 			borrowerTransactingParty.setParty(PartyRole.BORROWER.toString().equals(agreementForm.getPartyRole()) ? myParty.toParty() : counterparty.toParty());
 			transactingParties.add(borrowerTransactingParty);
+			
+			InternalReference borrowerInternalRef = new InternalReference();
+			borrowerInternalRef.setAccountId(null);
+			borrowerInternalRef.setBrokerCd(null);
+			borrowerInternalRef.setInternalRefId(null);
+			
+			borrowerTransactingParty.setInternalRef(borrowerInternalRef);
 
 			TransactingParty lenderTransactingParty = new TransactingParty();
 			lenderTransactingParty.setPartyRole(PartyRole.LENDER);
 			lenderTransactingParty.setParty(PartyRole.LENDER.toString().equals(agreementForm.getPartyRole())  ? myParty.toParty() : counterparty.toParty());
 			transactingParties.add(lenderTransactingParty);
+
+			InternalReference lenderInternalRef = new InternalReference();
+			lenderInternalRef.setAccountId(null);
+			lenderInternalRef.setBrokerCd(null);
+			lenderInternalRef.setInternalRefId(null);
+			
+			lenderTransactingParty.setInternalRef(lenderInternalRef);
 
 			trade.setTransactingParties(transactingParties);
 
@@ -128,7 +142,7 @@ public class UtilRestController {
 			Price price = new Price();
 			price.setCurrency(CurrencyCd.USD);
 			price.setUnit(PriceUnit.SHARE);
-			price.setValue(100.00f);
+			price.setValue(100.00d);
 
 			instrument.setPrice(price);
 
@@ -139,7 +153,7 @@ public class UtilRestController {
 			FeeRate feeRate = new FeeRate();
 			FixedRateDef fixedRateDef = new FixedRateDef();
 			feeRate.setFee(fixedRateDef);
-			fixedRateDef.setBaseRate(Float.parseFloat(agreementForm.getRate()));
+			fixedRateDef.setBaseRate(Double.parseDouble(agreementForm.getRate()));
 			fixedRateDef.setCutoffTime(defaultCutoffTime);
 			fixedRateDef.setEffectiveDate(tradeDate);
 			fixedRateDef.setEffectiveRate(null);
@@ -148,7 +162,7 @@ public class UtilRestController {
 
 			trade.setQuantity(new BigDecimal(agreementForm.getQuantity()));
 			trade.setBillingCurrency(CurrencyCd.USD);
-			trade.setDividendRatePct(100f);
+			trade.setDividendRatePct(100d);
 			trade.setTradeDate(tradeDate);
 			trade.setTermType(TermType.OPEN);
 			trade.setTermDate(null);
@@ -198,22 +212,31 @@ public class UtilRestController {
 			borrowerTransactingParty.setParty(PartyRole.BORROWER.toString().equals(proposalForm.getPartyRole()) ? myParty.toParty() : counterparty.toParty());
 			transactingParties.add(borrowerTransactingParty);
 
+			InternalReference borrowerInternalRef = new InternalReference();
+			borrowerInternalRef.setAccountId(null);
+			borrowerInternalRef.setBrokerCd(null);
+			borrowerInternalRef.setInternalRefId(null);
+			
+			borrowerTransactingParty.setInternalRef(borrowerInternalRef);
+
 			TransactingParty lenderTransactingParty = new TransactingParty();
 			lenderTransactingParty.setPartyRole(PartyRole.LENDER);
 			lenderTransactingParty.setParty(PartyRole.LENDER.toString().equals(proposalForm.getPartyRole())  ? myParty.toParty() : counterparty.toParty());
 			transactingParties.add(lenderTransactingParty);
 
+			InternalReference lenderInternalRef = new InternalReference();
+			lenderInternalRef.setAccountId(null);
+			lenderInternalRef.setBrokerCd(null);
+			lenderInternalRef.setInternalRefId(null);
+			
+			lenderTransactingParty.setInternalRef(lenderInternalRef);
+
 			trade.setTransactingParties(transactingParties);
 
 			Venue venue = new Venue();
 			venue.setType(VenueType.ONPLATFORM);
-
-			Platform platform = new Platform();
-			platform.setGleifLei("X");
-			platform.setLegalName("Phone Brokered");
-			platform.setVenueName("Phone");
-			platform.setVenueRefId("0");
-			venue.setPlatform(platform);
+			venue.setVenueName("Phone");
+			venue.setVenueRefKey("0");
 			
 			trade.setExecutionVenue(venue);
 
@@ -227,10 +250,10 @@ public class UtilRestController {
 			Price price = new Price();
 			price.setCurrency(CurrencyCd.USD);
 			price.setUnit(PriceUnit.SHARE);
-			Float f = 50f;
+			Double f = 50d;
 			if (proposalForm.getPrice() != null) {
 				try {
-					f = Float.parseFloat(proposalForm.getPrice());
+					f = Double.parseDouble(proposalForm.getPrice());
 				} catch (Exception p) {
 					logger.warn("Bad price: {}", proposalForm.getPrice());
 				}
@@ -243,10 +266,10 @@ public class UtilRestController {
 
 			LocalDate tradeDate = LocalDate.now();
 			
-			Float r = 5f;
+			Double r = 5d;
 			if (proposalForm.getRate() != null) {
 				try {
-					r = Float.parseFloat(proposalForm.getRate());
+					r = Double.parseDouble(proposalForm.getRate());
 				} catch (Exception p) {
 					logger.warn("Bad rate: {}", proposalForm.getRate());
 				}
@@ -262,6 +285,19 @@ public class UtilRestController {
 				floatingRateDef.setEffectiveDate(tradeDate);
 				floatingRateDef.setEffectiveRate(null);
 				floatingRateDef.setBenchmark(BenchmarkCd.fromValue(proposalForm.getBenchmark()));
+				floatingRateDef.setIsAutoRerate("YES".equals(proposalForm.getAutoRerate()));
+				
+				if (!floatingRateDef.isIsAutoRerate()) {
+					Double b = 5d;
+					if (proposalForm.getBaseRate() != null) {
+						try {
+							b = Double.parseDouble(proposalForm.getBaseRate());
+							floatingRateDef.setBaseRate(b);
+						} catch (Exception p) {
+							logger.warn("Bad base rate: {}", proposalForm.getBaseRate());
+						}
+					}	
+				}
 				
 				FloatingRate floatingRate = new FloatingRate();
 				floatingRate.setFloating(floatingRateDef);
@@ -311,7 +347,7 @@ public class UtilRestController {
 			
 			trade.setQuantity(q);
 			trade.setBillingCurrency(CurrencyCd.USD);
-			trade.setDividendRatePct(100f);
+			trade.setDividendRatePct(100d);
 			trade.setTradeDate(tradeDate);
 			trade.setTermType(TermType.OPEN);
 			trade.setTermDate(null);
@@ -335,7 +371,7 @@ public class UtilRestController {
 			
 			//only add rounding rules if proposer is the lender
 			if (PartyRole.LENDER.toString().equals(proposalForm.getPartyRole())) {
-				collateral.setRoundingRule(10.0f);
+				collateral.setRoundingRule(10.0d);
 				collateral.setRoundingMode(RoundingMode.ALWAYSUP);
 			}
 
@@ -345,34 +381,19 @@ public class UtilRestController {
 
 			PartySettlementInstruction partySettlementInstruction = new PartySettlementInstruction();
 			partySettlementInstruction.setPartyRole(PartyRole.fromValue(proposalForm.getPartyRole()));
+			partySettlementInstruction.setSettlementStatus(SettlementStatus.fromValue(proposalForm.getSettlementStatus()));
+			partySettlementInstruction.setInternalAcctCd(proposalForm.getInternalAcctCd());
 
 			SettlementInstruction instruction = new SettlementInstruction();
 			partySettlementInstruction.setInstruction(instruction);
-
-			List<LocalMarketField> localMarketFields = new ArrayList<>();
-
 			instruction.setSettlementBic(proposalForm.getSettlmentBic());
 			instruction.setLocalAgentBic(proposalForm.getLocalAgentBic());
 			instruction.setLocalAgentName(proposalForm.getLocalAgentName());
-			instruction.setLocalAgentAcct(proposalForm.getLocalAgentAcct());
-
-			if (proposalForm.getLocalFieldName1() != null) {
-				LocalMarketField localMarketField1 = new LocalMarketField();
-				localMarketField1.setLocalFieldName(proposalForm.getLocalFieldName1());
-				localMarketField1.setLocalFieldValue(proposalForm.getLocalFieldValue1());
-				localMarketFields.add(localMarketField1);
-			}
-
-			if (proposalForm.getLocalFieldName2() != null) {
-				LocalMarketField localMarketField2 = new LocalMarketField();
-				localMarketField2.setLocalFieldName(proposalForm.getLocalFieldName2());
-				localMarketField2.setLocalFieldValue(proposalForm.getLocalFieldValue2());
-				localMarketFields.add(localMarketField2);
-			}
-
-			if (!localMarketFields.isEmpty()) {
-				instruction.setLocalMarketFields(localMarketFields);
-			}
+			instruction.setDtcParticipantNumber(proposalForm.getDtcParticipantNumber());
+			instruction.setCdsCustomerUnitId(proposalForm.getCdsCustomerUnitId());
+			instruction.setCustodianName(proposalForm.getCustodianName());
+			instruction.setCustodianBic(proposalForm.getCustodianBic());
+			instruction.setCustodianAcct(proposalForm.getCustodianAcct());
 
 			contractProposal.setSettlement(Collections.singletonList(partySettlementInstruction));
 
@@ -430,7 +451,7 @@ public class UtilRestController {
 			
 			if (actingAsLender) {
 				if (collateral.getRoundingRule() == null) {
-					collateral.setRoundingRule(10.0f);
+					collateral.setRoundingRule(10.0d);
 				}
 				if (collateral.getRoundingMode() == null) {
 					collateral.setRoundingMode(RoundingMode.ALWAYSUP);
@@ -440,7 +461,7 @@ public class UtilRestController {
 		contractProposal.setTrade(tradeAgreement);
 		
 		if (tradeAgreement.getDividendRatePct() == null) {
-			tradeAgreement.setDividendRatePct(100f);
+			tradeAgreement.setDividendRatePct(100d);
 		}
 
 		List<NameValuePair> settlmentNameValuePairs = proposalForm.getSettlement();
@@ -451,11 +472,6 @@ public class UtilRestController {
 		SettlementInstruction instruction = new SettlementInstruction();
 		partySettlementInstruction.setInstruction(instruction);
 
-		List<LocalMarketField> localMarketFields = new ArrayList<>();
-
-		LocalMarketField localMarketField1 = null;
-		LocalMarketField localMarketField2 = null;
-
 		for (NameValuePair pair : settlmentNameValuePairs) {
 			if ("settlmentBic".equals(pair.getName())) {
 				instruction.setSettlementBic(pair.getValue());
@@ -465,35 +481,21 @@ public class UtilRestController {
 				instruction.setLocalAgentName(pair.getValue());
 			} else if ("localAgentAcct".equals(pair.getName())) {
 				instruction.setLocalAgentAcct(pair.getValue());
-			} else if ("localFieldName1".equals(pair.getName())) {
-				if (localMarketField1 == null) {
-					localMarketField1 = new LocalMarketField();
-					localMarketFields.add(localMarketField1);
-				}
-				localMarketField1.setLocalFieldName(pair.getValue());
-			} else if ("localFieldValue1".equals(pair.getName())) {
-				if (localMarketField1 == null) {
-					localMarketField1 = new LocalMarketField();
-					localMarketFields.add(localMarketField1);
-				}
-				localMarketField1.setLocalFieldValue(pair.getValue());
-			} else if ("localFieldName2".equals(pair.getName())) {
-				if (localMarketField2 == null) {
-					localMarketField2 = new LocalMarketField();
-					localMarketFields.add(localMarketField2);
-				}
-				localMarketField2.setLocalFieldName(pair.getValue());
-			} else if ("localFieldValue2".equals(pair.getName())) {
-				if (localMarketField2 == null) {
-					localMarketField2 = new LocalMarketField();
-					localMarketFields.add(localMarketField2);
-				}
-				localMarketField2.setLocalFieldValue(pair.getValue());
+			} else if ("dtcParticipantNumber".equals(pair.getName())) {
+				instruction.setDtcParticipantNumber(pair.getValue());
+			} else if ("cdsCustomerUnitId".equals(pair.getName())) {
+				instruction.setCdsCustomerUnitId(pair.getValue());
+			} else if ("custodianName".equals(pair.getName())) {
+				instruction.setCustodianName(pair.getValue());
+			} else if ("custodianBic".equals(pair.getName())) {
+				instruction.setCustodianBic(pair.getValue());
+			} else if ("custodianAcct".equals(pair.getName())) {
+				instruction.setCustodianAcct(pair.getValue());
+			} else if ("settlementStatus".equals(pair.getName())) {
+				partySettlementInstruction.setSettlementStatus(SettlementStatus.fromValue(pair.getValue()));
+			} else if ("internalAcctCd".equals(pair.getName())) {
+				partySettlementInstruction.setInternalAcctCd(pair.getValue());
 			}
-		}
-
-		if (!localMarketFields.isEmpty()) {
-			instruction.setLocalMarketFields(localMarketFields);
 		}
 
 		contractProposal.setSettlement(Collections.singletonList(partySettlementInstruction));
@@ -515,40 +517,26 @@ public class UtilRestController {
 
 			PartySettlementInstruction partySettlementInstruction = new PartySettlementInstruction();
 			partySettlementInstruction.setPartyRole(PartyRole.fromValue(acceptForm.getPartyRole()));
+			partySettlementInstruction.setSettlementStatus(SettlementStatus.fromValue(acceptForm.getSettlementStatus()));
+			partySettlementInstruction.setInternalAcctCd(acceptForm.getInternalAcctCd());
 
 			//only add rounding rules if proposer is the lender
 			if (PartyRole.LENDER.toString().equals(acceptForm.getPartyRole())) {
-				settlementInstructionUpdate.setRoundingRule(10);
+				settlementInstructionUpdate.setRoundingRule(10d);
 				settlementInstructionUpdate.setRoundingMode(RoundingMode.ALWAYSUP);
 			}
 
 			SettlementInstruction instruction = new SettlementInstruction();
 			partySettlementInstruction.setInstruction(instruction);
 
-			List<LocalMarketField> localMarketFields = new ArrayList<>();
-
 			instruction.setSettlementBic(acceptForm.getSettlmentBic());
 			instruction.setLocalAgentBic(acceptForm.getLocalAgentBic());
 			instruction.setLocalAgentName(acceptForm.getLocalAgentName());
 			instruction.setLocalAgentAcct(acceptForm.getLocalAgentAcct());
-
-			if (acceptForm.getLocalFieldName1() != null) {
-				LocalMarketField localMarketField1 = new LocalMarketField();
-				localMarketField1.setLocalFieldName(acceptForm.getLocalFieldName1());
-				localMarketField1.setLocalFieldValue(acceptForm.getLocalFieldValue1());
-				localMarketFields.add(localMarketField1);
-			}
-
-			if (acceptForm.getLocalFieldName2() != null) {
-				LocalMarketField localMarketField2 = new LocalMarketField();
-				localMarketField2.setLocalFieldName(acceptForm.getLocalFieldName2());
-				localMarketField2.setLocalFieldValue(acceptForm.getLocalFieldValue2());
-				localMarketFields.add(localMarketField2);
-			}
-
-			if (!localMarketFields.isEmpty()) {
-				instruction.setLocalMarketFields(localMarketFields);
-			}
+			instruction.setDtcParticipantNumber(acceptForm.getDtcParticipantNumber());
+			instruction.setCdsCustomerUnitId(acceptForm.getCdsCustomerUnitId());
+			instruction.setCustodianName(acceptForm.getCustodianName());
+			instruction.setCustodianAcct(acceptForm.getCustodianAcct());
 
 			settlementInstructionUpdate.setSettlement(partySettlementInstruction);
 
@@ -571,19 +559,19 @@ public class UtilRestController {
 
 		if (contractId != null && myParty != null && counterparty != null) {
 
-			Float r = 5f;
+			Double r = 5d;
 			if (rerateProposalForm.getRate() != null) {
 				try {
-					r = Float.parseFloat(rerateProposalForm.getRate());
+					r = Double.parseDouble(rerateProposalForm.getRate());
 				} catch (Exception p) {
 					logger.warn("Bad rate: {}", rerateProposalForm.getRate());
 				}
 			}
 
-			Float br = 5f;
+			Double br = 5d;
 			if (rerateProposalForm.getBenchmarkRate() != null) {
 				try {
-					br = Float.parseFloat(rerateProposalForm.getBenchmarkRate());
+					br = Double.parseDouble(rerateProposalForm.getBenchmarkRate());
 				} catch (Exception p) {
 					logger.warn("Bad rate: {}", rerateProposalForm.getBenchmarkRate());
 				}

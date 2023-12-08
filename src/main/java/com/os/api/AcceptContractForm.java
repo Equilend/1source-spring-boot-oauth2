@@ -11,6 +11,10 @@ public class AcceptContractForm {
 	private String counterparty = null;
 	@JsonProperty("partyRole")
 	private String partyRole = null;
+	@JsonProperty("settlementStatus")
+	private String settlementStatus = null;
+	@JsonProperty("internalAcctCd")
+	private String internalAcctCd = null;
 	@JsonProperty("settlmentBic")
 	private String settlmentBic = null;
 	@JsonProperty("localAgentBic")
@@ -19,14 +23,16 @@ public class AcceptContractForm {
 	private String localAgentName = null;
 	@JsonProperty("localAgentAcct")
 	private String localAgentAcct = null;
-	@JsonProperty("localFieldName1")
-	private String localFieldName1 = null;
-	@JsonProperty("localFieldValue1")
-	private String localFieldValue1 = null;
-	@JsonProperty("localFieldName2")
-	private String localFieldName2 = null;
-	@JsonProperty("localFieldValue2")
-	private String localFieldValue2 = null;
+	@JsonProperty("dtcParticipantNumber")
+	private String dtcParticipantNumber = null;
+	@JsonProperty("cdsCustomerUnitId")
+	private String cdsCustomerUnitId = null;
+	@JsonProperty("custodianName")
+	private String custodianName = null;
+	@JsonProperty("custodianBic")
+	private String custodianBic = null;
+	@JsonProperty("custodianAcct")
+	private String custodianAcct = null;
 
 	public String getMyParty() {
 		return myParty;
@@ -50,6 +56,22 @@ public class AcceptContractForm {
 
 	public void setPartyRole(String partyRole) {
 		this.partyRole = partyRole;
+	}
+
+	public String getSettlementStatus() {
+		return settlementStatus;
+	}
+
+	public void setSettlementStatus(String settlementStatus) {
+		this.settlementStatus = settlementStatus;
+	}
+
+	public String getInternalAcctCd() {
+		return internalAcctCd;
+	}
+
+	public void setInternalAcctCd(String internalAcctCd) {
+		this.internalAcctCd = internalAcctCd;
 	}
 
 	public String getSettlmentBic() {
@@ -84,42 +106,51 @@ public class AcceptContractForm {
 		this.localAgentAcct = localAgentAcct;
 	}
 
-	public String getLocalFieldName1() {
-		return localFieldName1;
+	public String getDtcParticipantNumber() {
+		return dtcParticipantNumber;
 	}
 
-	public void setLocalFieldName1(String localFieldName1) {
-		this.localFieldName1 = localFieldName1;
+	public void setDtcParticipantNumber(String dtcParticipantNumber) {
+		this.dtcParticipantNumber = dtcParticipantNumber;
 	}
 
-	public String getLocalFieldValue1() {
-		return localFieldValue1;
+	public String getCdsCustomerUnitId() {
+		return cdsCustomerUnitId;
 	}
 
-	public void setLocalFieldValue1(String localFieldValue1) {
-		this.localFieldValue1 = localFieldValue1;
+	public void setCdsCustomerUnitId(String cdsCustomerUnitId) {
+		this.cdsCustomerUnitId = cdsCustomerUnitId;
 	}
 
-	public String getLocalFieldName2() {
-		return localFieldName2;
+	public String getCustodianName() {
+		return custodianName;
 	}
 
-	public void setLocalFieldName2(String localFieldName2) {
-		this.localFieldName2 = localFieldName2;
+	public void setCustodianName(String custodianName) {
+		this.custodianName = custodianName;
 	}
 
-	public String getLocalFieldValue2() {
-		return localFieldValue2;
+	public String getCustodianBic() {
+		return custodianBic;
 	}
 
-	public void setLocalFieldValue2(String localFieldValue2) {
-		this.localFieldValue2 = localFieldValue2;
+	public void setCustodianBic(String custodianBic) {
+		this.custodianBic = custodianBic;
+	}
+
+	public String getCustodianAcct() {
+		return custodianAcct;
+	}
+
+	public void setCustodianAcct(String custodianAcct) {
+		this.custodianAcct = custodianAcct;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(counterparty, localAgentAcct, localAgentBic, localAgentName, localFieldName1,
-				localFieldName2, localFieldValue1, localFieldValue2, myParty, partyRole, settlmentBic);
+		return Objects.hash(cdsCustomerUnitId, counterparty, custodianAcct, custodianBic, custodianName,
+				dtcParticipantNumber, internalAcctCd, localAgentAcct, localAgentBic, localAgentName, myParty, partyRole,
+				settlementStatus, settlmentBic);
 	}
 
 	@Override
@@ -131,14 +162,19 @@ public class AcceptContractForm {
 		if (getClass() != obj.getClass())
 			return false;
 		AcceptContractForm other = (AcceptContractForm) obj;
-		return Objects.equals(counterparty, other.counterparty) && Objects.equals(localAgentAcct, other.localAgentAcct)
+		return Objects.equals(cdsCustomerUnitId, other.cdsCustomerUnitId)
+				&& Objects.equals(counterparty, other.counterparty)
+				&& Objects.equals(custodianAcct, other.custodianAcct)
+				&& Objects.equals(custodianBic, other.custodianBic)
+				&& Objects.equals(custodianName, other.custodianName)
+				&& Objects.equals(dtcParticipantNumber, other.dtcParticipantNumber)
+				&& Objects.equals(internalAcctCd, other.internalAcctCd)
+				&& Objects.equals(localAgentAcct, other.localAgentAcct)
 				&& Objects.equals(localAgentBic, other.localAgentBic)
-				&& Objects.equals(localAgentName, other.localAgentName)
-				&& Objects.equals(localFieldName1, other.localFieldName1)
-				&& Objects.equals(localFieldName2, other.localFieldName2)
-				&& Objects.equals(localFieldValue1, other.localFieldValue1)
-				&& Objects.equals(localFieldValue2, other.localFieldValue2) && Objects.equals(myParty, other.myParty)
-				&& Objects.equals(partyRole, other.partyRole) && Objects.equals(settlmentBic, other.settlmentBic);
+				&& Objects.equals(localAgentName, other.localAgentName) && Objects.equals(myParty, other.myParty)
+				&& Objects.equals(partyRole, other.partyRole)
+				&& Objects.equals(settlementStatus, other.settlementStatus)
+				&& Objects.equals(settlmentBic, other.settlmentBic);
 	}
 
 }

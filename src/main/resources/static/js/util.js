@@ -168,7 +168,6 @@ function partyParams() {
 function createContractShell(rowIndx, clickIndx, clickUriPrefix) {
 
 	document.getElementById("modal02").style.display = "block";
-	document.getElementById("caption02").innerHTML = 'Propose Contract';
 
 	var partyObj = JSON.parse(parties);
 

@@ -52,12 +52,12 @@ public class RateDeserializer extends StdDeserializer<OneOfTradeAgreementRate> {
 				
 				JsonNode nodeBaseRate = nodeRateRebateFixed.get("baseRate");
 				if (nodeBaseRate != null) {
-					fixedRateDef.setBaseRate(nodeBaseRate.floatValue());
+					fixedRateDef.setBaseRate(nodeBaseRate.doubleValue());
 				}
 
 				JsonNode nodeEffectiveRate = nodeRateRebateFixed.get("effectiveRate");
 				if (nodeEffectiveRate != null) {
-					fixedRateDef.setEffectiveRate(nodeEffectiveRate.floatValue());
+					fixedRateDef.setEffectiveRate(nodeEffectiveRate.doubleValue());
 				}
 
 				JsonNode nodeEffectiveDate = nodeRateRebateFixed.get("effectiveDate");
@@ -86,12 +86,12 @@ public class RateDeserializer extends StdDeserializer<OneOfTradeAgreementRate> {
 					
 					JsonNode nodeBaseRate = nodeRateRebateFloating.get("baseRate");
 					if (nodeBaseRate != null) {
-						floatingRateDef.setBaseRate(nodeBaseRate.floatValue());
+						floatingRateDef.setBaseRate(nodeBaseRate.doubleValue());
 					}
 
 					JsonNode nodeSpread = nodeRateRebateFloating.get("spread");
 					if (nodeSpread != null) {
-						floatingRateDef.setSpread(nodeSpread.floatValue());
+						floatingRateDef.setSpread(nodeSpread.doubleValue());
 					}
 
 					JsonNode nodeIsAutoRerate = nodeRateRebateFloating.get("isAutoRerate");
@@ -106,7 +106,7 @@ public class RateDeserializer extends StdDeserializer<OneOfTradeAgreementRate> {
 
 					JsonNode nodeEffectiveRate = nodeRateRebateFloating.get("effectiveRate");
 					if (nodeEffectiveRate != null) {
-						floatingRateDef.setEffectiveRate(nodeEffectiveRate.floatValue());
+						floatingRateDef.setEffectiveRate(nodeEffectiveRate.doubleValue());
 					}
 
 					JsonNode nodeEffectiveDate = nodeRateRebateFloating.get("effectiveDate");
@@ -133,12 +133,12 @@ public class RateDeserializer extends StdDeserializer<OneOfTradeAgreementRate> {
 				
 				JsonNode nodeBaseRate = nodeRateFee.get("baseRate");
 				if (nodeBaseRate != null) {
-					fixedRateDef.setBaseRate(nodeBaseRate.floatValue());
+					fixedRateDef.setBaseRate(nodeBaseRate.doubleValue());
 				}
 
 				JsonNode nodeEffectiveRate = nodeRateFee.get("effectiveRate");
 				if (nodeEffectiveRate != null) {
-					fixedRateDef.setEffectiveRate(nodeEffectiveRate.floatValue());
+					fixedRateDef.setEffectiveRate(nodeEffectiveRate.doubleValue());
 				}
 
 				JsonNode nodeEffectiveDate = nodeRateFee.get("effectiveDate");
