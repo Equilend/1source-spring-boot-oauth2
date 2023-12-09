@@ -125,19 +125,26 @@
 		</div>
 
 		<!-- Modal for json display on click-->
-		<div id="modal01" class="w3-modal w3-white" style="padding-top:0">
-			<span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal01').hide();">×</span>
-			<div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
-				<p id="caption"></p>
-				<pre id="jsonobj"></pre>
+		<div id="modal01" class="w3-modal">
+			<div class="w3-modal-content w3-card-4">
+				<header class="w3-container w3-orange">
+					<span onclick="$('#modal01').hide();" class="w3-button w3-display-topright">&times;</span>
+					<h2>Inspect JSON</h2>
+				</header>
+				<div class="w3-container" style="padding:5px;overflow-y:scroll;height:400px;">
+					<p id="caption"></p>
+					<pre id="jsonobj"></pre>
+				</div>
+				<footer class="w3-container w3-orange">
+					<p class="w3-right"><input type="submit" value="close" onclick="$('#modal01').hide();"></p>
+				</footer>
 			</div>
 		</div>
-
+		
 		<div id="modal02" class="w3-modal">
 			<div class="w3-modal-content w3-card-4">
 				<header class="w3-container w3-orange">
-					<span onclick="document.getElementById('modal02').style.display='none'"
-						class="w3-button w3-display-topright">&times;</span>
+					<span onclick="$('#modal02').hide();" class="w3-button w3-display-topright">&times;</span>
 					<h2>Propose Contract</h2>
 				</header>
 				<div class="w3-container" style="padding:5px;overflow-y:scroll;height:400px;">
@@ -269,7 +276,7 @@
 								<td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100"
 										style="width:100px;" value="XX36053"></td>
 							</tr>
-<!--							<tr>
+							<!--							<tr>
 								<td>&nbsp;</td>
 								<td><b>DTC Participant Number:</b></td>
 								<td><input type="text" name="dtcParticipantNumber" id="tDtcParticipantNumber"
@@ -331,7 +338,7 @@
 				<footer class="w3-container w3-orange">
 					<p class="w3-right"><input type="submit" value="submit"
 							onclick="$('#createProposalForm').submit();">&nbsp;<input type="submit" value="cancel"
-							onclick="document.getElementById('modal02').style.display='none'"></p>
+							onclick="$('#modal02').hide();"></p>
 				</footer>
 			</div>
 		</div>

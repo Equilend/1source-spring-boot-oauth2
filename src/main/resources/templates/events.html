@@ -145,11 +145,19 @@
 		</div>
 
 		<!-- Modal for json display on click-->
-		<div id="modal01" class="w3-modal w3-white" style="padding-top:0" onclick="this.style.display='none'">
-			<span class="w3-button w3-white w3-xxlarge w3-display-topright">×</span>
-			<div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
-				<p id="caption"></p>
-				<pre id="jsonobj"></pre>
+		<div id="modal01" class="w3-modal">
+			<div class="w3-modal-content w3-card-4">
+				<header class="w3-container w3-red">
+					<span onclick="$('#modal01').hide();" class="w3-button w3-display-topright">&times;</span>
+					<h2>Inspect JSON</h2>
+				</header>
+				<div class="w3-container" style="padding:5px;overflow-y:scroll;height:400px;">
+					<p id="caption"></p>
+					<pre id="jsonobj"></pre>
+				</div>
+				<footer class="w3-container w3-red">
+					<p class="w3-right"><input type="submit" value="close" onclick="$('#modal01').hide();"></p>
+				</footer>
 			</div>
 		</div>
 		<div id="cDialog" title="Event Display" style='display:none;'>

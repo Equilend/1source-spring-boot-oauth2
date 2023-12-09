@@ -630,7 +630,6 @@ function createContract(rowIndx, clickIndx, clickUriPrefix) {
 		async: true,
 		success: function(j) {
 			document.getElementById("modal02").style.display = "block";
-			document.getElementById("caption02").innerHTML = 'Create Contract from Agreement ' + data.getFormattedValue(rowIndx, clickIndx);
 
 			$('#cAgreementId').text(j.agreementId);
 			for (var t = 0; t < j.trade.transactingParties.length; t++) {
@@ -683,7 +682,6 @@ function approveContract(rowIndx, clickIndx, clickUriPrefix) {
 		async: true,
 		success: function(j) {
 			document.getElementById("modal02").style.display = "block";
-			document.getElementById("caption02").innerHTML = 'Approve contract ' + contractId;
 
 			$('#hContractId').val(contractId);
 
@@ -866,7 +864,7 @@ function createContractFromAgreement(id) {
 				"modal": true,
 				"title": 'Success'
 			});
-			postContract(j);
+			postContract(j.trade);
 		}
 	});
 }
@@ -878,7 +876,9 @@ function postContract(trade) {
 
 	var postUri = '/util/contractproposalgen';
 
-	trade.settlement = $("#createContractForm").serializeArray();
+    var proposalObj = JSON.parse('{}');
+    proposalObj.trade = trade;
+	proposalObj.settlement = $("#createContractForm").serializeArray();
 
 	$.ajax({
 		type: 'POST',
@@ -886,7 +886,7 @@ function postContract(trade) {
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader(header, token);
 		},
-		data: JSON.stringify(trade),
+		data: JSON.stringify(proposalObj),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		headers: {
@@ -1507,7 +1507,6 @@ function approveRerate(contractId, rerateId, clickUriPrefix) {
 			if (contractObj) {
 
 				document.getElementById("modal02").style.display = "block";
-				document.getElementById("caption02").innerHTML = 'Approve rerate ' + rerateId;
 
 				$('#hContractId').val(contractId);
 				$('#hRerateId').val(rerateId);

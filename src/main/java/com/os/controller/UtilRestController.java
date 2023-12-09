@@ -534,6 +534,24 @@ public class UtilRestController {
 			}
 		}
 
+		//TODO - refactor this once the new Venue objects are created
+		//this is a work around for the invalid venue party check
+		Venue venue = tradeAgreement.getExecutionVenue();
+		if (venue != null) {
+			VenueParties venueParties = venue.getVenueParties();
+			if (venueParties != null) {
+				VenueParties editedVenueParties = new VenueParties();
+				for (VenueParty venueParty : venueParties) {
+					if (actingAsLender && PartyRole.LENDER.equals(venueParty.getPartyRole())) {
+						editedVenueParties.add(venueParty);
+					} else if (!actingAsLender && PartyRole.BORROWER.equals(venueParty.getPartyRole())) {
+						editedVenueParties.add(venueParty);
+					}
+				}
+				venue.setVenueParties(editedVenueParties);
+			}
+		}
+		
 		Collateral collateral = tradeAgreement.getCollateral();
 		if (collateral != null) {
 			if (collateral.getMargin() == null) {
