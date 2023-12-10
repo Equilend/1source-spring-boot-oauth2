@@ -143,138 +143,152 @@
 		</div>
 
 		<!-- Modal for json display on click-->
-		<div id="modal01" class="w3-modal w3-white" style="padding-top:0" onclick="this.style.display='none'">
-			<span class="w3-button w3-white w3-xxlarge w3-display-topright">×</span>
-			<div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
-				<p id="caption"></p>
-				<pre id="jsonobj"></pre>
+		<div id="modal01" class="w3-modal">
+			<div class="w3-modal-content w3-card-4">
+				<header class="w3-container w3-brown">
+					<span onclick="$('#modal01').hide();" class="w3-button w3-display-topright">&times;</span>
+					<h2>Inspect JSON</h2>
+				</header>
+				<div class="w3-container" style="padding:5px;overflow-y:scroll;height:400px;">
+					<p id="caption"></p>
+					<pre id="jsonobj"></pre>
+				</div>
+				<footer class="w3-container w3-brown">
+					<p class="w3-right"><input type="submit" value="close" onclick="$('#modal01').hide();"></p>
+				</footer>
 			</div>
 		</div>
 
 		<!-- Modal for agreement form display on click-->
-		<div id="modal02" class="w3-modal w3-white" style="padding-top:0">
-			<span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal02').hide();">×</span>
-			<div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
-				<p id="caption02"></p>
-				<form id="createRerateAcceptForm">
-					<table>
-						<tr>
-							<td><b>Parties</b></td>
-							<td colspan="2">&nbsp;</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>My Party:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cMyParty"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Party Role:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cPartyRole"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Counterparty:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cCounterparty"></p>
-							</td>
-						</tr>
-						<tr>
-							<td><b>Instrument</b></td>
-							<td colspan="2">&nbsp;</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Name:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cName"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Quantity:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cQuantity"></p>
-							</td>
-						</tr>
-						<tr>
-							<td><b>Current Rate</b></td>
-							<td colspan="2">&nbsp;</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Rate Type:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cCurrentRateType"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Rate (%):</b></td>
-							<td>
-								<p style="margin: 1px;" id="cCurrentRate"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Benchmark:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cCurrentRateBenchmark"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Benchmark Rate (%):</b></td>
-							<td>
-								<p style="margin: 1px;" id="cCurrentRateBenchmarkVal"></p>
-							</td>
-						</tr>
-						<tr>
-							<td><b>Proposed Rate</b></td>
-							<td colspan="2">&nbsp;</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Rate Type:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cProposedRateType"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Rate (%):</b></td>
-							<td>
-								<p style="margin: 1px;" id="cProposedRate"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Benchmark:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cProposedRateBenchmark"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Benchmark Rate (%):</b></td>
-							<td>
-								<p style="margin: 1px;" id="cProposedRateBenchmarkVal"></p>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2"><input type="submit" value="Approve Rerate"></td>
-						</tr>
-					</table>
-					<input type="hidden" name="myParty" id="hMyParty">
-					<input type="hidden" name="counterparty" id="hCounterparty">
-					<input type="hidden" name="partyRole" id="hPartyRole">
-					<input type="hidden" name="contractId" id="hContractId">
-					<input type="hidden" name="rerateId" id="hRerateId">
-				</form>
+		<div id="modal02" class="w3-modal">
+			<div class="w3-modal-content w3-card-4">
+				<header class="w3-container w3-brown">
+					<span onclick="$('#modal02').hide();" class="w3-button w3-display-topright">&times;</span>
+					<h2>Approve Rerate</h2>
+				</header>
+				<div class="w3-container" style="padding:5px;overflow-y:scroll;height:400px;">
+					<form id="createRerateAcceptForm">
+						<table>
+							<tr>
+								<td><b>Parties</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>My Party:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cMyParty"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Party Role:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cPartyRole"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Counterparty:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cCounterparty"></p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Instrument</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Name:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cName"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Quantity:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cQuantity"></p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Current Rate</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Rate Type:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cCurrentRateType"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Rate (%):</b></td>
+								<td>
+									<p style="margin: 1px;" id="cCurrentRate"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Benchmark:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cCurrentRateBenchmark"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Benchmark Rate (%):</b></td>
+								<td>
+									<p style="margin: 1px;" id="cCurrentRateBenchmarkVal"></p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Proposed Rate</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Rate Type:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cProposedRateType"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Rate (%):</b></td>
+								<td>
+									<p style="margin: 1px;" id="cProposedRate"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Benchmark:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cProposedRateBenchmark"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Benchmark Rate (%):</b></td>
+								<td>
+									<p style="margin: 1px;" id="cProposedRateBenchmarkVal"></p>
+								</td>
+							</tr>
+						</table>
+						<input type="hidden" name="myParty" id="hMyParty">
+						<input type="hidden" name="counterparty" id="hCounterparty">
+						<input type="hidden" name="partyRole" id="hPartyRole">
+						<input type="hidden" name="contractId" id="hContractId">
+						<input type="hidden" name="rerateId" id="hRerateId">
+					</form>
+				</div>
+				<footer class="w3-container w3-brown">
+					<p class="w3-right"><input type="submit" value="approve"
+							onclick="$('#createRerateAcceptForm').submit();">&nbsp;<input type="submit" value="cancel"
+							onclick="$('#modal02').hide();"></p>
+				</footer>
 			</div>
 		</div>
 
