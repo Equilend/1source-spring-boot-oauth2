@@ -19,53 +19,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * SettlementInstructionUpdate
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-12-07T14:42:49.871457665Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2023-12-10T20:02:21.364369707Z[GMT]")
 
 public class SettlementInstructionUpdate implements ContractsContractIdBody {
-  @SerializedName("roundingRule")
-  private Double roundingRule = null;
-
-  @SerializedName("roundingMode")
-  private RoundingMode roundingMode = null;
-
   @SerializedName("settlement")
   private PartySettlementInstruction settlement = null;
-
-  public SettlementInstructionUpdate roundingRule(Double roundingRule) {
-    this.roundingRule = roundingRule;
-    return this;
-  }
-
-   /**
-   * Get roundingRule
-   * @return roundingRule
-  **/
-  @Schema(description = "")
-  public Double getRoundingRule() {
-    return roundingRule;
-  }
-
-  public void setRoundingRule(Double roundingRule) {
-    this.roundingRule = roundingRule;
-  }
-
-  public SettlementInstructionUpdate roundingMode(RoundingMode roundingMode) {
-    this.roundingMode = roundingMode;
-    return this;
-  }
-
-   /**
-   * Get roundingMode
-   * @return roundingMode
-  **/
-  @Schema(description = "")
-  public RoundingMode getRoundingMode() {
-    return roundingMode;
-  }
-
-  public void setRoundingMode(RoundingMode roundingMode) {
-    this.roundingMode = roundingMode;
-  }
 
   public SettlementInstructionUpdate settlement(PartySettlementInstruction settlement) {
     this.settlement = settlement;
@@ -95,14 +53,12 @@ public class SettlementInstructionUpdate implements ContractsContractIdBody {
       return false;
     }
     SettlementInstructionUpdate settlementInstructionUpdate = (SettlementInstructionUpdate) o;
-    return Objects.equals(this.roundingRule, settlementInstructionUpdate.roundingRule) &&
-        Objects.equals(this.roundingMode, settlementInstructionUpdate.roundingMode) &&
-        Objects.equals(this.settlement, settlementInstructionUpdate.settlement);
+    return Objects.equals(this.settlement, settlementInstructionUpdate.settlement);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(roundingRule, roundingMode, settlement);
+    return Objects.hash(settlement);
   }
 
 
@@ -111,8 +67,6 @@ public class SettlementInstructionUpdate implements ContractsContractIdBody {
     StringBuilder sb = new StringBuilder();
     sb.append("class SettlementInstructionUpdate {\n");
     
-    sb.append("    roundingRule: ").append(toIndentedString(roundingRule)).append("\n");
-    sb.append("    roundingMode: ").append(toIndentedString(roundingMode)).append("\n");
     sb.append("    settlement: ").append(toIndentedString(settlement)).append("\n");
     sb.append("}");
     return sb.toString();

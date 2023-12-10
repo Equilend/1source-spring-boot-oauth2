@@ -11,6 +11,8 @@ public class AcceptContractForm {
 	private String counterparty = null;
 	@JsonProperty("partyRole")
 	private String partyRole = null;
+	@JsonProperty("internalRefId")
+	private String internalRefId = null;
 	@JsonProperty("settlementStatus")
 	private String settlementStatus = null;
 	@JsonProperty("internalAcctCd")
@@ -64,6 +66,14 @@ public class AcceptContractForm {
 
 	public void setPartyRole(String partyRole) {
 		this.partyRole = partyRole;
+	}
+
+	public String getInternalRefId() {
+		return internalRefId;
+	}
+
+	public void setInternalRefId(String internalRefId) {
+		this.internalRefId = internalRefId;
 	}
 
 	public String getSettlementStatus() {
@@ -148,7 +158,7 @@ public class AcceptContractForm {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(counterparty, internalAcctCd, localAgentAcct, localAgentBic, localAgentName,
+		return Objects.hash(counterparty, internalAcctCd, internalRefId, localAgentAcct, localAgentBic, localAgentName,
 				localFieldName1, localFieldName2, localFieldValue1, localFieldValue2, myParty, partyRole,
 				settlementStatus, settlmentBic);
 	}
@@ -163,6 +173,7 @@ public class AcceptContractForm {
 			return false;
 		AcceptContractForm other = (AcceptContractForm) obj;
 		return Objects.equals(counterparty, other.counterparty) && Objects.equals(internalAcctCd, other.internalAcctCd)
+				&& Objects.equals(internalRefId, other.internalRefId)
 				&& Objects.equals(localAgentAcct, other.localAgentAcct)
 				&& Objects.equals(localAgentBic, other.localAgentBic)
 				&& Objects.equals(localAgentName, other.localAgentName)

@@ -22,7 +22,9 @@ import java.util.ArrayList;
 
 public class Parties extends ArrayList<Party> {
 
-  @Override
+  private static final long serialVersionUID = 1L;
+
+@Override
   public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;

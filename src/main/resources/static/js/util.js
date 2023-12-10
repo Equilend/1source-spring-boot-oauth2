@@ -476,9 +476,8 @@ function contractData(j, parties) {
 				//						break;
 				//					}
 				//				}
-			} else if (j[i].contractStatus == 'APPROVED') {
+			} else if (j[i].contractStatus == 'PENDING') {
 				canSettle = true;
-				canRerate = true; //<-- TODO remove this when ledger checks status
 			} else if (j[i].contractStatus == 'OPEN') {
 				canRerate = true;
 			}
@@ -587,7 +586,6 @@ function showJson(rowIndx, clickIndx, clickUriPrefix) {
 		},
 		success: function(j) {
 			document.getElementById("modal01").style.display = "block";
-			document.getElementById("caption").innerHTML = uri;
 			document.getElementById("jsonobj").innerHTML = syntaxHighlight(j);
 		}
 	});
@@ -1075,13 +1073,74 @@ function acceptContract(accept, id) {
 
 }
 
-function confirmSettlement() {
-	$('#cDialogText').text('Under construction :)');
-	$('#cDialog').dialog({
-		"show": true,
-		"modal": true,
-		"title": 'Work In Progress'
+function confirmSettlement(rowIndx, clickIndx, clickUriPrefix) {
+	
+	var token = $('#_csrf').attr('content');
+	var header = $('#_csrf_header').attr('content');
+
+	var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+
+	$("#table_div").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
 	});
+
+	setTimeout(function() {
+		$.ajax({
+			type: 'PATCH',
+			url: apiserver + uri,
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+		    data: '{"settlementStatus": "SETTLED"}',
+		    contentType: "application/json; charset=utf-8",
+		    dataType: "json",
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			async: false,
+			statusCode: {
+				403: function(responseObject, textStatus, jqXHR) {
+					$("#table_div").LoadingOverlay("hide", true);
+					$('#cDialogText').text('You cannot Decline a contract you Proposed. Try to Cancel instead. Otherwise please contact support.');
+					$('#cDialog').dialog({
+						"show": true,
+						"modal": true,
+						"title": 'Error'
+					});
+				},
+				400: function(responseObject, textStatus, jqXHR) {
+					$('#cDialogText').text('Could not Decline contract');
+					if (responseObject.responseJSON && responseObject.responseJSON.message) {
+						$('#cDialogText').text(responseObject.responseJSON.message);
+					}
+					$('#cDialog').dialog({
+						"show": true,
+						"modal": true,
+						"title": 'Error'
+					});
+				}
+			},
+			success: function(j) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Settlement confirmed!');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Success',
+					"close": function(event, ui) { loadContracts(); }
+				});
+			},
+			error: function(x, s, e) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Something went wrong.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			}
+		});
+	}, 200);
 }
 
 function pageTable(p) {
@@ -1104,8 +1163,6 @@ function w3_close() {
 function onClick(element) {
 	document.getElementById("img01").src = element.src;
 	document.getElementById("modal01").style.display = "block";
-	var captionText = document.getElementById("caption");
-	captionText.innerHTML = element.alt;
 }
 
 function syntaxHighlight(json) {
@@ -1692,7 +1749,6 @@ function createRerate(rowIndx, clickIndx, clickUriPrefix) {
 		async: true,
 		success: function(j) {
 			document.getElementById("modal03").style.display = "block";
-			document.getElementById("caption03").innerHTML = 'Create Rerate for Contract ' + data.getFormattedValue(rowIndx, clickIndx);
 
 			$('#rhContractId').val(data.getFormattedValue(rowIndx, clickIndx));
 			$('#rcName').text(j.trade.instrument.ticker);

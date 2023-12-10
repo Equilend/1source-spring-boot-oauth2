@@ -648,9 +648,9 @@ public class UtilRestController {
 
 	@PostMapping(path = "/util/acceptform", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<SettlementInstructionUpdate> postAcceptForm(AcceptContractForm acceptForm) {
+	public ResponseEntity<ContractProposalApproval> postAcceptForm(AcceptContractForm acceptForm) {
 
-		SettlementInstructionUpdate settlementInstructionUpdate = new SettlementInstructionUpdate();
+		ContractProposalApproval contractProposalApproval = new ContractProposalApproval();
 
 		SearchParty myParty = ledgerPartyRepository.getParty(acceptForm.getMyParty());
 		SearchParty counterparty = ledgerPartyRepository.getParty(acceptForm.getCounterparty());
@@ -663,10 +663,12 @@ public class UtilRestController {
 					.setSettlementStatus(SettlementStatus.fromValue(acceptForm.getSettlementStatus()));
 			partySettlementInstruction.setInternalAcctCd(acceptForm.getInternalAcctCd());
 
+			contractProposalApproval.setInternalRefId(acceptForm.getInternalRefId());
+			
 			// only add rounding rules if proposer is the lender
 			if (PartyRole.LENDER.toString().equals(acceptForm.getPartyRole())) {
-				settlementInstructionUpdate.setRoundingRule(10d);
-				settlementInstructionUpdate.setRoundingMode(RoundingMode.ALWAYSUP);
+				contractProposalApproval.setRoundingRule(10d);
+				contractProposalApproval.setRoundingMode(RoundingMode.ALWAYSUP);
 			}
 
 			SettlementInstruction instruction = new SettlementInstruction();
@@ -701,9 +703,9 @@ public class UtilRestController {
 				instruction.setLocalMarketFields(localMarketFields);
 			}
 
-			settlementInstructionUpdate.setSettlement(partySettlementInstruction);
+			contractProposalApproval.setSettlement(partySettlementInstruction);
 
-			return new ResponseEntity<>(settlementInstructionUpdate, HttpStatus.OK);
+			return new ResponseEntity<>(contractProposalApproval, HttpStatus.OK);
 		}
 
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

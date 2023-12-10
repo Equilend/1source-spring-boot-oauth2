@@ -143,213 +143,268 @@
 		</div>
 
 		<!-- Modal for json display on click-->
-		<div id="modal01" class="w3-modal w3-white" style="padding-top:0" onclick="this.style.display='none'">
-			<span class="w3-button w3-white w3-xxlarge w3-display-topright">×</span>
-			<div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
-				<p id="caption"></p>
-				<pre id="jsonobj"></pre>
+		<div id="modal01" class="w3-modal">
+			<div class="w3-modal-content w3-card-4">
+				<header class="w3-container w3-purple">
+					<span onclick="$('#modal01').hide();" class="w3-button w3-display-topright">&times;</span>
+					<h2>Inspect JSON</h2>
+				</header>
+				<div class="w3-container" style="padding:5px;overflow-y:scroll;height:400px;">
+					<p id="caption"></p>
+					<pre id="jsonobj"></pre>
+				</div>
+				<footer class="w3-container w3-purple">
+					<p class="w3-right"><input type="submit" value="close" onclick="$('#modal01').hide();"></p>
+				</footer>
+			</div>
+		</div>
+
+		<div id="modal02" class="w3-modal">
+			<div class="w3-modal-content w3-card-4">
+				<header class="w3-container w3-purple">
+					<span onclick="$('#modal02').hide();" class="w3-button w3-display-topright">&times;</span>
+					<h2>Approve Contract</h2>
+				</header>
+				<div class="w3-container" style="padding:5px;overflow-y:scroll;height:400px;">
+					<form id="createAcceptForm">
+						<table>
+							<tr>
+								<td><b>Parties</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>My Party:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cMyParty"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Party Role:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cPartyRole"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Counterparty:</b></td>
+								<td>
+									<p style="margin: 1px;" id="cCounterparty"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Internal Reference ID:</b></td>
+								<td><input type="text" name="internalRefId" id="tInternalRefId" value="REF123456"></td>
+							</tr>
+							<tr>
+								<td><b>Settlement</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Settlement Status:</b></td>
+								<td><select name="settlementStatus" id="sSettlementStatus">
+										<option value="NONE" selected>NONE
+										<option value="PENDING" selected>PENDING
+										<option value="SETTLED">SETTLED
+									</select></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Settlement BIC:</b></td>
+								<td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120"
+										style="width:120px;" value="XXXXXXXX"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Local Agent BIC:</b></td>
+								<td><input type="text" name="localAgentBic" id="tLocalAgentBic" maxlength="120"
+										style="width:120px;" value="YYYYYYYY"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Local Agent Name:</b></td>
+								<td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140"
+										style="width:140px;" value="ZZZ Clearing"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Local Agent Account:</b></td>
+								<td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100"
+										style="width:100px;" value="2468999"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Local Market Field 1 Name:</b></td>
+								<td><input type="text" name="localFieldName1" id="tLocalFieldName1" maxlength="100"
+										style="width:100px;" value="DTCYUS00"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Local Market Field 1 Value:</b></td>
+								<td><input type="text" name="localFieldValue1" id="tLocalFieldValue1" maxlength="100"
+										style="width:100px;" value="00001"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Local Market Field 2 Name:</b></td>
+								<td><input type="text" name="localFieldName2" id="tLocalFieldName2" maxlength="100"
+										style="width:100px;" value="DVPCCY"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Local Market Field 2 Value:</b></td>
+								<td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100"
+										style="width:100px;" value="USD"></td>
+							</tr>
+						</table>
+						<input type="hidden" name="myParty" id="hMyParty">
+						<input type="hidden" name="counterparty" id="hCounterparty">
+						<input type="hidden" name="partyRole" id="hPartyRole">
+						<input type="hidden" name="contractId" id="hContractId">
+					</form>
+				</div>
+				<footer class="w3-container w3-purple">
+					<p class="w3-right"><input type="submit" value="approve"
+							onclick="$('#createAcceptForm').submit();">&nbsp;<input type="submit" value="cancel"
+							onclick="$('#modal02').hide();"></p>
+				</footer>
 			</div>
 		</div>
 
 		<!-- Modal for agreement form display on click-->
-		<div id="modal02" class="w3-modal w3-white" style="padding-top:0">
-			<span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal02').hide();">×</span>
-			<div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
-				<p id="caption02"></p>
-				<form id="createAcceptForm">
-					<table>
-						<tr>
-							<td><b>My Party:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cMyParty"></p>
-							</td>
-						</tr>
-						<tr>
-							<td><b>Party Role:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cPartyRole"></p>
-							</td>
-						</tr>
-						<tr>
-							<td><b>Counterparty:</b></td>
-							<td>
-								<p style="margin: 1px;" id="cCounterparty"></p>
-							</td>
-						</tr>
-						<tr>
-							<td><b>Settlement BIC:</b></td>
-							<td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120"
-									style="width:120px;" value="XXXXXXXX"></td>
-						</tr>
-						<tr>
-							<td><b>Local Agent BIC:</b></td>
-							<td><input type="text" name="localAgentBic" id="tLocalAgentBic" maxlength="120"
-									style="width:120px;" value="YYYYYYYY"></td>
-						</tr>
-						<tr>
-							<td><b>Local Agent Name:</b></td>
-							<td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140"
-									style="width:140px;" value="ZZZ Clearing"></td>
-						</tr>
-						<tr>
-							<td><b>Local Agent Account:</b></td>
-							<td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100"
-									style="width:100px;" value="2468999"></td>
-						</tr>
-						<tr>
-							<td><b>Local Market Field 1 Name:</b></td>
-							<td><input type="text" name="localFieldName1" id="tLocalFieldName1" maxlength="100"
-									style="width:100px;" value="DTCYUS00"></td>
-						</tr>
-						<tr>
-							<td><b>Local Market Field 1 Value:</b></td>
-							<td><input type="text" name="localFieldValue1" id="tLocalFieldValue1" maxlength="100"
-									style="width:100px;" value="00001"></td>
-						</tr>
-						<tr>
-							<td><b>Local Market Field 2 Name:</b></td>
-							<td><input type="text" name="localFieldName2" id="tLocalFieldName2" maxlength="100"
-									style="width:100px;" value="DVPCCY"></td>
-						</tr>
-						<tr>
-							<td><b>Local Market Field 2 Value:</b></td>
-							<td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100"
-									style="width:100px;" value="USD"></td>
-						</tr>
-						<tr>
-							<td colspan="2"><input type="submit" value="Approve Contract"></td>
-						</tr>
-					</table>
-					<input type="hidden" name="myParty" id="hMyParty">
-					<input type="hidden" name="counterparty" id="hCounterparty">
-					<input type="hidden" name="partyRole" id="hPartyRole">
-					<input type="hidden" name="contractId" id="hContractId">
-				</form>
-			</div>
-		</div>
-
-		<!-- Modal for agreement form display on click-->
-		<div id="modal03" class="w3-modal w3-white" style="padding-top:0">
-			<span class="w3-button w3-white w3-xxlarge w3-display-topright" onclick="$('#modal03').hide();">×</span>
-			<div class="w3-modal-content w3-animate-zoom w3-transparent w3-padding-64">
-				<p id="caption03"></p>
-				<form id="createRerateForm">
-					<table>
-						<tr>
-							<td><b>Parties</b></td>
-							<td colspan="2">&nbsp;</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>My Party:</b></td>
-							<td>
-								<p style="margin: 1px;" id="rcMyParty"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Party Role:</b></td>
-							<td>
-								<p style="margin: 1px;" id="rcPartyRole"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Counterparty:</b></td>
-							<td>
-								<p style="margin: 1px;" id="rcCounterparty"></p>
-							</td>
-						</tr>
-						<tr>
-							<td><b>Instrument</b></td>
-							<td colspan="2">&nbsp;</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Name:</b></td>
-							<td><span id="rcName"></span></td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Quantity:</b></td>
-							<td><span id="rcQuantity"></span></td>
-						</tr>
-						<tr>
-							<td><b>Current Rate</b></td>
-							<td colspan="2">&nbsp;</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Rate Type:</b></td>
-							<td>
-								<p style="margin: 1px;" id="rcCurrentRateType"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Rate (%):</b></td>
-							<td>
-								<p style="margin: 1px;" id="rcCurrentRate"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Benchmark:</b></td>
-							<td>
-								<p style="margin: 1px;" id="rcCurrentRateBenchmark"></p>
-							</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Benchmark Rate (%):</b></td>
-							<td>
-								<p style="margin: 1px;" id="rcCurrentRateBenchmarkVal"></p>
-							</td>
-						</tr>
-						<tr>
-							<td><b>Proposed Rate</b></td>
-							<td colspan="2">&nbsp;</td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Rate Type:</b></td>
-							<td><select name="rateType" id="rsProposedRateType" onchange="toggleRSBenchmark();">
-									<option value="RFL">Rebate Floating
-									<option value="RFI">Rebate Fixed
-									<option value="FEE">Fee
-								</select></td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Rate (%):</b></td>
-							<td><input type="text" name="rate" id="rtProposedRate"></td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Benchmark:</b></td>
-							<td><select name="benchmark" id="rsProposedBenchmark">
-									<option value="OBFR">OBFR
-									<option value="SOFR">SOFR
-									<option value="EFFR">EFFR
-									<option value="TGCR">TGCR
-									<option value="BGCR">BGCR
-								</select></td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td><b>Benchmark Rate (%):</b></td>
-							<td><input type="text" name="benchmarkRate" id="rtProposedBenchmarkRate"></td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-							<td colspan="2"><input type="submit"></td>
-						</tr>
-					</table>
-					<input type="hidden" name="myParty" id="rhMyParty">
-					<input type="hidden" name="counterparty" id="rhCounterparty">
-					<input type="hidden" name="partyRole" id="rhPartyRole">
-					<input type="hidden" name="contractId" id="rhContractId">
-				</form>
+		<div id="modal03" class="w3-modal">
+			<div class="w3-modal-content w3-card-4">
+				<header class="w3-container w3-purple">
+					<span onclick="$('#modal03').hide();" class="w3-button w3-display-topright">&times;</span>
+					<h2>Rerate Contract</h2>
+				</header>
+				<div class="w3-container" style="padding:5px;overflow-y:scroll;height:400px;">
+					<form id="createRerateForm">
+						<table>
+							<tr>
+								<td><b>Parties</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>My Party:</b></td>
+								<td>
+									<p style="margin: 1px;" id="rcMyParty"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Party Role:</b></td>
+								<td>
+									<p style="margin: 1px;" id="rcPartyRole"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Counterparty:</b></td>
+								<td>
+									<p style="margin: 1px;" id="rcCounterparty"></p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Instrument</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Name:</b></td>
+								<td><span id="rcName"></span></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Quantity:</b></td>
+								<td><span id="rcQuantity"></span></td>
+							</tr>
+							<tr>
+								<td><b>Current Rate</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Rate Type:</b></td>
+								<td>
+									<p style="margin: 1px;" id="rcCurrentRateType"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Rate (%):</b></td>
+								<td>
+									<p style="margin: 1px;" id="rcCurrentRate"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Benchmark:</b></td>
+								<td>
+									<p style="margin: 1px;" id="rcCurrentRateBenchmark"></p>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Benchmark Rate (%):</b></td>
+								<td>
+									<p style="margin: 1px;" id="rcCurrentRateBenchmarkVal"></p>
+								</td>
+							</tr>
+							<tr>
+								<td><b>Proposed Rate</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Rate Type:</b></td>
+								<td><select name="rateType" id="rsProposedRateType" onchange="toggleRSBenchmark();">
+										<option value="RFL">Rebate Floating
+										<option value="RFI">Rebate Fixed
+										<option value="FEE">Fee
+									</select></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Rate (%):</b></td>
+								<td><input type="text" name="rate" id="rtProposedRate"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Benchmark:</b></td>
+								<td><select name="benchmark" id="rsProposedBenchmark">
+										<option value="OBFR">OBFR
+										<option value="SOFR">SOFR
+										<option value="EFFR">EFFR
+										<option value="TGCR">TGCR
+										<option value="BGCR">BGCR
+									</select></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Benchmark Rate (%):</b></td>
+								<td><input type="text" name="benchmarkRate" id="rtProposedBenchmarkRate"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td colspan="2"><input type="submit"></td>
+							</tr>
+						</table>
+						<input type="hidden" name="myParty" id="rhMyParty">
+						<input type="hidden" name="counterparty" id="rhCounterparty">
+						<input type="hidden" name="partyRole" id="rhPartyRole">
+						<input type="hidden" name="contractId" id="rhContractId">
+					</form>
+				</div>
+				<footer class="w3-container w3-purple">
+					<p class="w3-right"><input type="submit" value="submit"
+							onclick="$('#createRerateForm').submit();">&nbsp;<input type="submit" value="cancel"
+							onclick="$('#modal03').hide();"></p>
+				</footer>
 			</div>
 		</div>
 
@@ -364,7 +419,7 @@
 		<p class="w3-right">Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS"
 				target="_blank" class="w3-hover-opacity">w3.css</a></p>
 	</div>
-	
+
 	<script>
 		$(function () {
 			expandToWindow($('#table_div'), 305);
