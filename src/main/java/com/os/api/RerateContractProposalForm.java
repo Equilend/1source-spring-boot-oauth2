@@ -19,8 +19,10 @@ public class RerateContractProposalForm {
 	private String rate = null;
 	@JsonProperty("benchmark")
 	private String benchmark = null;
-	@JsonProperty("benchmarkRate")
-	private String benchmarkRate = null;
+	@JsonProperty("autoRerate")
+	private String autoRerate = null;
+	@JsonProperty("baseRate")
+	private String baseRate = null;
 
 	public String getContractId() {
 		return contractId;
@@ -78,17 +80,26 @@ public class RerateContractProposalForm {
 		this.benchmark = benchmark;
 	}
 
-	public String getBenchmarkRate() {
-		return benchmarkRate;
+	public String getAutoRerate() {
+		return autoRerate;
 	}
 
-	public void setBenchmarkRate(String benchmarkRate) {
-		this.benchmarkRate = benchmarkRate;
+	public void setAutoRerate(String autoRerate) {
+		this.autoRerate = autoRerate;
+	}
+
+	public String getBaseRate() {
+		return baseRate;
+	}
+
+	public void setBaseRate(String baseRate) {
+		this.baseRate = baseRate;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(benchmark, benchmarkRate, contractId, counterparty, myParty, partyRole, rate, rateType);
+		return Objects.hash(autoRerate, baseRate, benchmark, contractId, counterparty, myParty, partyRole, rate,
+				rateType);
 	}
 
 	@Override
@@ -100,10 +111,11 @@ public class RerateContractProposalForm {
 		if (getClass() != obj.getClass())
 			return false;
 		RerateContractProposalForm other = (RerateContractProposalForm) obj;
-		return Objects.equals(benchmark, other.benchmark) && Objects.equals(benchmarkRate, other.benchmarkRate)
-				&& Objects.equals(contractId, other.contractId) && Objects.equals(counterparty, other.counterparty)
-				&& Objects.equals(myParty, other.myParty) && Objects.equals(partyRole, other.partyRole)
-				&& Objects.equals(rate, other.rate) && Objects.equals(rateType, other.rateType);
+		return Objects.equals(autoRerate, other.autoRerate) && Objects.equals(baseRate, other.baseRate)
+				&& Objects.equals(benchmark, other.benchmark) && Objects.equals(contractId, other.contractId)
+				&& Objects.equals(counterparty, other.counterparty) && Objects.equals(myParty, other.myParty)
+				&& Objects.equals(partyRole, other.partyRole) && Objects.equals(rate, other.rate)
+				&& Objects.equals(rateType, other.rateType);
 	}
 
 }

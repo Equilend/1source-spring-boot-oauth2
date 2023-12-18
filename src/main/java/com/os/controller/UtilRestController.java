@@ -734,11 +734,11 @@ public class UtilRestController {
 			}
 
 			Double br = 5d;
-			if (rerateProposalForm.getBenchmarkRate() != null) {
+			if (rerateProposalForm.getBaseRate() != null) {
 				try {
-					br = Double.parseDouble(rerateProposalForm.getBenchmarkRate());
+					br = Double.parseDouble(rerateProposalForm.getBaseRate());
 				} catch (Exception p) {
-					logger.warn("Bad rate: {}", rerateProposalForm.getBenchmarkRate());
+					logger.warn("Bad base rate: {}", rerateProposalForm.getBaseRate());
 				}
 			}
 
@@ -747,11 +747,15 @@ public class UtilRestController {
 
 				FloatingRateDef floatingRateDef = new FloatingRateDef();
 				floatingRateDef.setSpread(r);
-				floatingRateDef.setBaseRate(br);
 				floatingRateDef.setCutoffTime(defaultCutoffTime);
 				floatingRateDef.setEffectiveDate(rerateDate);
 				floatingRateDef.setEffectiveRate(null);
 				floatingRateDef.setBenchmark(BenchmarkCd.fromValue(rerateProposalForm.getBenchmark()));
+				floatingRateDef.setIsAutoRerate("YES".equals(rerateProposalForm.getAutoRerate()));
+
+				if (!floatingRateDef.isIsAutoRerate()) {
+					floatingRateDef.setBaseRate(br);
+				}
 
 				FloatingRate floatingRate = new FloatingRate();
 				floatingRate.setFloating(floatingRateDef);

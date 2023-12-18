@@ -363,8 +363,14 @@ function agreementData(j, parties) {
 			btns += '<input type="button" value="Propose Contract" onclick="createContract(' + rowIdx + ', 1, \'/v1/ledger/agreements/\');return false;"/>';
 		}
 
-		var rateType = 'Rebate';
-		if (j[i].trade.rate.fee) {
+		var rateType = '--';
+		if (j[i].trade.rate.rebate) {
+			if (j[i].trade.rate.rebate.floating) {
+				rateType = 'Rebate Floating';
+			} else if (j[i].trade.rate.rebate.fixed) {
+				rateType = 'Rebate Fixed';
+			}
+		} else if (j[i].trade.rate.fee) {
 			rateType = 'Fee';
 		}
 
@@ -376,6 +382,9 @@ function agreementData(j, parties) {
 				rate = j[i].trade.rate.rebate.fixed.baseRate.toString();
 			} else if (j[i].trade.rate.rebate.floating) {
 				rate = j[i].trade.rate.rebate.floating.benchmark + '+' + j[i].trade.rate.rebate.floating.spread.toString();
+				if (j[i].trade.rate.rebate.floating.isAutoRerate) {
+					rate += ' AUTO';
+				}
 			}
 		}
 
@@ -421,10 +430,12 @@ function contractData(j, parties) {
 
 	var d = new google.visualization.DataTable();
 	d.addColumn('string', '');
-	d.addColumn('string', 'Status');
 	d.addColumn('string', 'Contract ID');
+	d.addColumn('string', 'Contract Status');
 	d.addColumn('string', 'Borrower');
+	d.addColumn('string', 'Borrower Settlement');
 	d.addColumn('string', 'Lender');
+	d.addColumn('string', 'Lender Settlement');
 	d.addColumn('datetime', 'Last Update');
 	d.addColumn('string', 'Ticker');
 	d.addColumn('string', 'Cusip');
@@ -446,7 +457,9 @@ function contractData(j, parties) {
 		var canRerate = false;
 
 		var borrower;
+		var borrowerSettlement;
 		var lender;
+		var lenderSettlement;
 
 		for (var t = 0; t < j[i].trade.transactingParties.length; t++) {
 
@@ -487,25 +500,41 @@ function contractData(j, parties) {
 			continue;
 		}
 
-		var btns = '<input type="button" value="Json" onclick="showJson(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
-		if (canAcc) {
-			btns += '<input type="button" value="Approve" onclick="approveContract(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
-		}
-		if (canDec) {
-			btns += '<input type="button" value="Decline" onclick="declineContract(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
-		}
-		if (canCan) {
-			btns += '<input type="button" value="Cancel" onclick="cancelContract(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
-		}
-		if (canSettle) {
-			btns += '<input type="button" value="Confirm Settlement" onclick="confirmSettlement(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
-		}
-		if (canRerate) {
-			btns += '<input type="button" value="Rerate" onclick="createRerate(' + rowIdx + ', 2, \'/v1/ledger/contracts/\');return false;"/>';
+		for (var s = 0; s < j[i].settlement.length; s++) {
+			if (j[i].settlement[s].partyRole == 'BORROWER') {
+				borrowerSettlement = j[i].settlement[s].settlementStatus;
+			} else if (j[i].settlement[s].partyRole == 'LENDER') {
+				lenderSettlement = j[i].settlement[s].settlementStatus;
+			}
+
 		}
 
-		var rateType = 'Rebate';
-		if (j[i].trade.rate.fee) {
+
+		var btns = '<input type="button" value="Json" onclick="showJson(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		if (canAcc) {
+			btns += '<input type="button" value="Approve" onclick="approveContract(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+		if (canDec) {
+			btns += '<input type="button" value="Decline" onclick="declineContract(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+		if (canCan) {
+			btns += '<input type="button" value="Cancel" onclick="cancelContract(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+		if (canSettle) {
+			btns += '<input type="button" value="Confirm Settlement" onclick="confirmSettlement(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+		if (canRerate) {
+			btns += '<input type="button" value="Rerate" onclick="createRerate(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+
+		var rateType = '--';
+		if (j[i].trade.rate.rebate) {
+			if (j[i].trade.rate.rebate.floating) {
+				rateType = 'Rebate Floating';
+			} else if (j[i].trade.rate.rebate.fixed) {
+				rateType = 'Rebate Fixed';
+			}
+		} else if (j[i].trade.rate.fee) {
 			rateType = 'Fee';
 		}
 
@@ -517,14 +546,19 @@ function contractData(j, parties) {
 				rate = j[i].trade.rate.rebate.fixed.baseRate.toString();
 			} else if (j[i].trade.rate.rebate.floating) {
 				rate = j[i].trade.rate.rebate.floating.benchmark + '+' + j[i].trade.rate.rebate.floating.spread.toString();
+				if (j[i].trade.rate.rebate.floating.isAutoRerate) {
+					rate += ' AUTO';
+				}
 			}
 		}
 
 		d.addRow([{ v: 'ButtonName', f: btns }
-			, j[i].contractStatus
 			, j[i].contractId
+			, j[i].contractStatus
 			, borrower
+			, borrowerSettlement
 			, lender
+			, lenderSettlement
 			, new Date(Date.parse(j[i].lastUpdateDateTime))
 			, j[i].trade.instrument.ticker
 			, j[i].trade.instrument.cusip
@@ -642,12 +676,13 @@ function createContract(rowIndx, clickIndx, clickUriPrefix) {
 			$('#cCusip').text(j.trade.instrument.cusip);
 			$('#cSedol').text(j.trade.instrument.sedol);
 			if (j.trade.rate.rebate) {
-				$('#cRateType').text("Rebate");
 				if (j.trade.rate.rebate.floating) {
-					$('#cRate').text(j.trade.rate.rebate.floating.baseRate);
-					$('#cRateBenchmark').text(j.trade.rate.rebate.floating.benchmark);
+					$('#cRateType').text("Rebate Floating");
+					$('#cRatePct').text(j.trade.rate.rebate.floating.spread);
+					$('#cBenchmark').text(j.trade.rate.rebate.floating.benchmark);
 				} else if (j.trade.rate.rebate.fixed) {
-					$('#cRate').text(j.trade.rate.rebate.fixed.baseRate);
+					$('#cRateType').text("Rebate Fixed");
+					$('#cRatePct').text(j.trade.rate.rebate.fixed.baseRate);
 				}
 			} else if (j.trade.rate.fee) {
 				$('#cRateType').text("Fee");
@@ -874,8 +909,8 @@ function postContract(trade) {
 
 	var postUri = '/util/contractproposalgen';
 
-    var proposalObj = JSON.parse('{}');
-    proposalObj.trade = trade;
+	var proposalObj = JSON.parse('{}');
+	proposalObj.trade = trade;
 	proposalObj.settlement = $("#createContractForm").serializeArray();
 
 	$.ajax({
@@ -1074,7 +1109,7 @@ function acceptContract(accept, id) {
 }
 
 function confirmSettlement(rowIndx, clickIndx, clickUriPrefix) {
-	
+
 	var token = $('#_csrf').attr('content');
 	var header = $('#_csrf_header').attr('content');
 
@@ -1091,9 +1126,9 @@ function confirmSettlement(rowIndx, clickIndx, clickUriPrefix) {
 			beforeSend: function(xhr) {
 				xhr.setRequestHeader(header, token);
 			},
-		    data: '{"settlementStatus": "SETTLED"}',
-		    contentType: "application/json; charset=utf-8",
-		    dataType: "json",
+			data: '{"settlementStatus": "SETTLED"}',
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -1300,7 +1335,7 @@ function rerateData(j, parties) {
 		var ticker;
 		var quantity;
 
-		var contractObj = fetchContract(j[i].loanId);
+		var contractObj = fetchContract(j[i].contractId);
 
 		if (contractObj) {
 
@@ -1343,11 +1378,11 @@ function rerateData(j, parties) {
 			continue;
 		}
 
-		var actUrl = '\'/v1/ledger/contracts/' + j[i].loanId + '/rerates/' + j[i].rerateId + '\'';
+		var actUrl = '\'/v1/ledger/contracts/' + j[i].contractId + '/rerates/' + j[i].rerateId + '\'';
 
 		var btns = '<input type="button" value="Json" onclick="showJson(' + rowIdx + ', 2, \'/v1/ledger/rerates/\');return false;"/>';
 		if (canAcc) {
-			btns += '<input type="button" value="Approve" onclick="approveRerate(\'' + j[i].loanId + '\', \'' + j[i].rerateId + '\', ' + actUrl + ');return false;"/>';
+			btns += '<input type="button" value="Approve" onclick="approveRerate(\'' + j[i].contractId + '\', \'' + j[i].rerateId + '\', ' + actUrl + ');return false;"/>';
 		}
 		if (canDec) {
 			btns += '<input type="button" value="Decline" onclick="declineRerate(' + actUrl + ');return false;"/>';
@@ -1356,8 +1391,14 @@ function rerateData(j, parties) {
 			btns += '<input type="button" value="Cancel" onclick="cancelRerate(' + actUrl + ');return false;"/>';
 		}
 
-		var currentRateType = 'Rebate';
-		if (j[i].rate.fee) {
+		var currentRateType = '--';
+		if (j[i].rate.rebate) {
+			if (j[i].rate.rebate.floating) {
+				currentRateType = 'Rebate Floating';
+			} else if (j[i].rate.rebate.fixed) {
+				currentRateType = 'Rebate Fixed';
+			}
+		} else if (j[i].rate.fee) {
 			currentRateType = 'Fee';
 		}
 
@@ -1369,11 +1410,20 @@ function rerateData(j, parties) {
 				currentRate = j[i].rate.rebate.fixed.baseRate.toString();
 			} else if (j[i].rate.rebate.floating) {
 				currentRate = j[i].rate.rebate.floating.benchmark + '+' + j[i].rate.rebate.floating.spread.toString();
+				if (j[i].rate.rebate.floating.isAutoRerate) {
+					currentRate += ' AUTO';
+				}
 			}
 		}
 
-		var proposedRateType = 'Rebate';
-		if (j[i].rerate.fee) {
+		var proposedRateType = '--';
+		if (j[i].rate.rebate) {
+			if (j[i].rate.rebate.floating) {
+				proposedRateType = 'Rebate Floating';
+			} else if (j[i].rate.rebate.fixed) {
+				proposedRateType = 'Rebate Fixed';
+			}
+		} else if (j[i].rate.fee) {
 			proposedRateType = 'Fee';
 		}
 
@@ -1385,13 +1435,16 @@ function rerateData(j, parties) {
 				proposedRate = j[i].rerate.rebate.fixed.baseRate.toString();
 			} else if (j[i].rerate.rebate.floating) {
 				proposedRate = j[i].rerate.rebate.floating.benchmark + '+' + j[i].rerate.rebate.floating.spread.toString();
+				if (j[i].rerate.rebate.floating.isAutoRerate) {
+					proposedRate += ' AUTO';
+				}
 			}
 		}
 
 		d.addRow([{ v: 'ButtonName', f: btns }
 			, j[i].status
 			, j[i].rerateId
-			, j[i].loanId //<-- TODO fix this to be contractId
+			, j[i].contractId
 			, borrower
 			, lender
 			, ticker
@@ -1603,55 +1656,69 @@ function approveRerate(contractId, rerateId, clickUriPrefix) {
 					}
 				}
 
-				var currentRateType = 'Rebate';
-				if (contractObj.trade.rate.fee) {
-					currentRateType = 'Fee';
-				}
-
+				var currentRateType = '--';
 				var currentRate = '--';
 				var currentBenchmark = '--';
+				var currentAutoRerate = '--';
 				var currentBenchmarkRate = '--';
-				if (contractObj.trade.rate.fee) {
-					currentRate = contractObj.trade.rate.fee.baseRate.toString();
-				} else if (contractObj.trade.rate.rebate) {
-					if (contractObj.trade.rate.rebate.fixed) {
-						currentRate = contractObj.trade.rate.rebate.fixed.baseRate.toString();
-					} else if (contractObj.trade.rate.rebate.floating) {
-						currentRate = contractObj.trade.rate.rebate.floating.spread.toString();
+
+				if (contractObj.trade.rate.rebate) {
+					if (contractObj.trade.rate.rebate.floating) {
+						currentRateType = 'Rebate Floating';
+						currentRate = contractObj.trade.rate.rebate.floating.spread;
 						currentBenchmark = contractObj.trade.rate.rebate.floating.benchmark;
 						currentBenchmarkRate = contractObj.trade.rate.rebate.floating.baseRate;
+						if (contractObj.trade.rate.rebate.floating.isAutoRerate) {
+							currentAutoRerate = 'YES'
+						} else {
+							currentAutoRerate = 'NO'
+						}
+					} else if (contractObj.trade.rate.rebate.fixed) {
+						currentRateType = 'Rebate Fixed';
+						currentRate = contractObj.trade.rate.rebate.fixed.baseRate;
 					}
+				} else if (contractObj.trade.rate.fee) {
+					currentRateType = 'Fee';
+					currentRate = contractObj.trade.rate.fee.baseRate;
 				}
 
 				$('#cCurrentRateType').text(currentRateType);
-				$('#cCurrentRate').text(currentRate);
-				$('#cCurrentRateBenchmark').text(currentBenchmark);
-				$('#cCurrentRateBenchmarkVal').text(currentBenchmarkRate);
+				$('#cCurrentRatePct').text(currentRate);
+				$('#cCurrentBenchmark').text(currentBenchmark);
+				$('#cCurrentAutoRerate').text(currentAutoRerate);
+				$('#cCurrentBaseRatePct').text(currentBenchmarkRate);
 
-				var proposedRateType = 'Rebate';
-				if (j.rerate.fee) {
-					proposedRateType = 'Fee';
-				}
-
+				var proposedRateType = '--';
 				var proposedRate = '--';
 				var proposedBenchmark = '--';
+				var proposedAutoRerate = '--';
 				var proposedBenchmarkRate = '--';
-				if (j.rerate.fee) {
-					proposedRate = j.rerate.fee.baseRate;
-				} else if (j.rerate.rebate) {
-					if (j.rerate.rebate.fixed) {
-						proposedRate = j.rerate.rebate.fixed.baseRate;
-					} else if (j.rerate.rebate.floating) {
+
+				if (j.rerate.rebate) {
+					if (j.rerate.rebate.floating) {
+						proposedRateType = 'Rebate Floating';
 						proposedRate = j.rerate.rebate.floating.spread;
 						proposedBenchmark = j.rerate.rebate.floating.benchmark;
 						proposedBenchmarkRate = j.rerate.rebate.floating.baseRate;
+						if (j.rerate.rebate.floating.isAutoRerate) {
+							proposedAutoRerate = 'YES'
+						} else {
+							proposedAutoRerate = 'NO'
+						}
+					} else if (j.rerate.rebate.fixed) {
+						proposedRateType = 'Rebate Fixed';
+						proposedRate = j.rerate.rebate.fixed.baseRate;
 					}
+				} else if (j.rerate.fee) {
+					proposedRateType = 'Fee';
+					proposedRate = j.rerate.fee.baseRate;
 				}
 
 				$('#cProposedRateType').text(proposedRateType);
-				$('#cProposedRate').text(proposedRate);
-				$('#cProposedRateBenchmark').text(proposedBenchmark);
-				$('#cProposedRateBenchmarkVal').text(proposedBenchmarkRate);
+				$('#cProposedRatePct').text(proposedRate);
+				$('#cProposedBenchmark').text(proposedBenchmark);
+				$('#cProposedAutoRerate').text(proposedAutoRerate);
+				$('#cProposedBaseRatePct').text(proposedBenchmarkRate);
 
 			} else {
 				$('#cDialogText').text('Could not link rerate to an active contract');
@@ -1786,46 +1853,48 @@ function createRerate(rowIndx, clickIndx, clickUriPrefix) {
 				}
 			}
 
-			var currentRateType = 'Rebate';
-			if (j.trade.rate.fee) {
-				currentRateType = 'Fee';
-				$("#rsProposedRateType option[value=FEE]").attr('selected', 'selected');
-			} else if (j.trade.rate.rebate.floating) {
-				currentRateType += ' Floating';
-				$("#rsProposedRateType option[value=RFL]").attr('selected', 'selected');
-			} else {
-				currentRateType += ' Fixed';
-				$("#rsProposedRateType option[value=RFI]").attr('selected', 'selected');
-			}
-			toggleRSBenchmark();
+			var currentRateType = '--';
+			var currentRate = '--';
+			var currentBenchmark = '--';
+			var currentAutoRerate = '--';
+			var currentBenchmarkRate = '--';
 
-			var currentRate = null;
-			var currentBenchmark = null;
-			var currentBenchmarkRate = null;
-
-			$('#rtProposedRate').val('');
-			$('#rtProposedBenchmarkRate').val('');
-
-			if (j.trade.rate.fee) {
-				currentRate = j.trade.rate.fee.baseRate;
-				$('#rtProposedRate').val(currentRate);
-			} else if (j.trade.rate.rebate) {
-				if (j.trade.rate.rebate.fixed) {
-					currentRate = j.trade.rate.rebate.fixed.baseRate;
-					$('#rtProposedRate').val(currentRate);
-				} else if (j.trade.rate.rebate.floating) {
+			if (j.trade.rate.rebate) {
+				if (j.trade.rate.rebate.floating) {
+					currentRateType = 'Rebate Floating';
 					currentRate = j.trade.rate.rebate.floating.spread;
-					$('#rtProposedRate').val(currentRate);
 					currentBenchmark = j.trade.rate.rebate.floating.benchmark;
-					$('#rsProposedBenchmark option[value=' + currentBenchmark + ']').attr('selected', 'selected');
 					currentBenchmarkRate = j.trade.rate.rebate.floating.baseRate;
+					$("#rsProposedRateType option[value=RFL]").attr('selected', 'selected');
+					$('#rtProposedRate').val(currentRate);
+					$('#rsProposedBenchmark option[value=' + currentBenchmark + ']').attr('selected', 'selected');
+					if (j.trade.rate.rebate.floating.isAutoRerate) {
+						currentAutoRerate = 'YES'
+						$("#rsProposedAutoRerate option[value=YES]").attr('selected', 'selected');
+					} else {
+						currentAutoRerate = 'NO'
+						$("#rsProposedAutoRerate option[value=NO]").attr('selected', 'selected');
+					}
 					$('#rtProposedBenchmarkRate').val(currentBenchmarkRate);
+				} else if (j.trade.rate.rebate.fixed) {
+					currentRateType = 'Rebate Fixed';
+					currentRate = j.trade.rate.rebate.fixed.baseRate;
+					$("#rsProposedRateType option[value=RFI]").attr('selected', 'selected');
+					$('#rtProposedRate').val(currentRate);
 				}
+			} else if (j.trade.rate.fee) {
+				currentRateType = 'Fee';
+				currentRate = j.trade.rate.fee.baseRate;
+				$("#rsProposedRateType option[value=FEE]").attr('selected', 'selected');
+				$('#rtProposedRate').val(currentRate);
 			}
+
+			toggleRSBenchmark();
 
 			$('#rcCurrentRateType').text(currentRateType);
 			$('#rcCurrentRate').text(currentRate);
 			$('#rcCurrentRateBenchmark').text(currentBenchmark);
+			$('#rcAutoRerate').text(currentAutoRerate);
 			$('#rcCurrentRateBenchmarkVal').text(currentBenchmarkRate);
 
 		}

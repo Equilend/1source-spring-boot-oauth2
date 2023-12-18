@@ -123,13 +123,14 @@
 				<form>Counterparty <select id="sCounterparty">
 						<option value="_">All Parties</option>
 					</select>&nbsp;&nbsp;
-					Since <select id="sTimeSince">
-						<option value="_" selected>Start of Day</option>
+					Last Update <select id="sTimeSince">
+						<option value="_">Start of Day</option>
 						<option value="5">5 Minutes</option>
 						<option value="15">15 Minutes</option>
 						<option value="60">1 Hour</option>
 						<option value="180">3 Hours</option>
-						<option value="10080">1 Week</option>
+						<option value="10080" selected>1 Week</option>
+						<option value="40320">1 Month</option>
 					</select>&nbsp;&nbsp;
 					With Status <select id="sStatus">
 						<option value="_" selected>All</option>
@@ -350,7 +351,12 @@
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td><b>Benchmark Rate (%):</b></td>
+								<td><b>Auto Rerate:</b></td>
+								<td><p style="margin: 1px;" id="rcAutoRerate"></p></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Base Rate (%):</b></td>
 								<td>
 									<p style="margin: 1px;" id="rcCurrentRateBenchmarkVal"></p>
 								</td>
@@ -386,12 +392,16 @@
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td><b>Benchmark Rate (%):</b></td>
-								<td><input type="text" name="benchmarkRate" id="rtProposedBenchmarkRate"></td>
+								<td><b>Auto Rerate:</b></td>
+								<td><select name="autoRerate" id="rsProposedAutoRerate" onchange="toggleRSAutoRerate();">
+										<option value="YES">YES
+										<option value="NO">NO
+									</select></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td colspan="2"><input type="submit"></td>
+								<td><b>Base Rate (%):</b></td>
+								<td><input type="text" name="baseRate" id="rtProposedBenchmarkRate"></td>
 							</tr>
 						</table>
 						<input type="hidden" name="myParty" id="rhMyParty">
@@ -443,10 +453,23 @@
 			var rateType = $('#rsProposedRateType').val();
 			if (rateType == 'RFI' || rateType == 'FEE') {
 				$('#rsProposedBenchmark').prop('disabled', 'disabled');
+				$('#rsProposedAutoRerate').prop('disabled', 'disabled');
+				$('#rtProposedBenchmarkRate').prop('disabled', 'disabled');
 			} else {
 				$('#rsProposedBenchmark').prop('disabled', false);
+				$('#rsProposedAutoRerate').prop('disabled', false);
+				toggleRSAutoRerate();
 			}
 		}
+		function toggleRSAutoRerate() {
+			var autoRerate = $('#rsProposedAutoRerate').val();
+			if (autoRerate == 'YES') {
+				$('#rtProposedBenchmarkRate').prop('disabled', 'disabled');
+			} else {
+				$('#rtProposedBenchmarkRate').prop('disabled', false);
+			}
+		}
+		
 	</script>
 
 </body>

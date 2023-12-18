@@ -124,12 +124,13 @@
 						<option value="_">All Parties</option>
 					</select>&nbsp;&nbsp;
 					Since <select id="sTimeSince">
-						<option value="_" selected>Start of Day</option>
+						<option value="_">Start of Day</option>
 						<option value="5">5 Minutes</option>
 						<option value="15">15 Minutes</option>
 						<option value="60">1 Hour</option>
 						<option value="180">3 Hours</option>
-						<option value="10080">1 Week</option>
+						<option value="10080" selected>1 Week</option>
+						<option value="40320">1 Month</option>
 					</select>&nbsp;<input type="button" value="Submit" onclick="loadAgreements();"></form>
 			</div>
 			<div id="table_div"></div>
@@ -198,25 +199,6 @@
 								<td><span id="cSedol"></span></td>
 							</tr>
 							<tr>
-								<td><b>Terms</b></td>
-								<td colspan="2">&nbsp;</td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>Rate Type:</b></td>
-								<td><span id="cRateType"></span></td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>Rate:</b></td>
-								<td><span id="cRate"></span></td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>Benchmark:</b></td>
-								<td><span id="cRateBenchmark"></span></td>
-							</tr>
-							<tr>
 								<td>&nbsp;</td>
 								<td><b>Quantity:</b></td>
 								<td><span id="cQuantity"></span></td>
@@ -235,6 +217,35 @@
 								<td>&nbsp;</td>
 								<td><b>Term:</b></td>
 								<td><span id="cTerm"></span></td>
+							</tr>
+							<tr>
+								<td><b>Rate</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Rate Type:</b></td>
+								<td><span id="cRateType">--</span></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Rate (%):</b></td>
+								<td><span id="cRatePct"--></span></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Benchmark:</b></td>
+								<td><span id="cBenchmark">--</span></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Auto Rerate:</b></td>
+								<td><span id="cAutoRerate">--</span></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Base Rate (%):</b></td>
+								<td><span id="cBaseRatePct">--</span></td>
 							</tr>
 							<tr>
 								<td><b>Settlement</b></td>
