@@ -70,9 +70,12 @@
 	<script type="text/javascript">
 		google.charts.load('current', {'packages': ['table']});
 		google.charts.setOnLoadCallback(loadRerates);
-
 		var parties = '[(${parties})]';
 		function loadRerates() {
+        	var searchParams = new URLSearchParams(window.location.search);
+        	if (searchParams.has('status')) {
+				$('#sStatus option[value=' + searchParams.get('status') + ']').attr('selected', 'selected');
+			}
 			loadData(parties, '/v1/ledger/rerates', rerateData, rerateParams);
 		}
 	</script>
@@ -134,7 +137,7 @@
 					With Status <select id="sStatus">
 						<option value="_" selected>All</option>
 						<option value="PROPOSED">Proposed</option>
-						<option value="APPROVED">Approved</option>
+						<option value="PENDING">Pending</option>
 						<option value="DECLINED">Declined</option>
 						<option value="CANCELED">Canceled</option>
 					</select>&nbsp;<input type="button" value="Submit" onclick="loadRerates();"></form>
