@@ -33,13 +33,13 @@ function loadSummary() {
 	$("#summaryPC").LoadingOverlay("show", {
 		background: "rgba(255, 255, 255, 0.8)"
 	});
-	$("#summaryAC").LoadingOverlay("show", {
-		background: "rgba(255, 255, 255, 0.8)"
-	});
-	$("#summaryTA").LoadingOverlay("show", {
+	$("#summaryPSC").LoadingOverlay("show", {
 		background: "rgba(255, 255, 255, 0.8)"
 	});
 	$("#summaryPR").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
+	$("#summaryPER").LoadingOverlay("show", {
 		background: "rgba(255, 255, 255, 0.8)"
 	});
 
@@ -48,18 +48,45 @@ function loadSummary() {
 		$("#summaryOC").LoadingOverlay("hide", true);
 		$('#summaryPC').text(localStorage.getItem('storeProposedSize'));
 		$("#summaryPC").LoadingOverlay("hide", true);
-		$('#summaryAC').text(localStorage.getItem('storeApprovedSize'));
-		$("#summaryAC").LoadingOverlay("hide", true);
-	});
+		$('#summaryPSC').text(localStorage.getItem('storePendingSize'));
+		$("#summaryPSC").LoadingOverlay("hide", true);
 
-	loadAgreementStore().then((data) => {
-		$('#summaryTA').text(localStorage.getItem('storeAgreementSize'));
-		$("#summaryTA").LoadingOverlay("hide", true);
+		$('#summaryOC6').text(localStorage.getItem('storeOpenSize6hr'));
+		$('#summaryPC6').text(localStorage.getItem('storeProposedSize6hr'));
+		$('#summaryPSC6').text(localStorage.getItem('storePendingSize6hr'));
+
+		$('#summaryOC24').text(localStorage.getItem('storeOpenSize24hr'));
+		$('#summaryPC24').text(localStorage.getItem('storeProposedSize24hr'));
+		$('#summaryPSC24').text(localStorage.getItem('storePendingSize24hr'));
+
+		$('#summaryOC1d').text(localStorage.getItem('storeOpenSize1d'));
+		$('#summaryPC1d').text(localStorage.getItem('storeProposedSize1d'));
+		$('#summaryPSC1d').text(localStorage.getItem('storePendingSize1d'));
+
+		$('#summaryOC3d').text(localStorage.getItem('storeOpenSize3d'));
+		$('#summaryPC3d').text(localStorage.getItem('storeProposedSize3d'));
+		$('#summaryPSC3d').text(localStorage.getItem('storePendingSize3d'));
+
 	});
 
 	loadRerateStore().then((data) => {
-		$('#summaryPR').text(localStorage.getItem('storeRerateSize'));
+		$('#summaryPR').text(localStorage.getItem('storeRerateProposedSize'));
 		$("#summaryPR").LoadingOverlay("hide", true);
+		$('#summaryPER').text(localStorage.getItem('storeReratePendingSize'));
+		$("#summaryPER").LoadingOverlay("hide", true);
+
+		$('#summaryPR6').text(localStorage.getItem('storeRerateProposedSize6hr'));
+		$('#summaryPER6').text(localStorage.getItem('storeReratePendingSize6hr'));
+
+		$('#summaryPR24').text(localStorage.getItem('storeRerateProposedSize24hr'));
+		$('#summaryPER24').text(localStorage.getItem('storeReratePendingSize24hr'));
+
+		$('#summaryPR1d').text(localStorage.getItem('storeRerateProposedSize1d'));
+		$('#summaryPER1d').text(localStorage.getItem('storeReratePendingSize1d'));
+
+		$('#summaryPR3d').text(localStorage.getItem('storeRerateProposedSize3d'));
+		$('#summaryPER3d').text(localStorage.getItem('storeReratePendingSize3d'));
+
 	});
 
 }
@@ -251,7 +278,7 @@ function eventData(j, parties) {
 
 	var d = new google.visualization.DataTable();
 	d.addColumn('string', '');
-	d.addColumn('number', 'Event ID');
+	d.addColumn('string', 'Event ID');
 	d.addColumn('string', 'Event Type');
 	d.addColumn('datetime', 'Timestamp');
 	d.addColumn('string', 'URI');
