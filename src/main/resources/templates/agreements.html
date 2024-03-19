@@ -163,16 +163,52 @@
 					<form id="createContractForm">
 						<table>
 							<tr>
+								<td><b>Venue</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Venue Party:</b></td>
+								<td><span id="cVenueParty">1Source_Demo_Party</span></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Venue Name:</b></td>
+								<td><span id="cVenueName">1Source Demo UI</span></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Venue Reference Key:</b></td>
+								<td><span id="cVenueRefKey"></span></td>
+							</tr>
+							<tr>
+								<td><b>Agreement</b></td>
+								<td colspan="2">&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
 								<td><b>Agreement ID:</b></td>
-								<td colspan="2"><span id="cAgreementId"></span></td>
+								<td><span id="cAgreementId"></span></td>
 							</tr>
 							<tr>
+								<td>&nbsp;</td>
 								<td><b>Borrower:</b></td>
-								<td colspan="2"><span id="cBorrower"></span></td>
+								<td><span id="cBorrower"></span></td>
 							</tr>
 							<tr>
+								<td>&nbsp;</td>
+								<td><b>Borrower Internal Ref ID:</b></td>
+								<td><span id="cBorrowerInternalRefId"></span></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
 								<td><b>Lender:</b></td>
-								<td colspan="2"><span id="cLender"></span></td>
+								<td><span id="cLender"></span></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>Lender Internal Ref ID:</b></td>
+								<td><span id="cLenderInternalRefId"></span></td>
 							</tr>
 							<tr>
 								<td><b>Instrument</b></td>
@@ -230,7 +266,7 @@
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>Rate (%):</b></td>
-								<td><span id="cRatePct"--></span></td>
+								<td><span id="cRatePct">--</span></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
@@ -253,9 +289,17 @@
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
+								<td><b>Internal Account Cd:</b></td>
+								<td><input type="text" name="internalAcctCd" id="tInternalAcctCd" maxlength="120"
+										style="width:120px;" value="BOX1"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
 								<td><b>Settlement BIC:</b></td>
-								<td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120"
-										style="width:120px;" value="XXXXXXXX"></td>
+								<td><select name="settlmentBic" id="sSettlmentBic" onchange="toggleClearing();">
+										<option value="DTCYUS33" selected>DTCYUS33
+										<option value="CDSLCATT">CDSLCATT
+									</select></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
@@ -277,27 +321,15 @@
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td><b>Local Market Field 1 Name:</b></td>
-								<td><input type="text" name="localFieldName1" id="tLocalFieldName1" maxlength="100"
-										style="width:100px;" value="DTCYUS00"></td>
+								<td><b>DTC Participant Number:</b></td>
+								<td><input type="text" name="dtcParticipantNumber" id="tDtcParticipantNumber" maxlength="100"
+										style="width:100px;" value="0000"></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td><b>Local Market Field 1 Value:</b></td>
-								<td><input type="text" name="localFieldValue1" id="tLocalFieldValue1" maxlength="100"
-										style="width:100px;" value="00001"></td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>Local Market Field 2 Name:</b></td>
-								<td><input type="text" name="localFieldName2" id="tLocalFieldName2" maxlength="100"
-										style="width:100px;" value="DVPCCY"></td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>Local Market Field 2 Value:</b></td>
-								<td><input type="text" name="localFieldValue2" id="tLocalFieldValue2" maxlength="100"
-										style="width:100px;" value="USD"></td>
+								<td><b>CDS Customer Unit ID:</b></td>
+								<td><input type="text" name="cdsCustomerUnitId" id="tCdsCustomerUnitId" maxlength="100"
+										style="width:100px;" value="1111"></td>
 							</tr>
 						</table>
 						<input type="hidden" id="fAgreementId" name="fAgreementId">
@@ -320,7 +352,7 @@
 	<!-- W3.CSS Container -->
 	<div class="w3-light-grey w3-container w3-padding-8" style="padding-right:58px">
 		<p class="w3-right">Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS"
-				target="_blank" class="w3-hover-opacity">w3.css</a></p>
+				target="_blank" rel="noopener" class="w3-hover-opacity">w3.css</a></p>
 	</div>
 
 	<script>
@@ -328,6 +360,7 @@
 			expandToWindow($('#table_div'), 305);
 			addEventListener("resize", (event) => {expandToWindow($('#table_div'), 305);});
 			loadPartylist('sCounterparty', parties);
+			toggleClearing();
 			$('#createContractForm').on("submit", function (e) {
 				e.preventDefault(); // cancel the actual submit
 				$('#modal02').hide();
@@ -335,6 +368,17 @@
 			});
 			setTimeout(ping, 1000 * 30);
 		});
+		function toggleClearing() {
+			var clearing = $('#sSettlmentBic').val();
+			if (clearing == 'DTCYUS33') {
+				$('#tDtcParticipantNumber').prop('disabled', false);
+				$('#tCdsCustomerUnitId').prop('disabled', 'disabled');
+			} else {
+				$('#tDtcParticipantNumber').prop('disabled', 'disabled');
+				$('#tCdsCustomerUnitId').prop('disabled', false);
+			}
+		}
+
 	</script>
 </body>
 

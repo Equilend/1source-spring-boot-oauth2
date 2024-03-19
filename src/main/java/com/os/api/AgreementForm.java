@@ -4,6 +4,9 @@ import java.util.Objects;
 
 public class AgreementForm {
 
+	private String venueParty;
+	private String venueName;
+	private String venueRefKey;
 	private String partyRole;
 	private String internalRefId;
 	private String instrument;
@@ -11,6 +14,30 @@ public class AgreementForm {
 	private String quantity;
 	private String myParty;
 	private String counterparty;
+
+	public String getVenueParty() {
+		return venueParty;
+	}
+
+	public void setVenueParty(String venueParty) {
+		this.venueParty = venueParty;
+	}
+
+	public String getVenueName() {
+		return venueName;
+	}
+
+	public void setVenueName(String venueName) {
+		this.venueName = venueName;
+	}
+
+	public String getVenueRefKey() {
+		return venueRefKey;
+	}
+
+	public void setVenueRefKey(String venueRefKey) {
+		this.venueRefKey = venueRefKey;
+	}
 
 	public String getPartyRole() {
 		return partyRole;
@@ -70,7 +97,8 @@ public class AgreementForm {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(counterparty, instrument, internalRefId, myParty, partyRole, quantity, rate);
+		return Objects.hash(counterparty, instrument, internalRefId, myParty, partyRole, quantity, rate, venueName,
+				venueParty, venueRefKey);
 	}
 
 	@Override
@@ -85,7 +113,8 @@ public class AgreementForm {
 		return Objects.equals(counterparty, other.counterparty) && Objects.equals(instrument, other.instrument)
 				&& Objects.equals(internalRefId, other.internalRefId) && Objects.equals(myParty, other.myParty)
 				&& Objects.equals(partyRole, other.partyRole) && Objects.equals(quantity, other.quantity)
-				&& Objects.equals(rate, other.rate);
+				&& Objects.equals(rate, other.rate) && Objects.equals(venueName, other.venueName)
+				&& Objects.equals(venueParty, other.venueParty) && Objects.equals(venueRefKey, other.venueRefKey);
 	}
 
 }

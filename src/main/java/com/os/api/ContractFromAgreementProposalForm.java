@@ -2,8 +2,7 @@ package com.os.api;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.os.api.model.TradeAgreement;
-
+import io.swagger.client.model.VenueTradeAgreement;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +10,13 @@ import javax.validation.Valid;
 
 public class ContractFromAgreementProposalForm   {
   @JsonProperty("trade")
-  private TradeAgreement trade = null;
+  private VenueTradeAgreement trade = null;
 
   @JsonProperty("settlement")
   @Valid
   private List<NameValuePair> settlement = null;
 
-  public ContractFromAgreementProposalForm trade(TradeAgreement trade) {
+  public ContractFromAgreementProposalForm trade(VenueTradeAgreement trade) {
     this.trade = trade;
     return this;
   }
@@ -29,11 +28,11 @@ public class ContractFromAgreementProposalForm   {
   @Schema(description = "")
   
     @Valid
-    public TradeAgreement getTrade() {
+    public VenueTradeAgreement getTrade() {
     return trade;
   }
 
-  public void setTrade(TradeAgreement trade) {
+  public void setTrade(VenueTradeAgreement trade) {
     this.trade = trade;
   }
 

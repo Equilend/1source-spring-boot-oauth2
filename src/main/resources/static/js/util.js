@@ -208,6 +208,8 @@ function createContractShell(rowIndx, clickIndx, clickUriPrefix) {
 				.html(partyObj[p].partyId));
 	}
 
+	$('#cVenueRefKey').text(generateVenueReferenceKey());
+
 	$('#cCounterparty').text(data.getFormattedValue(rowIndx, clickIndx));
 	$('#hCounterparty').val(data.getFormattedValue(rowIndx, clickIndx));
 
@@ -690,12 +692,17 @@ function createContract(rowIndx, clickIndx, clickUriPrefix) {
 		success: function(j) {
 			document.getElementById("modal02").style.display = "block";
 
+			$('#cVenueParty').text(j.trade.executionVenue.partyId);
+			$('#cVenueName').text(j.trade.executionVenue.venueName);
+			$('#cVenueRefKey').text(j.trade.executionVenue.venueRefKey);
 			$('#cAgreementId').text(j.agreementId);
 			for (var t = 0; t < j.trade.transactingParties.length; t++) {
 				if (j.trade.transactingParties[t].partyRole == 'BORROWER') {
 					$('#cBorrower').text(j.trade.transactingParties[t].party.partyName);
+					$('#cBorrowerInternalRefId').text(j.trade.transactingParties[t].internalRef.internalRefId);
 				} else if (j.trade.transactingParties[t].partyRole == 'LENDER') {
 					$('#cLender').text(j.trade.transactingParties[t].party.partyName);
+					$('#cLenderInternalRefId').text(j.trade.transactingParties[t].internalRef.internalRefId);
 				}
 			}
 			$('#cFigi').text(j.trade.instrument.figi);
@@ -2016,4 +2023,8 @@ function proposeRerate(contractId, proposal) {
 			});
 		}
 	});
+}
+
+function generateVenueReferenceKey() {
+	return 'DU'+(''+Date.now()).substring(3);
 }

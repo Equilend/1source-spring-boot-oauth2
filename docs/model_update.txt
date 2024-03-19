@@ -2,8 +2,11 @@ Things to remember when adding a new version of the model:
 
 1. Fix all the packages
 2. Fix all the references to the weird LocalDate and OffsetDatetime. Change them to java.time package
-2. Add this to OneOfTradeAgreementRate to allow deserialization
+3. Add this to OneOfTradeAgreementRate to allow deserialization
 
- @JsonDeserialize(using = RateDeserializer.class)
+@JsonDeserialize(using = TradeAgreementRateDeserializer.class)
 
+4. Add this to OneOfVenueTradeAgreementRate to allow deserialization
+
+@JsonDeserialize(using = VenueTradeAgreementRateDeserializer.class)
  
