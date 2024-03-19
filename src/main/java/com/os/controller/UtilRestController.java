@@ -403,6 +403,7 @@ public class UtilRestController {
 			BigDecimal contractPrice = BigDecimal
 					.valueOf(trade.getInstrument().getPrice().getValue().doubleValue() * 1.02);
 			contractPrice = contractPrice.setScale(2, java.math.RoundingMode.HALF_UP);
+			collateral.setContractPrice(contractPrice.doubleValue());
 			BigDecimal contractValue = BigDecimal.valueOf(
 					trade.getQuantity().doubleValue() * (trade.getInstrument().getPrice().getValue().doubleValue()));
 			contractValue = contractValue.setScale(2, java.math.RoundingMode.HALF_UP);
@@ -437,7 +438,11 @@ public class UtilRestController {
 			instruction.setLocalAgentBic(proposalForm.getLocalAgentBic());
 			instruction.setLocalAgentName(proposalForm.getLocalAgentName());
 			instruction.setLocalAgentAcct(proposalForm.getLocalAgentAcct());
+			instruction.setDtcParticipantNumber(proposalForm.getDtcParticipantNumber());
+			instruction.setCdsCustomerUnitId(proposalForm.getCdsCustomerUnitId());
 
+			partySettlementInstruction.setInternalAcctCd(proposalForm.getInternalAcctCd());
+			
 			contractProposal.setSettlement(Collections.singletonList(partySettlementInstruction));
 
 			return new ResponseEntity<>(contractProposal, HttpStatus.OK);
@@ -589,6 +594,7 @@ public class UtilRestController {
 			instruction.setLocalAgentAcct(acceptForm.getLocalAgentAcct());
 			instruction.setDtcParticipantNumber(acceptForm.getDtcParticipantNumber());
 			instruction.setCdsCustomerUnitId(acceptForm.getCdsCustomerUnitId());
+			
 			partySettlementInstruction.setInternalAcctCd(acceptForm.getInternalAcctCd());
 
 			contractProposalApproval.setSettlement(partySettlementInstruction);

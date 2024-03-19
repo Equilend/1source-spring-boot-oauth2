@@ -47,6 +47,10 @@ public class ContractProposalForm {
 	private String localAgentName = null;
 	@JsonProperty("localAgentAcct")
 	private String localAgentAcct = null;
+	@JsonProperty("dtcParticipantNumber")
+	private String dtcParticipantNumber = null;
+	@JsonProperty("cdsCustomerUnitId")
+	private String cdsCustomerUnitId = null;
 
 	public String getVenueParty() {
 		return venueParty;
@@ -216,11 +220,28 @@ public class ContractProposalForm {
 		this.localAgentAcct = localAgentAcct;
 	}
 
+	public String getDtcParticipantNumber() {
+		return dtcParticipantNumber;
+	}
+
+	public void setDtcParticipantNumber(String dtcParticipantNumber) {
+		this.dtcParticipantNumber = dtcParticipantNumber;
+	}
+
+	public String getCdsCustomerUnitId() {
+		return cdsCustomerUnitId;
+	}
+
+	public void setCdsCustomerUnitId(String cdsCustomerUnitId) {
+		this.cdsCustomerUnitId = cdsCustomerUnitId;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(autoRerate, baseRate, benchmark, counterparty, instrument, internalAcctCd, internalRefId,
-				localAgentAcct, localAgentBic, localAgentName, myParty, partyRole, price, quantity, rate, rateType,
-				settlementStatus, settlmentBic, venueName, venueParty, venueRefKey);
+		return Objects.hash(autoRerate, baseRate, benchmark, cdsCustomerUnitId, counterparty, dtcParticipantNumber,
+				instrument, internalAcctCd, internalRefId, localAgentAcct, localAgentBic, localAgentName, myParty,
+				partyRole, price, quantity, rate, rateType, settlementStatus, settlmentBic, venueName, venueParty,
+				venueRefKey);
 	}
 
 	@Override
@@ -233,7 +254,10 @@ public class ContractProposalForm {
 			return false;
 		ContractProposalForm other = (ContractProposalForm) obj;
 		return Objects.equals(autoRerate, other.autoRerate) && Objects.equals(baseRate, other.baseRate)
-				&& Objects.equals(benchmark, other.benchmark) && Objects.equals(counterparty, other.counterparty)
+				&& Objects.equals(benchmark, other.benchmark)
+				&& Objects.equals(cdsCustomerUnitId, other.cdsCustomerUnitId)
+				&& Objects.equals(counterparty, other.counterparty)
+				&& Objects.equals(dtcParticipantNumber, other.dtcParticipantNumber)
 				&& Objects.equals(instrument, other.instrument) && Objects.equals(internalAcctCd, other.internalAcctCd)
 				&& Objects.equals(internalRefId, other.internalRefId)
 				&& Objects.equals(localAgentAcct, other.localAgentAcct)
