@@ -587,6 +587,9 @@ public class UtilRestController {
 			instruction.setLocalAgentBic(acceptForm.getLocalAgentBic());
 			instruction.setLocalAgentName(acceptForm.getLocalAgentName());
 			instruction.setLocalAgentAcct(acceptForm.getLocalAgentAcct());
+			instruction.setDtcParticipantNumber(acceptForm.getDtcParticipantNumber());
+			instruction.setCdsCustomerUnitId(acceptForm.getCdsCustomerUnitId());
+			partySettlementInstruction.setInternalAcctCd(acceptForm.getInternalAcctCd());
 
 			contractProposalApproval.setSettlement(partySettlementInstruction);
 

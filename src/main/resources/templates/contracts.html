@@ -219,9 +219,17 @@
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
+								<td><b>Internal Account Cd:</b></td>
+								<td><input type="text" name="internalAcctCd" id="tInternalAcctCd" maxlength="120"
+										style="width:120px;" value="BOX1"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
 								<td><b>Settlement BIC:</b></td>
-								<td><input type="text" name="settlmentBic" id="tSettlmentBic" maxlength="120"
-										style="width:120px;" value="XXXXXXXX"></td>
+								<td><select name="settlmentBic" id="sSettlmentBic" onchange="toggleClearing();">
+										<option value="DTCYUS33" selected>DTCYUS33
+										<option value="CDSLCATT">CDSLCATT
+									</select></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
@@ -240,6 +248,18 @@
 								<td><b>Local Agent Account:</b></td>
 								<td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100"
 										style="width:100px;" value="2468999"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>DTC Participant Number:</b></td>
+								<td><input type="text" name="dtcParticipantNumber" id="tDtcParticipantNumber" maxlength="100"
+										style="width:100px;" value="0000"></td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td><b>CDS Customer Unit ID:</b></td>
+								<td><input type="text" name="cdsCustomerUnitId" id="tCdsCustomerUnitId" maxlength="100"
+										style="width:100px;" value="1111"></td>
 							</tr>
 						</table>
 						<input type="hidden" name="myParty" id="hMyParty">
@@ -417,6 +437,7 @@
 			addEventListener("resize", (event) => {expandToWindow($('#table_div'), 305);});
 			loadPartylist('sCounterparty', parties);
 			toggleRSBenchmark();
+			toggleClearing();
 			$('#createAcceptForm').on("submit", function (e) {
 				e.preventDefault(); // cancel the actual submit
 				$('#modal02').hide();
@@ -448,6 +469,16 @@
 				$('#rtProposedBenchmarkRate').prop('disabled', 'disabled');
 			} else {
 				$('#rtProposedBenchmarkRate').prop('disabled', false);
+			}
+		}
+		function toggleClearing() {
+			var clearing = $('#sSettlmentBic').val();
+			if (clearing == 'DTCYUS33') {
+				$('#tDtcParticipantNumber').prop('disabled', false);
+				$('#tCdsCustomerUnitId').prop('disabled', 'disabled');
+			} else {
+				$('#tDtcParticipantNumber').prop('disabled', 'disabled');
+				$('#tCdsCustomerUnitId').prop('disabled', false);
 			}
 		}
 		

@@ -25,25 +25,17 @@ public class AcceptContractForm {
 	private String localAgentName = null;
 	@JsonProperty("localAgentAcct")
 	private String localAgentAcct = null;
-//	@JsonProperty("dtcParticipantNumber")
-//	private String dtcParticipantNumber = null;
-//	@JsonProperty("cdsCustomerUnitId")
-//	private String cdsCustomerUnitId = null;
+	@JsonProperty("dtcParticipantNumber")
+	private String dtcParticipantNumber = null;
+	@JsonProperty("cdsCustomerUnitId")
+	private String cdsCustomerUnitId = null;
+
 //	@JsonProperty("custodianName")
 //	private String custodianName = null;
 //	@JsonProperty("custodianBic")
 //	private String custodianBic = null;
 //	@JsonProperty("custodianAcct")
 //	private String custodianAcct = null;
-	@JsonProperty("localFieldName1")
-	private String localFieldName1 = null;
-	@JsonProperty("localFieldValue1")
-	private String localFieldValue1 = null;
-	@JsonProperty("localFieldName2")
-	private String localFieldName2 = null;
-	@JsonProperty("localFieldValue2")
-	private String localFieldValue2 = null;
-
 	public String getMyParty() {
 		return myParty;
 	}
@@ -124,43 +116,26 @@ public class AcceptContractForm {
 		this.localAgentAcct = localAgentAcct;
 	}
 
-	public String getLocalFieldName1() {
-		return localFieldName1;
+	public String getDtcParticipantNumber() {
+		return dtcParticipantNumber;
 	}
 
-	public void setLocalFieldName1(String localFieldName1) {
-		this.localFieldName1 = localFieldName1;
+	public void setDtcParticipantNumber(String dtcParticipantNumber) {
+		this.dtcParticipantNumber = dtcParticipantNumber;
 	}
 
-	public String getLocalFieldValue1() {
-		return localFieldValue1;
+	public String getCdsCustomerUnitId() {
+		return cdsCustomerUnitId;
 	}
 
-	public void setLocalFieldValue1(String localFieldValue1) {
-		this.localFieldValue1 = localFieldValue1;
-	}
-
-	public String getLocalFieldName2() {
-		return localFieldName2;
-	}
-
-	public void setLocalFieldName2(String localFieldName2) {
-		this.localFieldName2 = localFieldName2;
-	}
-
-	public String getLocalFieldValue2() {
-		return localFieldValue2;
-	}
-
-	public void setLocalFieldValue2(String localFieldValue2) {
-		this.localFieldValue2 = localFieldValue2;
+	public void setCdsCustomerUnitId(String cdsCustomerUnitId) {
+		this.cdsCustomerUnitId = cdsCustomerUnitId;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(counterparty, internalAcctCd, internalRefId, localAgentAcct, localAgentBic, localAgentName,
-				localFieldName1, localFieldName2, localFieldValue1, localFieldValue2, myParty, partyRole,
-				settlementStatus, settlmentBic);
+		return Objects.hash(cdsCustomerUnitId, counterparty, dtcParticipantNumber, internalAcctCd, internalRefId,
+				localAgentAcct, localAgentBic, localAgentName, myParty, partyRole, settlementStatus, settlmentBic);
 	}
 
 	@Override
@@ -172,15 +147,14 @@ public class AcceptContractForm {
 		if (getClass() != obj.getClass())
 			return false;
 		AcceptContractForm other = (AcceptContractForm) obj;
-		return Objects.equals(counterparty, other.counterparty) && Objects.equals(internalAcctCd, other.internalAcctCd)
+		return Objects.equals(cdsCustomerUnitId, other.cdsCustomerUnitId)
+				&& Objects.equals(counterparty, other.counterparty)
+				&& Objects.equals(dtcParticipantNumber, other.dtcParticipantNumber)
+				&& Objects.equals(internalAcctCd, other.internalAcctCd)
 				&& Objects.equals(internalRefId, other.internalRefId)
 				&& Objects.equals(localAgentAcct, other.localAgentAcct)
 				&& Objects.equals(localAgentBic, other.localAgentBic)
-				&& Objects.equals(localAgentName, other.localAgentName)
-				&& Objects.equals(localFieldName1, other.localFieldName1)
-				&& Objects.equals(localFieldName2, other.localFieldName2)
-				&& Objects.equals(localFieldValue1, other.localFieldValue1)
-				&& Objects.equals(localFieldValue2, other.localFieldValue2) && Objects.equals(myParty, other.myParty)
+				&& Objects.equals(localAgentName, other.localAgentName) && Objects.equals(myParty, other.myParty)
 				&& Objects.equals(partyRole, other.partyRole)
 				&& Objects.equals(settlementStatus, other.settlementStatus)
 				&& Objects.equals(settlmentBic, other.settlmentBic);
