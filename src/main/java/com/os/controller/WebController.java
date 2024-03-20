@@ -101,6 +101,14 @@ public class WebController {
 		return "rerates";
 	}
 
+	@GetMapping(path = "/returns")
+	public String returns(OAuth2AuthenticationToken authentication, Principal principal, Model model) {
+
+		decorateAuth(principal, model);
+
+		return "returns";
+	}
+
 	private void decorateAuth(Principal principal, Model model) {
 		
 		List<SearchParty> myPartyList = ledgerPartyRepository.getPartiesByUser(principal.getName());

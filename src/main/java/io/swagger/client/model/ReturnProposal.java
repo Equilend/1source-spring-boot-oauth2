@@ -12,18 +12,16 @@
 
 package io.swagger.client.model;
 
+import java.util.Objects;
+import com.google.gson.annotations.SerializedName;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
-
-import com.google.gson.annotations.SerializedName;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 /**
  * ReturnProposal
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2024-03-19T17:47:23.155955443Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2024-03-20T18:35:03.532063368Z[GMT]")
 
 public class ReturnProposal {
   @SerializedName("executionVenue")
@@ -38,8 +36,11 @@ public class ReturnProposal {
   @SerializedName("returnSettlementDate")
   private LocalDate returnSettlementDate = null;
 
-  @SerializedName("collateral")
-  private Collateral collateral = null;
+  @SerializedName("collateralValue")
+  private Double collateralValue = null;
+
+  @SerializedName("settlementType")
+  private SettlementType settlementType = null;
 
   @SerializedName("settlement")
   private PartySettlementInstruction settlement = null;
@@ -89,7 +90,7 @@ public class ReturnProposal {
    * Get returnDate
    * @return returnDate
   **/
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   public LocalDate getReturnDate() {
     return returnDate;
   }
@@ -107,7 +108,7 @@ public class ReturnProposal {
    * Get returnSettlementDate
    * @return returnSettlementDate
   **/
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   public LocalDate getReturnSettlementDate() {
     return returnSettlementDate;
   }
@@ -116,22 +117,40 @@ public class ReturnProposal {
     this.returnSettlementDate = returnSettlementDate;
   }
 
-  public ReturnProposal collateral(Collateral collateral) {
-    this.collateral = collateral;
+  public ReturnProposal collateralValue(Double collateralValue) {
+    this.collateralValue = collateralValue;
     return this;
   }
 
    /**
-   * Get collateral
-   * @return collateral
+   * Get collateralValue
+   * @return collateralValue
   **/
   @Schema(description = "")
-  public Collateral getCollateral() {
-    return collateral;
+  public Double getCollateralValue() {
+    return collateralValue;
   }
 
-  public void setCollateral(Collateral collateral) {
-    this.collateral = collateral;
+  public void setCollateralValue(Double collateralValue) {
+    this.collateralValue = collateralValue;
+  }
+
+  public ReturnProposal settlementType(SettlementType settlementType) {
+    this.settlementType = settlementType;
+    return this;
+  }
+
+   /**
+   * Get settlementType
+   * @return settlementType
+  **/
+  @Schema(description = "")
+  public SettlementType getSettlementType() {
+    return settlementType;
+  }
+
+  public void setSettlementType(SettlementType settlementType) {
+    this.settlementType = settlementType;
   }
 
   public ReturnProposal settlement(PartySettlementInstruction settlement) {
@@ -166,13 +185,14 @@ public class ReturnProposal {
         Objects.equals(this.quantity, returnProposal.quantity) &&
         Objects.equals(this.returnDate, returnProposal.returnDate) &&
         Objects.equals(this.returnSettlementDate, returnProposal.returnSettlementDate) &&
-        Objects.equals(this.collateral, returnProposal.collateral) &&
+        Objects.equals(this.collateralValue, returnProposal.collateralValue) &&
+        Objects.equals(this.settlementType, returnProposal.settlementType) &&
         Objects.equals(this.settlement, returnProposal.settlement);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(executionVenue, quantity, returnDate, returnSettlementDate, collateral, settlement);
+    return Objects.hash(executionVenue, quantity, returnDate, returnSettlementDate, collateralValue, settlementType, settlement);
   }
 
 
@@ -185,7 +205,8 @@ public class ReturnProposal {
     sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
     sb.append("    returnDate: ").append(toIndentedString(returnDate)).append("\n");
     sb.append("    returnSettlementDate: ").append(toIndentedString(returnSettlementDate)).append("\n");
-    sb.append("    collateral: ").append(toIndentedString(collateral)).append("\n");
+    sb.append("    collateralValue: ").append(toIndentedString(collateralValue)).append("\n");
+    sb.append("    settlementType: ").append(toIndentedString(settlementType)).append("\n");
     sb.append("    settlement: ").append(toIndentedString(settlement)).append("\n");
     sb.append("}");
     return sb.toString();

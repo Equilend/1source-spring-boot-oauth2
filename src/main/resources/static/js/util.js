@@ -470,7 +470,8 @@ function contractData(j, parties) {
 	d.addColumn('string', 'Cusip');
 	d.addColumn('string', 'Rate Type');
 	d.addColumn('string', 'Rate');
-	d.addColumn('number', 'Quantity');
+	d.addColumn('number', 'Open Quantity');
+	d.addColumn('number', 'Original Quantity');
 	d.addColumn('number', 'Value');
 
 	var counterpartyFilter = $("#sCounterparty").val();
@@ -484,6 +485,8 @@ function contractData(j, parties) {
 		var canCan = false;
 		var canSettle = false;
 		var canRerate = false;
+		var canReturn = false;
+		var canRecall = false;
 
 		var borrower;
 		var borrowerSettlement;
@@ -522,6 +525,11 @@ function contractData(j, parties) {
 				canSettle = true;
 			} else if (j[i].contractStatus == 'OPEN') {
 				canRerate = true;
+				if (actingAsLender(j[i].trade.transactingParties, parties)) {
+					canRecall = true;
+				} else {
+					canReturn = true;
+				}
 			}
 		}
 
@@ -554,6 +562,12 @@ function contractData(j, parties) {
 		}
 		if (canRerate) {
 			btns += '<input type="button" value="Rerate" onclick="createRerate(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+		if (canReturn) {
+			btns += '<input type="button" value="Return" onclick="createReturn(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
+		}
+		if (canRecall) {
+			btns += '<input type="button" value="Recall" onclick="createRecall(' + rowIdx + ', 1, \'/v1/ledger/contracts/\');return false;"/>';
 		}
 
 		var rateType = '--';
@@ -593,6 +607,7 @@ function contractData(j, parties) {
 			, j[i].trade.instrument.cusip
 			, rateType
 			, rate
+			, j[i].trade.openQuantity
 			, j[i].trade.quantity
 			, j[i].trade.collateral.collateralValue]);
 
@@ -1170,7 +1185,7 @@ function confirmSettlement(rowIndx, clickIndx, clickUriPrefix) {
 			statusCode: {
 				403: function(responseObject, textStatus, jqXHR) {
 					$("#table_div").LoadingOverlay("hide", true);
-					$('#cDialogText').text('You cannot Decline a contract you Proposed. Try to Cancel instead. Otherwise please contact support.');
+					$('#cDialogText').text('You cannot Confirm Settlement on this Contract. Please contact support.');
 					$('#cDialog').dialog({
 						"show": true,
 						"modal": true,
@@ -1178,7 +1193,7 @@ function confirmSettlement(rowIndx, clickIndx, clickUriPrefix) {
 					});
 				},
 				400: function(responseObject, textStatus, jqXHR) {
-					$('#cDialogText').text('Could not Decline contract');
+					$('#cDialogText').text('Could not Confirm Settlement on this Contract');
 					if (responseObject.responseJSON && responseObject.responseJSON.message) {
 						$('#cDialogText').text(responseObject.responseJSON.message);
 					}
@@ -2025,6 +2040,315 @@ function proposeRerate(contractId, proposal) {
 	});
 }
 
+
+function returnData(j, parties) {
+
+	var d = new google.visualization.DataTable();
+	d.addColumn('string', '');
+	d.addColumn('string', 'Status');
+	d.addColumn('string', 'Return ID');
+	d.addColumn('string', 'Contract ID');
+	d.addColumn('string', 'Borrower');
+	d.addColumn('string', 'Borrower Settlement');
+	d.addColumn('string', 'Lender');
+	d.addColumn('string', 'Lender Settlement');
+	d.addColumn('string', 'Ticker');
+	d.addColumn('number', 'Contract Quantity');
+	d.addColumn('number', 'Return Quantity');
+	d.addColumn('date', 'Return Date');
+
+	var counterpartyFilter = $("#sCounterparty").val();
+	var rowIdx = 0;
+
+	for (var i = 0; i < j.length; i++) {
+
+		var matchesFilter = false;
+		//var canAcc = false;
+		//var canDec = false;
+		var canCan = false;
+		var canSettle = false;
+
+		var borrower;
+		var borrowerSettlement;
+		var lender;
+		var lenderSettlement;
+
+		var ticker;
+		var quantity;
+
+		var contractObj = fetchContract(j[i].contractId);
+
+		if (contractObj) {
+
+			ticker = contractObj.trade.instrument.ticker;
+			quantity = contractObj.trade.quantity;
+
+			for (var t = 0; t < contractObj.trade.transactingParties.length; t++) {
+
+				if (counterpartyFilter == '_' || counterpartyFilter == contractObj.trade.transactingParties[t].party.partyId) {
+					matchesFilter = true;
+				}
+
+				if (contractObj.trade.transactingParties[t].partyRole == 'BORROWER') {
+					borrower = contractObj.trade.transactingParties[t].party.partyId;
+				} else if (contractObj.trade.transactingParties[t].partyRole == 'LENDER') {
+					lender = contractObj.trade.transactingParties[t].party.partyId;
+				}
+
+				if (j[i].returnStatus == 'PENDING') {
+
+					//				for (var p = 0; p < parties.length; p++) {
+					//					if (parties[p].partyId == contractObj.trade.transactingParties[t].party.partyId && contractObj.trade.transactingParties[t].partyRole == 'BORROWER') {
+					//canAcc = true;
+					//canDec = true;
+					//						break;
+					//					}
+					//				}
+
+					//				for (var p = 0; p < parties.length; p++) {
+					//					if (parties[p].partyId == contractObj.trade.transactingParties[t].party.partyId && contractObj.trade.transactingParties[t].partyRole == 'LENDER') {
+					canCan = true;
+					//						break;
+					//					}
+					//				}
+					canSettle = true;
+				}
+			}
+		}
+
+		if (!matchesFilter) {
+			continue;
+		}
+
+		var actUrl = '\'/v1/ledger/contracts/' + j[i].contractId + '/returns/' + j[i].returnId + '\'';
+
+		var btns = '<input type="button" value="Json" onclick="showJson(' + rowIdx + ', 2, \'/v1/ledger/contracts/' + j[i].contractId + '/returns/\'' + ');return false;"/>';
+		//if (canAcc) {
+//			btns += '<input type="button" value="Approve" onclick="approveRerate(\'' + j[i].contractId + '\', \'' + j[i].rerateId + '\', ' + actUrl + ');return false;"/>';
+		//}
+		//if (canDec) {
+//			btns += '<input type="button" value="Decline" onclick="declineRerate(' + actUrl + ');return false;"/>';
+		//}
+		if (canCan) {
+			btns += '<input type="button" value="Cancel" onclick="cancelReturn(' + actUrl + ');return false;"/>';
+		}
+		if (canSettle) {
+			btns += '<input type="button" value="Confirm Settlement" onclick="confirmReturnSettlement(' + rowIdx + ', 2, \'/v1/ledger/contracts/' + j[i].contractId + '/returns/\'' + ');return false;"/>';
+		}
+
+		for (var s = 0; s < j[i].settlement.length; s++) {
+			if (j[i].settlement[s].partyRole == 'BORROWER') {
+				borrowerSettlement = j[i].settlement[s].settlementStatus;
+			} else if (j[i].settlement[s].partyRole == 'LENDER') {
+				lenderSettlement = j[i].settlement[s].settlementStatus;
+			}
+
+		}
+
+		d.addRow([{ v: 'ButtonName', f: btns }
+			, j[i].returnStatus
+			, j[i].returnId
+			, j[i].contractId
+			, borrower
+			, borrowerSettlement
+			, lender
+			, lenderSettlement
+			, ticker
+			, quantity
+			, j[i].quantity
+			, new Date(Date.parse(j[i].returnDate)) //<-- TODO should this be lastUpdateDateTime with capital T?
+		]);
+
+		rowIdx++;
+	}
+
+	return d;
+}
+
+function returnParams() {
+
+	var params = { 'noCache': new Date().getTime() };
+
+	params['size'] = 1000;
+
+	var minutesSince = $("#sTimeSince").val();
+
+	if (minutesSince == '_') {
+		var sinceDatetime = new Date();
+		sinceDatetime.setUTCHours(0, 0, 0, 0);
+		params['since'] = toIsoString(sinceDatetime);
+	} else if (minutesSince && minutesSince > 0) {
+		var sinceDatetime = new Date(Date.now() - (minutesSince * 60 * 1000));
+		params['since'] = toIsoString(sinceDatetime);
+	}
+
+	var withStatus = $("#sStatus").val();
+	if (withStatus != '_') {
+		params['status'] = withStatus;
+	}
+
+	return params;
+}
+
+function cancelReturn(clickUriPrefix) {
+
+	var token = $('#_csrf').attr('content');
+	var header = $('#_csrf_header').attr('content');
+
+	$("#table_div").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
+
+	setTimeout(function() {
+
+		$.ajax({
+			type: 'POST',
+			url: apiserver + clickUriPrefix + '/cancel',
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			async: false,
+			statusCode: {
+				403: function(responseObject, textStatus, jqXHR) {
+					$("#table_div").LoadingOverlay("hide", true);
+					$('#cDialogText').text('You cannot Cancel a Return you received. Please contact your counterparty if the Return was recieved in error.');
+					$('#cDialog').dialog({
+						"show": true,
+						"modal": true,
+						"title": 'Error'
+					});
+				}
+			},
+			success: function(j) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Return canceled!');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Success',
+					"close": function(event, ui) { loadReturns(); }
+				});
+			},
+			error: function(x, s, e) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Something went wrong.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			}
+		});
+	}, 200);
+
+}
+
+function confirmReturnSettlement(rowIndx, clickIndx, clickUriPrefix) {
+
+	var token = $('#_csrf').attr('content');
+	var header = $('#_csrf_header').attr('content');
+
+	var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+
+	$("#table_div").LoadingOverlay("show", {
+		background: "rgba(255, 255, 255, 0.8)"
+	});
+
+	setTimeout(function() {
+		$.ajax({
+			type: 'PATCH',
+			url: apiserver + uri,
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(header, token);
+			},
+			data: '{"settlementStatus": "SETTLED"}',
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			async: false,
+			statusCode: {
+				403: function(responseObject, textStatus, jqXHR) {
+					$("#table_div").LoadingOverlay("hide", true);
+					$('#cDialogText').text('You cannot Confirm Settlement of this Return. Please contact support.');
+					$('#cDialog').dialog({
+						"show": true,
+						"modal": true,
+						"title": 'Error'
+					});
+				},
+				400: function(responseObject, textStatus, jqXHR) {
+					$('#cDialogText').text('Could not Confirm Settlement of this Return');
+					if (responseObject.responseJSON && responseObject.responseJSON.message) {
+						$('#cDialogText').text(responseObject.responseJSON.message);
+					}
+					$('#cDialog').dialog({
+						"show": true,
+						"modal": true,
+						"title": 'Error'
+					});
+				}
+			},
+			success: function(j) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Settlement confirmed!');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Success',
+					"close": function(event, ui) { loadReturns(); }
+				});
+			},
+			error: function(x, s, e) {
+				$("#table_div").LoadingOverlay("hide", true);
+				$('#cDialogText').text('Something went wrong.');
+				$('#cDialog').dialog({
+					"show": true,
+					"modal": true,
+					"title": 'Error'
+				});
+			}
+		});
+	}, 200);
+}
+
+function createReturn(rowIndx, clickIndx, clickUriPrefix) {
+
+	var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+
+	var partyObj = JSON.parse(parties);
+
+    alert(uri);
+}
+
+function createRecall(rowIndx, clickIndx, clickUriPrefix) {
+
+	var uri = (clickUriPrefix == null ? '' : clickUriPrefix) + data.getFormattedValue(rowIndx, clickIndx);
+
+	var partyObj = JSON.parse(parties);
+
+    alert(uri);
+}
+
 function generateVenueReferenceKey() {
 	return 'DU'+(''+Date.now()).substring(3);
+}
+
+function actingAsLender(transactingParties, myParties) {
+	
+    for (var t = 0; t < transactingParties.length; t++) {
+		if (transactingParties[t].partyRole == 'LENDER') {
+			for (var p = 0; p < myParties.length; p++) {
+				if (myParties[p].partyId == transactingParties[t].party.partyId) {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }

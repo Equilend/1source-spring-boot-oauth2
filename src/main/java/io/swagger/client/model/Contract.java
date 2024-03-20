@@ -12,19 +12,17 @@
 
 package io.swagger.client.model;
 
-import java.time.OffsetDateTime;
+import java.util.Objects;
+import com.google.gson.annotations.SerializedName;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import com.google.gson.annotations.SerializedName;
-
-import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.OffsetDateTime;
 /**
  * Contract
  */
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2024-03-19T17:47:23.155955443Z[GMT]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2024-03-20T18:35:03.532063368Z[GMT]")
 
 public class Contract {
   @SerializedName("contractId")

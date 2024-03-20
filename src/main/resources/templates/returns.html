@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<title>1Source Ledger - Parties</title>
+	<title>1Source Ledger - Returns</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta id="_csrf" name="_csrf" th:content="${_csrf.token}" />
@@ -58,7 +58,7 @@
 		}
 
 		.key {
-			color: green;
+			color: red;
 		}
 	</style>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -69,11 +69,14 @@
 	<script type="text/javascript" src="/js/loadingoverlay.min.js"></script>
 	<script type="text/javascript">
 		google.charts.load('current', {'packages': ['table']});
-		google.charts.setOnLoadCallback(loadParties);
-
+		google.charts.setOnLoadCallback(loadReturns);
 		var parties = '[(${parties})]';
-		function loadParties() {
-			loadData(parties, '/v1/ledger/parties', partyData, partyParams);
+		function loadReturns() {
+        	var searchParams = new URLSearchParams(window.location.search);
+        	if (searchParams.has('status')) {
+				$('#sStatus option[value=' + searchParams.get('status') + ']').attr('selected', 'selected');
+			}
+			loadData(parties, '/v1/ledger/returns', returnData, returnParams);
 		}
 	</script>
 </head>
@@ -81,7 +84,7 @@
 <body>
 
 	<!-- Sidebar/menu -->
-	<nav class="w3-sidebar w3-orange w3-collapse w3-top w3-large w3-padding"
+	<nav class="w3-sidebar w3-lime w3-collapse w3-top w3-large w3-padding"
 		style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
 		<a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft"
 			style="width:100%;font-size:22px">Close Menu</a>
@@ -92,20 +95,20 @@
 		<div class="w3-bar-block">
 			<a href="/" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Home</a>
 			<a href="/summary" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Summary</a>
-			<a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Parties</a>
+			<a href="/parties" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Parties</a>
 			<a href="/events" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Events</a>
 			<a href="/agreements" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Agreements</a>
 			<a href="/contracts" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Contracts</a>
 			<a href="/rerates" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Rerates</a>
-			<a href="/returns" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Returns</a>
+			<a href="#" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Returns</a>
 			<span sec:authorize="isAuthenticated()"><a href="/user-logout" onclick="w3_close()"
 					class="w3-bar-item w3-button w3-hover-white">Logout</a></span>
 		</div>
 	</nav>
 
 	<!-- Top menu on small screens -->
-	<header class="w3-container w3-top w3-hide-large w3-orange w3-xlarge w3-padding">
-		<a href="javascript:void(0)" class="w3-button w3-orange w3-margin-right" onclick="w3_open()">☰</a>
+	<header class="w3-container w3-top w3-hide-large w3-lime w3-xlarge w3-padding">
+		<a href="javascript:void(0)" class="w3-button w3-lime w3-margin-right" onclick="w3_open()">☰</a>
 		<span>1Source Ledger</span>
 	</header>
 
@@ -118,17 +121,34 @@
 
 		<!-- Parties -->
 		<div class="w3-container" id="contact" style="margin-top:45px">
-			<h1 class="w3-xxxlarge w3-text-orange" style="margin-top:45px"><b>Parties.</b></h1>
-			<hr style="width:50px;border:5px solid orange" class="w3-round">
+			<h1 class="w3-xxxlarge w3-text-lime" style="margin-top:45px"><b>Returns.</b></h1>
+			<hr style="width:50px;border:5px solid #cddc39" class="w3-round">
 			<div id="filter_div" style="height:35px;min-width:1000px;">
+				<form>Counterparty <select id="sCounterparty">
+						<option value="_">All Parties</option>
+					</select>&nbsp;&nbsp;
+					Since <select id="sTimeSince">
+						<option value="_" selected>Start of Day</option>
+						<option value="5">5 Minutes</option>
+						<option value="15">15 Minutes</option>
+						<option value="60">1 Hour</option>
+						<option value="180">3 Hours</option>
+						<option value="10080">1 Week</option>
+					</select>&nbsp;&nbsp;
+					With Status <select id="sStatus">
+						<option value="_" selected>All</option>
+						<option value="PENDING">Pending</option>
+						<option value="SETTLED">Settled</option>
+						<option value="CANCELED">Canceled</option>
+					</select>&nbsp;<input type="button" value="Submit" onclick="loadReturns();"></form>
 			</div>
-			<div id="table_div"></div>
+			<div id="table_div" style="height:70vh;"></div>
 		</div>
 
 		<!-- Modal for json display on click-->
 		<div id="modal01" class="w3-modal">
 			<div class="w3-modal-content w3-card-4">
-				<header class="w3-container w3-orange">
+				<header class="w3-container w3-lime">
 					<span onclick="$('#modal01').hide();" class="w3-button w3-display-topright">&times;</span>
 					<h2>Inspect JSON</h2>
 				</header>
@@ -136,40 +156,22 @@
 					<p id="caption"></p>
 					<pre id="jsonobj"></pre>
 				</div>
-				<footer class="w3-container w3-orange">
+				<footer class="w3-container w3-lime">
 					<p class="w3-right"><input type="submit" value="close" onclick="$('#modal01').hide();"></p>
 				</footer>
 			</div>
 		</div>
-		
+
+		<!-- Modal for agreement form display on click-->
 		<div id="modal02" class="w3-modal">
 			<div class="w3-modal-content w3-card-4">
-				<header class="w3-container w3-orange">
+				<header class="w3-container w3-lime">
 					<span onclick="$('#modal02').hide();" class="w3-button w3-display-topright">&times;</span>
-					<h2>Propose Contract</h2>
+					<h2>Approve Return</h2>
 				</header>
 				<div class="w3-container" style="padding:5px;overflow-y:scroll;height:400px;">
-					<form id="createProposalForm">
+					<form id="createReturnAcceptForm">
 						<table>
-							<tr>
-								<td><b>Venue</b></td>
-								<td colspan="2">&nbsp;</td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>Venue Party:</b></td>
-								<td><span id="cVenueParty">1Source_Demo_Party</span></td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>Venue Name:</b></td>
-								<td><span id="cVenueName">1Source Demo UI</span></td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>Venue Reference Key:</b></td>
-								<td><span id="cVenueRefKey"></span></td>
-							</tr>
 							<tr>
 								<td><b>Parties</b></td>
 								<td colspan="2">&nbsp;</td>
@@ -177,27 +179,23 @@
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>My Party:</b></td>
-								<td><select name="myParty" id="sMyParty" style="width:200px;"></select></td>
+								<td>
+									<p style="margin: 1px;" id="cMyParty"></p>
+								</td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>Party Role:</b></td>
-								<td><select name="partyRole" id="sPartyRole" style="width:200px;">
-										<option value="BORROWER">Borrowing From
-										<option value="LENDER">Lending To
-									</select></td>
+								<td>
+									<p style="margin: 1px;" id="cPartyRole"></p>
+								</td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>Counterparty:</b></td>
 								<td>
-									<span id="cCounterparty"></span>
+									<p style="margin: 1px;" id="cCounterparty"></p>
 								</td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>Internal Reference ID:</b></td>
-								<td><input type="text" name="internalRefId" id="tInternalRefId" value="REF123456"></td>
 							</tr>
 							<tr>
 								<td><b>Instrument</b></td>
@@ -206,130 +204,92 @@
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>Name:</b></td>
-								<td><select name="instrument" id="sInstrument" style="width:240px;"></select></td>
+								<td>
+									<p style="margin: 1px;" id="cName"></p>
+								</td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>Quantity:</b></td>
-								<td><input type="text" name="quantity" id="tQuantity" value="5000"></td>
+								<td>
+									<p style="margin: 1px;" id="cQuantity"></p>
+								</td>
 							</tr>
 							<tr>
-								<td>&nbsp;</td>
-								<td><b>Price:</b></td>
-								<td><input type="text" name="price" id="tPrice" value="50.5"></td>
-							</tr>
-							<tr>
-								<td><b>Rate</b></td>
+								<td><b>Current Rate</b></td>
 								<td colspan="2">&nbsp;</td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>Rate Type:</b></td>
-								<td><select name="rateType" id="sRateType" onchange="toggleBenchmark();">
-										<option value="RFL">Rebate Floating
-										<option value="RFI">Rebate Fixed
-										<option value="FEE">Fee
-									</select></td>
+								<td><span id="cCurrentRateType">--</span></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>Rate (%):</b></td>
-								<td><input type="text" name="rate" id="tRate" value="0.15"></td>
+								<td><span id="cCurrentRatePct"--></span></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>Benchmark:</b></td>
-								<td><select name="benchmark" id="sBenchmark">
-										<option value="OBFR">OBFR
-										<option value="SOFR">SOFR
-										<option value="EFFR">EFFR
-										<option value="TGCR">TGCR
-										<option value="BGCR">BGCR
-									</select></td>
+								<td><span id="cCurrentBenchmark">--</span></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>Auto Rerate:</b></td>
-								<td><select name="autoRerate" id="sAutoRerate" onchange="toggleAutoRerate();">
-										<option value="YES">YES
-										<option value="NO">NO
-									</select></td>
+								<td><span id="cCurrentAutoRerate">--</span></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
 								<td><b>Base Rate (%):</b></td>
-								<td><input type="text" name="baseRate" id="tBaseRate" value=""></td>
+								<td><span id="cCurrentBaseRatePct">--</span></td>
 							</tr>
 							<tr>
-								<td><b>Settlement</b></td>
+								<td><b>Proposed Rate</b></td>
 								<td colspan="2">&nbsp;</td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td><b>Settlement Status:</b></td>
-								<td><select name="settlementStatus" id="sSettlementStatus">
-										<option value="NONE" selected>NONE
-										<option value="PENDING" selected>PENDING
-										<option value="SETTLED">SETTLED
-									</select></td>
+								<td><b>Rate Type:</b></td>
+								<td><span id="cProposedRateType">--</span></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td><b>Internal Account Cd:</b></td>
-								<td><input type="text" name="internalAcctCd" id="tInternalAcctCd" maxlength="120"
-										style="width:120px;" value="BOX1"></td>
+								<td><b>Rate (%):</b></td>
+								<td><span id="cProposedRatePct"--></span></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td><b>Settlement BIC:</b></td>
-								<td><select name="settlmentBic" id="sSettlmentBic" onchange="toggleClearing();">
-										<option value="DTCYUS33" selected>DTCYUS33
-										<option value="CDSLCATT">CDSLCATT
-									</select></td>
+								<td><b>Benchmark:</b></td>
+								<td><span id="cProposedBenchmark">--</span></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td><b>Local Agent BIC:</b></td>
-								<td><input type="text" name="localAgentBic" id="tLocalAgentBic" maxlength="120"
-										style="width:120px;" value="YYYYYYYY"></td>
+								<td><b>Auto Rerate:</b></td>
+								<td><span id="cProposedAutoRerate">--</span></td>
 							</tr>
 							<tr>
 								<td>&nbsp;</td>
-								<td><b>Local Agent Name:</b></td>
-								<td><input type="text" name="localAgentName" id="tLocalAgentName" maxlength="140"
-										style="width:140px;" value="ZZZ Clearing"></td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>Local Agent Account:</b></td>
-								<td><input type="text" name="localAgentAcct" id="tLocalAgentAcct" maxlength="100"
-										style="width:100px;" value="2468999"></td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>DTC Participant Number:</b></td>
-								<td><input type="text" name="dtcParticipantNumber" id="tDtcParticipantNumber" maxlength="100"
-										style="width:100px;" value="0000"></td>
-							</tr>
-							<tr>
-								<td>&nbsp;</td>
-								<td><b>CDS Customer Unit ID:</b></td>
-								<td><input type="text" name="cdsCustomerUnitId" id="tCdsCustomerUnitId" maxlength="100"
-										style="width:100px;" value="1111"></td>
+								<td><b>Base Rate (%):</b></td>
+								<td><span id="cProposedBaseRatePct">--</span></td>
 							</tr>
 						</table>
+						<input type="hidden" name="myParty" id="hMyParty">
 						<input type="hidden" name="counterparty" id="hCounterparty">
+						<input type="hidden" name="partyRole" id="hPartyRole">
+						<input type="hidden" name="contractId" id="hContractId">
+						<input type="hidden" name="rerateId" id="hRerateId">
 					</form>
 				</div>
-				<footer class="w3-container w3-orange">
-					<p class="w3-right"><input type="submit" value="submit"
-							onclick="$('#createProposalForm').submit();">&nbsp;<input type="submit" value="cancel"
+				<footer class="w3-container w3-lime">
+					<p class="w3-right"><input type="submit" value="approve"
+							onclick="$('#createReturnAcceptForm').submit();">&nbsp;<input type="submit" value="cancel"
 							onclick="$('#modal02').hide();"></p>
 				</footer>
 			</div>
 		</div>
 
-		<div id="cDialog" title="Submit Agreement" style='display:none;'>
+		<div id="cDialog" title="Updating Return Contract" style='display:none;'>
 			<div id="cDialogText">Waiting for ledger response...</div>
 		</div>
 		<!-- End page content -->
@@ -345,46 +305,14 @@
 		$(function () {
 			expandToWindow($('#table_div'), 305);
 			addEventListener("resize", (event) => {expandToWindow($('#table_div'), 305);});
-			loadInstrumentlist();
-			toggleBenchmark();
-			toggleClearing();
-			$('#createProposalForm').on("submit", function (e) {
+			loadPartylist('sCounterparty', parties);
+			$('#createReturnAcceptForm').on("submit", function (e) {
 				e.preventDefault(); // cancel the actual submit
 				$('#modal02').hide();
-				validateProposal($(this));
+				acceptReturn($(this));
 			});
 			setTimeout(ping, 1000 * 30);
 		});
-		function toggleBenchmark() {
-			var rateType = $('#sRateType').val();
-			if (rateType == 'RFI' || rateType == 'FEE') {
-				$('#sBenchmark').prop('disabled', 'disabled');
-				$('#sAutoRerate').prop('disabled', 'disabled');
-				$('#tBaseRate').prop('disabled', 'disabled');
-			} else {
-				$('#sBenchmark').prop('disabled', false);
-				$('#sAutoRerate').prop('disabled', false);
-				toggleAutoRerate();
-			}
-		}
-		function toggleAutoRerate() {
-			var autoRerate = $('#sAutoRerate').val();
-			if (autoRerate == 'YES') {
-				$('#tBaseRate').prop('disabled', 'disabled');
-			} else {
-				$('#tBaseRate').prop('disabled', false);
-			}
-		}
-		function toggleClearing() {
-			var clearing = $('#sSettlmentBic').val();
-			if (clearing == 'DTCYUS33') {
-				$('#tDtcParticipantNumber').prop('disabled', false);
-				$('#tCdsCustomerUnitId').prop('disabled', 'disabled');
-			} else {
-				$('#tDtcParticipantNumber').prop('disabled', 'disabled');
-				$('#tCdsCustomerUnitId').prop('disabled', false);
-			}
-		}
 	</script>
 
 </body>
