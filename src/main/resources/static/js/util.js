@@ -489,15 +489,17 @@ function contractData(j, parties) {
 		var canRecall = false;
 
 		var borrower;
-		var borrowerSettlement;
+		var borrowerSettlement = "--";
 		var lender;
-		var lenderSettlement;
+		var lenderSettlement = "--";
 
 		for (var t = 0; t < j[i].trade.transactingParties.length; t++) {
 
 			if (counterpartyFilter == '_' || counterpartyFilter == j[i].trade.transactingParties[t].party.partyId) {
 				matchesFilter = true;
 			}
+			
+			var isLenderParty = actingAsLender(j[i].trade.transactingParties, parties);
 
 			if (j[i].trade.transactingParties[t].partyRole == 'BORROWER') {
 				borrower = j[i].trade.transactingParties[t].party.partyId;
@@ -507,25 +509,17 @@ function contractData(j, parties) {
 
 			if (j[i].contractStatus == 'PROPOSED') {
 
-				//				for (var p = 0; p < parties.length; p++) {
-				//					if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId && j[i].trade.transactingParties[t].partyRole == 'BORROWER') {
-				canAcc = true;
-				canDec = true;
-				//						break;
-				//					}
-				//				}
-
-				//				for (var p = 0; p < parties.length; p++) {
-				//					if (parties[p].partyId == j[i].trade.transactingParties[t].party.partyId && j[i].trade.transactingParties[t].partyRole == 'LENDER') {
-				canCan = true;
-				//						break;
-				//					}
-				//				}
+				if (j[i].isInitiator) {
+					canCan = true;
+				} else {
+					canAcc = true;
+					canDec = true;
+				}
 			} else if (j[i].contractStatus == 'PENDING') {
 				canSettle = true;
 			} else if (j[i].contractStatus == 'OPEN') {
 				canRerate = true;
-				if (actingAsLender(j[i].trade.transactingParties, parties)) {
+				if (isLenderParty) {
 					canRecall = true;
 				} else {
 					canReturn = true;
@@ -540,8 +534,14 @@ function contractData(j, parties) {
 		for (var s = 0; s < j[i].settlement.length; s++) {
 			if (j[i].settlement[s].partyRole == 'BORROWER') {
 				borrowerSettlement = j[i].settlement[s].settlementStatus;
+				if (!isLenderParty && borrowerSettlement == 'SETTLED') {
+					canSettle = false;
+				}
 			} else if (j[i].settlement[s].partyRole == 'LENDER') {
 				lenderSettlement = j[i].settlement[s].settlementStatus;
+				if (isLenderParty && lenderSettlement == 'SETTLED') {
+					canSettle = false;
+				}
 			}
 
 		}
@@ -2089,6 +2089,8 @@ function returnData(j, parties) {
 					matchesFilter = true;
 				}
 
+ 			    var isLenderParty = actingAsLender(contractObj.trade.transactingParties, parties);
+
 				if (contractObj.trade.transactingParties[t].partyRole == 'BORROWER') {
 					borrower = contractObj.trade.transactingParties[t].party.partyId;
 				} else if (contractObj.trade.transactingParties[t].partyRole == 'LENDER') {
@@ -2097,20 +2099,7 @@ function returnData(j, parties) {
 
 				if (j[i].returnStatus == 'PENDING') {
 
-					//				for (var p = 0; p < parties.length; p++) {
-					//					if (parties[p].partyId == contractObj.trade.transactingParties[t].party.partyId && contractObj.trade.transactingParties[t].partyRole == 'BORROWER') {
-					//canAcc = true;
-					//canDec = true;
-					//						break;
-					//					}
-					//				}
-
-					//				for (var p = 0; p < parties.length; p++) {
-					//					if (parties[p].partyId == contractObj.trade.transactingParties[t].party.partyId && contractObj.trade.transactingParties[t].partyRole == 'LENDER') {
 					canCan = true;
-					//						break;
-					//					}
-					//				}
 					canSettle = true;
 				}
 			}
